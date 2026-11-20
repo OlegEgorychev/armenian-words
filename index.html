@@ -1251,11 +1251,12 @@ const A={
 };
 
 /* ================= KEYBOARD ================= */
-document.addEventListener('keydown',e=>{
+window.addEventListener('keydown',e=>{
   if(screen!=='session'||!ses||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(document.activeElement&&document.activeElement!==document.body)document.activeElement.blur();
   const tk=cur();if(!tk)return;
+  if(e.key==='Tab'){e.preventDefault();if(!fb&&!ses.hint&&['wt','tw','build','write','dict'].includes(tk.t))A.hint();return;}
   if(fb||tk.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
-  if(e.key==='Tab'){e.preventDefault();if(!ses.hint&&['wt','tw','build','write','dict'].includes(tk.t))A.hint();return;}
   if(['wt','tw','read','L1','L2'].includes(tk.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
   if(tk.t==='build'){
     const k=e.key.toLowerCase();if(!isHy(k)||k==='ւ')return;
@@ -1275,7 +1276,7 @@ document.addEventListener('keydown',e=>{
     if(e.key===' '){e.preventDefault();A.key(' ');return;}
     if(e.key.length===1&&isHy(e.key.toLowerCase())){e.preventDefault();A.key(e.key.toLowerCase());}
   }
-});
+},true);
 render();
 </script>
 </body>
