@@ -17,10 +17,21 @@ The interface is available in **English and Russian**. Use the RU / EN button in
 | 🧩 Builder | assembling the word letter by letter (up to 3 mistakes) |
 | ✍️ Writing | typing the word on an Armenian keyboard from its translation |
 | 🎧 Dictation | typing the word from its transcription (spelling) |
-| Աա Letters | letter ↔ sound; choose which letters to practise in the Alphabet tab |
+| Աա Letters | alphabet trainer in the style of [chev.me/armenian](https://chev.me/armenian/): letter → pick its transliteration out of 5, 15 questions |
 | 🔁 Review | spaced repetition of learned words: 1-3-7-14-30-60-120 days |
 
 A word counts as **learned** once it is answered correctly on the first try in all five core exercises. After that it moves into spaced-repetition review.
+
+## Alphabet first: words only from learned letters
+
+The Alphabet tab works like [chev.me/armenian](https://chev.me/armenian/) by Oleg Kalachev:
+
+- 39 letter cards sorted **by frequency** (ա ն ր ո ե ի մ ու կ տ…) or alphabetically, with upper/lower case toggles
+- tap letters to select them, then **Train selected**. If you select fewer than 15 letters, the quiz cycles through them (up to 3 rounds)
+- every letter has a unique transliteration (`'` marks aspirated sounds: թ t', ց ts', չ ch', փ p', ք k'; ռ is rr)
+- a letter becomes **learned** after 3 correct answers in a row, or you can mark the letters you already know with “✓ I know selected”
+
+With **“Only words made of learned letters”** turned on (default), every word exercise except Review uses only words whose letters are all learned. The home screen shows which letters to learn next to unlock the most words, and the dictionary shows 🔒 with the missing letters.
 
 ## Features
 

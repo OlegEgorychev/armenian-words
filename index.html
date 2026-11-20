@@ -11,13 +11,13 @@
   --accent:#E8833A;--accent-ink:#fff;--accent-soft:#FCEBDD;
   --ok:#3B9F5A;--ok-soft:#E3F4E8;--bad:#D2504A;--bad-soft:#FBE5E3;
   --hy:"Noto Sans Armenian","Arian AMU","Sylfaen","Mshtakan",system-ui,sans-serif;
-  --radius:16px;
+  --radius:16px;--sel:#FFF4B8;--sel-b:#D8C25C;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;
-  --accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220;
+  --accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220;--sel:#4A4220;--sel-b:#8F7F35;
 }}
-:root[data-theme=dark]{--bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;--accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220}
+:root[data-theme=dark]{--sel:#4A4220;--sel-b:#8F7F35;--bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;--accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -152,12 +152,30 @@ details summary::-webkit-details-marker{display:none}
 .muted{color:var(--muted);font-size:14px}
 
 /* alphabet */
-.abc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.abc button{border:2px solid var(--line);background:var(--card);border-radius:12px;padding:8px 0;display:flex;flex-direction:column;align-items:center}
-.abc button b{font:600 26px var(--hy)}
-.abc button small{color:var(--muted);font-size:12px}
-.abc button.on{border-color:var(--accent);background:var(--accent-soft)}
-.abc .acc{font-size:10px;color:var(--ok)}
+.abc{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.abc button{position:relative;border:3px solid var(--line);background:var(--card);border-radius:12px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.abc button b{font:600 28px/1.1 var(--hy);white-space:nowrap}
+.abc button b .lo{color:var(--muted)}
+.abc button small{color:var(--ok);font-size:14px;font-style:italic;font-weight:600}
+.abc button.sel{background:var(--sel);border-color:var(--sel-b)}
+.abc button.known{border-color:var(--ok)}
+.abc button.known::after{content:'✓';position:absolute;top:2px;right:6px;font-size:12px;color:var(--ok);font-weight:700}
+.sdots{display:flex;gap:3px;height:6px}
+.sdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.sdots i.on{background:var(--ok)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:none;padding:6px 12px;font-size:14px}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.abc-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.key.dim{opacity:.38}
+.lock{color:var(--muted);font-size:12px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:15px}
+.switch input{width:44px;height:24px;accent-color:var(--accent)}
+.next-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.next-l span{border:1px solid var(--line);border-radius:10px;padding:2px 8px;font-size:13px}
+.next-l b{font:600 18px var(--hy)}
+.cta{background:var(--accent-soft);border-color:var(--accent)}
+.letter-q .big.hy{font-size:72px;letter-spacing:6px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:20;font-size:14px;max-width:90%;text-align:center}
 </style>
 </head>
@@ -333,13 +351,17 @@ const RAW = `
 `;
 
 // Alphabet: [lowercase, uppercase, sound RU, sound EN]
+// Alphabet: [lowercase, uppercase, translit RU, translit EN] — unique labels: ' = aspirated, rr = rolled r
 const ABC = [
- ['ա','Ա','а','a'],['բ','Բ','б','b'],['գ','Գ','г','g'],['դ','Դ','д','d'],['ե','Ե','е / йе','e / ye'],['զ','Զ','з','z'],['է','Է','э','e'],['ը','Ը','ы','ə'],
- ['թ','Թ','т (придых.)','t (aspirated)'],['ժ','Ժ','ж','zh'],['ի','Ի','и','i'],['լ','Լ','л','l'],['խ','Խ','х','kh'],['ծ','Ծ','ц (твёрдое)','ts (hard)'],['կ','Կ','к (твёрдое)','k (hard)'],['հ','Հ','h','h'],
- ['ձ','Ձ','дз','dz'],['ղ','Ղ','гх','gh'],['ճ','Ճ','ч (твёрдое)','ch (hard)'],['մ','Մ','м','m'],['յ','Յ','й','y'],['ն','Ն','н','n'],['շ','Շ','ш','sh'],['ո','Ո','о / во','o / vo'],
- ['չ','Չ','ч (придых.)','ch (aspirated)'],['պ','Պ','п (твёрдое)','p (hard)'],['ջ','Ջ','дж','j'],['ռ','Ռ','р (раскат.)','r (rolled)'],['ս','Ս','с','s'],['վ','Վ','в','v'],['տ','Տ','т (твёрдое)','t (hard)'],['ր','Ր','р','r'],
- ['ց','Ց','ц (придых.)','ts (aspirated)'],['ու','Ու','у','u'],['փ','Փ','п (придых.)','p (aspirated)'],['ք','Ք','к (придых.)','k (aspirated)'],['և','Եվ','ев','yev'],['օ','Օ','о','o'],['ֆ','Ֆ','ф','f']
+ ['ա','Ա','а','a'],['բ','Բ','б','b'],['գ','Գ','г','g'],['դ','Դ','д','d'],['ե','Ե','е','ye'],['զ','Զ','з','z'],['է','Է','э','e'],['ը','Ը','ы','ə'],
+ ['թ','Թ',"т'","t'"],['ժ','Ժ','ж','zh'],['ի','Ի','и','i'],['լ','Լ','л','l'],['խ','Խ','х','kh'],['ծ','Ծ','ц','ts'],['կ','Կ','к','k'],['հ','Հ','h','h'],
+ ['ձ','Ձ','дз','dz'],['ղ','Ղ','гх','gh'],['ճ','Ճ','ч','ch'],['մ','Մ','м','m'],['յ','Յ','й','y'],['ն','Ն','н','n'],['շ','Շ','ш','sh'],['ո','Ո','во','vo'],
+ ['չ','Չ',"ч'","ch'"],['պ','Պ','п','p'],['ջ','Ջ','дж','j'],['ռ','Ռ','рр','rr'],['ս','Ս','с','s'],['վ','Վ','в','v'],['տ','Տ','т','t'],['ր','Ր','р','r'],
+ ['ց','Ց',"ц'","ts'"],['ու','Ու','у','u'],['փ','Փ',"п'","p'"],['ք','Ք',"к'","k'"],['և','Եվ','ев','ev'],['օ','Օ','о','o'],['ֆ','Ֆ','ф','f']
 ];
+// frequency order (source: chev.me/armenian, simia.net letter frequencies)
+const FREQ=['ա','ն','ր','ո','ե','ի','մ','ու','կ','տ','յ','վ','ս','լ','հ','թ','գ','ը','դ','ց','բ','է','պ','ք','ղ','ծ','շ','և','զ','ռ','խ','ջ','չ','ժ','փ','ձ','ֆ','օ','ճ'];
+const byL=Object.fromEntries(ABC.map(a=>[a[0],a]));
 const baseSnd = s => s.split(' ')[0];
 
 /* ================= I18N ================= */
@@ -351,7 +373,7 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
   wt:['Слово → перевод','Читаешь по-армянски, выбираешь перевод'],tw:['Перевод → слово','Ищешь армянское слово среди похожих'],
   read:['Чтение','Как читается слово? Выбери транскрипцию'],build:['Конструктор','Собери слово из букв по порядку'],
   write:['Написание','Напиши слово на армянской клавиатуре'],dict:['Диктант','Пиши по транскрипции — тренирует орфографию'],
-  letters:['Буквы','Буква ↔ звук. Выбери буквы во вкладке «Алфавит»'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней']},
+  letters:['Буквы','Как на chev.me: буква → транслитерация, 15 вопросов'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней']},
  newWord:'Новое слово',know:'Уже знаю',next:'Дальше ⏎',pickMeaning:'Выбери перевод',findHy:'Найди слово по-армянски',howRead:'Как читается это слово?',
  whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из 3',
  writeHy:'Напиши по-армянски',writeTr:'Напиши по транскрипции',hintTr:'Транскрипция',hintTrs:'Показать транскрипции',hintMean:'Перевод',listen:'🔊 Слушать',
@@ -369,7 +391,13 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  ioPh:'Сюда попадёт JSON при экспорте. Чтобы импортировать — вставь JSON и нажми кнопку ниже',importT:'Импорт из текста',resetAll:'Сбросить весь прогресс',
  storage:'Прогресс хранится в этом браузере.',voiceY:'Армянский голос найден 🔊',voiceN:'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.',
  nothing:'Ничего не найдено',resetT:'Сбросить прогресс слова',delT:'Удалить',
- abcSub:'алфавит',abcNote:'Отметь буквы, которые хочешь тренировать в упражнении «Буквы». Под буквой — звук и процент правильных ответов.',
+ abcSub:'алфавит',abcNote:'Нажимай на буквы, чтобы выбрать их для тренировки. Буква становится выученной (зелёная рамка ✓) после 3 правильных ответов подряд — или сразу отметь те, что уже знаешь. Слова в тренировках собираются только из выученных букв.',
+ legend:"' — с придыханием, без апострофа — твёрдый звук; рр — раскатистое р",sortFreq:'По частоте',sortAlpha:'По алфавиту',upper:'Заглавные',lower:'Строчные',
+ trainSel:'Учить выбранное ({0})',trainAll:'Учить все',markKnown:'✓ Знаю выбранные',markForgot:'✗ Забыл выбранные',clearSel:'Сбросить выбор',
+ knownN:'Выучено букв: {0} из 39',chooseTr:'Выбери транслитерацию',newKnown:'Новые выученные буквы:',unlocked:'Открыто новых слов: {0}',selectFirst:'Сначала выбери буквы',
+ lettersCard:'Буквы: {0}/39 · доступно слов: {1} из {2}',onlyKnown:'Только слова из выученных букв',nextLetters:'Выучи следующими:',plusWords:'+{0} сл.',
+ startAbc:'Слова собираются только из выученных букв. Начни с алфавита — выучи несколько букв, и слова из них появятся в тренировках.',goAbc:'Учить алфавит →',needs:'🔒 нужны:',
+ letterKnown:'Буква {0} выучена! 🎉',
  selAll:'Выбрать все',unselAll:'Снять все',practice:'▶ Тренировать',myWords:'Мои слова'},
 en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
  themes:'Topics',all:'All',exercises:'Exercises',dict:'Dictionary',alphabet:'Alphabet',lettersN:'letters',
@@ -378,7 +406,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
   wt:['Word → translation','Read the Armenian word, pick its meaning'],tw:['Translation → word','Find the Armenian word among similar ones'],
   read:['Reading','How is the word read? Pick the transcription'],build:['Builder','Assemble the word letter by letter'],
   write:['Writing','Type the word on the Armenian keyboard'],dict:['Dictation','Write from the transcription — trains spelling'],
-  letters:['Letters','Letter ↔ sound. Choose letters in the Alphabet tab'],review:['Review','Learned words at 1-3-7-14-30 day intervals']},
+  letters:['Letters','Like chev.me: letter → transliteration, 15 questions'],review:['Review','Learned words at 1-3-7-14-30 day intervals']},
  newWord:'New word',know:'I know it',next:'Continue ⏎',pickMeaning:'Choose the translation',findHy:'Find the Armenian word',howRead:'How is this word read?',
  whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of 3',
  writeHy:'Write it in Armenian',writeTr:'Write from the transcription',hintTr:'Transcription',hintTrs:'Show transcriptions',hintMean:'Translation',listen:'🔊 Listen',
@@ -396,7 +424,13 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  ioPh:'Exported JSON appears here. To import, paste JSON and press the button below',importT:'Import from text',resetAll:'Reset all progress',
  storage:'Progress is stored in this browser.',voiceY:'Armenian voice found 🔊',voiceN:'No Armenian voice on this device — audio is hidden.',
  nothing:'Nothing found',resetT:'Reset word progress',delT:'Delete',
- abcSub:'alphabet',abcNote:'Select the letters you want to practise in the Letters exercise. Under each letter: its sound and your accuracy.',
+ abcSub:'alphabet',abcNote:'Tap letters to select them for practice. A letter becomes learned (green ✓ border) after 3 correct answers in a row — or mark the ones you already know. Word exercises only use words made of learned letters.',
+ legend:"' — aspirated, without it — unaspirated; rr — rolled r",sortFreq:'By frequency',sortAlpha:'Alphabetical',upper:'Upper',lower:'Lower',
+ trainSel:'Train selected ({0})',trainAll:'Train all',markKnown:'✓ I know selected',markForgot:'✗ Forgot selected',clearSel:'Select none',
+ knownN:'Letters learned: {0} of 39',chooseTr:'Choose the transliteration',newKnown:'Newly learned letters:',unlocked:'New words unlocked: {0}',selectFirst:'Select letters first',
+ lettersCard:'Letters: {0}/39 · words available: {1} of {2}',onlyKnown:'Only words made of learned letters',nextLetters:'Learn next:',plusWords:'+{0} words',
+ startAbc:'Words only use letters you have learned. Start with the alphabet — learn a few letters and words made of them will appear here.',goAbc:'Learn the alphabet →',needs:'🔒 needs:',
+ letterKnown:'Letter {0} learned! 🎉',
  selAll:'Select all',unselAll:'Clear all',practice:'▶ Practise',myWords:'My words'}
 };
 
@@ -405,15 +439,16 @@ const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1};
 const MY='Мои слова';
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},lettersOn:null,lang:null};}
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
 if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
+if(Array.isArray(S.lettersOn)){S.sel=S.lettersOn;}delete S.lettersOn;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 const L=()=>T[S.lang]||T.ru;
 const t=(k,...a)=>{let s=L()[k];if(s===undefined)s=T.ru[k];a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s;};
 const snd=a=>S.lang==='en'?a[3]:a[2];
-const soundOf=ch=>{const a=ABC.find(x=>x[0]===ch);return a?baseSnd(snd(a)):'';};
+const soundOf=ch=>{const a=byL[ch];return a?snd(a):'';};
 
 // Cyrillic transcription → Latin
 function cyr2lat(s){
@@ -437,7 +472,7 @@ function translit(hy,lang){
   for(let i=0;i<s.length;i++){
     const c=s[i],start=i===0||s[i-1]===' ';
     if(c==='ո'&&s[i+1]==='ւ'){out+=map['ու'];i++;continue;}
-    if(c==='ո'){out+=start?(lang==='en'?'vo':'во'):map['ո'];continue;}
+    if(c==='ո'){out+=start?(lang==='en'?'vo':'во'):(lang==='en'?'o':'о');continue;}
     if(c==='ե'){out+=start?(lang==='en'?'ye':'е'):(lang==='en'?'e':'е');continue;}
     out+=map[c]!==undefined?map[c]:c;
   }
@@ -451,7 +486,17 @@ function themesAll(){const ids=THEMES.map(x=>x.id);return S.custom.length?ids.co
 function st(id){return S.w[id]||(S.w[id]={f:{},lvl:0,next:0,err:0});}
 function peek(id){return S.w[id]||{f:{},lvl:0,next:0,err:0};}
 function status(w){const s=peek(w.id);if(s.lvl>0)return s.next<=Date.now()?'due':'learned';return FLAGS.some(f=>s.f[f])?'learning':'new';}
-function pool(){const th=S.themes;return allWords().filter(w=>!th.length||th.includes(w.th));}
+function knownSet(){return new Set(S.known);}
+function missing(w,K){K=K||knownSet();return [...new Set(units(w.hy))].filter(u=>!K.has(u));}
+function wordOK(w,K){return missing(w,K).length===0;}
+function themed(){const th=S.themes;return allWords().filter(w=>!th.length||th.includes(w.th));}
+function pool(){const K=knownSet();return themed().filter(w=>!S.onlyKnown||wordOK(w,K));}
+function nextLetters(n){
+  const K=knownSet(),cnt={};
+  themed().forEach(w=>{const m=missing(w,K);if(m.length===1)cnt[m[0]]=(cnt[m[0]]||0)+1;});
+  const unk=FREQ.filter(l=>!K.has(l));
+  return unk.map(l=>({l,n:cnt[l]||0})).sort((a,b)=>b.n-a.n||FREQ.indexOf(a.l)-FREQ.indexOf(b.l)).slice(0,n);
+}
 function isDue(w){const s=peek(w.id);return s.lvl>0&&s.next<=Date.now();}
 function due(){return allWords().filter(isDue).sort((a,b)=>peek(a.id).next-peek(b.id).next);}
 function today(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -490,7 +535,7 @@ function pickPractice(n){
   if(c.length<n)c=c.concat(p.filter(w=>status(w)==='new').slice(0,n-c.length));
   return shuffle(c);
 }
-function lettersOn(){return S.lettersOn?ABC.filter(a=>S.lettersOn.includes(a[0])):ABC;}
+function lettersOn(){return S.sel.length?ABC.filter(a=>S.sel.includes(a[0])):ABC;}
 function available(k){
   const p=pool();
   if(k==='brain')return p.filter(w=>peek(w.id).lvl===0).length;
@@ -507,9 +552,8 @@ function options(w,fn,k){
   return shuffle(out);
 }
 function letterOptions(a,k){
-  const pl=shuffle(ABC.filter(x=>x[0]!==a[0]&&baseSnd(snd(x))!==baseSnd(snd(a))));
-  const out=[a],seen=new Set([baseSnd(snd(a))]);
-  for(const x of pl){if(out.length>=k)break;if(seen.has(baseSnd(snd(x))))continue;seen.add(baseSnd(snd(x)));out.push(x);}
+  const out=[a],seen=new Set([snd(a)]);
+  for(const x of shuffle(ABC)){if(out.length>=k)break;if(seen.has(snd(x)))continue;seen.add(snd(x));out.push(x);}
   return shuffle(out);
 }
 
@@ -531,16 +575,11 @@ function start(kind){
     const ws=due().slice(0,15);if(!ws.length)return toast(t('noReview'));
     tasks=shuffle(ws.map(w=>({t:rnd(['wt','tw','read']),w}))).concat(shuffle(ws.map(w=>({t:rnd(['write','build']),w}))));
   }else if(kind==='letters'){
-    const Ls=lettersOn();if(!Ls.length)return toast(t('noLetters'));
-    const weight=a=>{const r=S.letters[a[0]]||{ok:0,bad:0};return Math.max(.4,1+r.bad*2-r.ok*.25);};
-    for(let i=0;i<16;i++){
-      let tot=Ls.reduce((s,a)=>s+weight(a),0),x=Math.random()*tot,pick=Ls[0];
-      for(const a of Ls){x-=weight(a);if(x<=0){pick=a;break;}}
-      if(Ls.length>1&&tasks.length&&tasks[tasks.length-1].w===pick){i--;continue;}
-      tasks.push({t:rnd(['L1','L2']),w:pick});
-    }
+    const Ls=lettersOn(),rounds=Math.min(3,Math.ceil(15/Ls.length));let seq=[];
+    for(let r=0;r<rounds;r++){let sh=shuffle(Ls);if(seq.length&&Ls.length>1&&sh[0]===seq[seq.length-1])sh.push(sh.shift());seq=seq.concat(sh);}
+    tasks=seq.slice(0,15).map(a=>({t:'L1',w:a}));
   }
-  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[]};
+  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length};
   fb=null;screen='session';render();
 }
 function cur(){return ses.tasks[ses.i];}
@@ -551,16 +590,19 @@ function prep(tk){
   if(tk.t==='wt')p.opts=options(w,MEAN,5);
   if(tk.t==='tw')p.opts=options(w,x=>x.hy,5);
   if(tk.t==='read')p.opts=options(w,TR_,4);
-  if(tk.t==='L1'||tk.t==='L2')p.opts=letterOptions(w,4);
+  if(tk.t==='L1'||tk.t==='L2')p.opts=letterOptions(w,5);
   if(tk.t==='build'){
     p.units=units(w.hy);
-    const extra=shuffle(ABC.map(a=>a[0]).filter(u=>!p.units.includes(u))).slice(0,p.units.length>8?2:3);
+    const K=knownSet(),cand=ABC.map(a=>a[0]).filter(u=>!p.units.includes(u));
+    const pref=S.onlyKnown?cand.filter(u=>K.has(u)):cand;
+    const extra=shuffle(pref).concat(shuffle(cand.filter(u=>!pref.includes(u)))).slice(0,p.units.length>8?2:3);
     p.tiles=shuffle(p.units.concat(extra)).map(u=>({u,used:false}));
     p.placed=[];p.mist=0;
   }
   if(tk.t==='write'||tk.t==='dict'){p.typed='';p.hints=0;}
   return tk.p=p;
 }
+function streakOf(l){const h=(S.letters[l]&&S.letters[l].h)||[];let n=0;for(let i=h.length-1;i>=0&&h[i];i--)n++;return n;}
 function resOf(w){if(!ses.res.has(w))ses.res.set(w,{w,ok:0,bad:0});return ses.res.get(w);}
 function addXP(n){const d=today();S.xp[d]=(S.xp[d]||0)+n;ses.xp+=n;}
 function setFlag(w,f,ok){
@@ -572,15 +614,21 @@ function answer(ok,extra){
   const tk=cur();
   const isWord=!/^L/.test(tk.t);
   if(!tk.retry){
-    if(isWord){const r=resOf(tk.w);ok?r.ok++:r.bad++;}
+    {const r=resOf(tk.w);ok?r.ok++:r.bad++;}
     if(FLAGS.includes(tk.t)&&ses.kind!=='review'&&isWord)setFlag(tk.w,tk.t,ok);
-    if(!isWord){const r=S.letters[tk.w[0]]||(S.letters[tk.w[0]]={ok:0,bad:0});ok?r.ok++:r.bad++;}
+  }
+  if(!isWord){
+    const l=tk.w[0],r=S.letters[l]||(S.letters[l]={ok:0,bad:0});ok?r.ok++:r.bad++;
+    r.h=(r.h||[]).concat(ok?1:0).slice(-5);
+    if(!tk.retry&&!ok)resOf(tk.w);
+    if(streakOf(l)>=3&&!S.known.includes(l)){S.known.push(l);ses.newKnown.push(l);toast(t('letterKnown',l));}
   }
   if(ok){ses.done++;addXP(XP[tk.t]||1);}
   else ses.tasks.push({t:tk.t,w:tk.w,retry:true});
   fb={ok,extra:extra||{}};
   save();render();
   if(isWord&&hyVoice)say(tk.w.hy);
+  if(!isWord&&ok){const at=ses.i;setTimeout(()=>{if(ses&&fb&&fb.ok&&ses.i===at&&screen==='session')next();},650);}
 }
 function next(){
   if(!ses)return;
@@ -618,6 +666,16 @@ function render(){
   else if(screen==='session')rSession();
   else if(screen==='end')rEnd();
 }
+function lettersCard(){
+  const K=knownSet(),ok=pool().length,tot=themed().length,nl=nextLetters(4);
+  const empty=S.onlyKnown&&ok===0;
+  return `<div class="card ${empty?'cta':''}">
+    <b>${t('lettersCard',K.size,S.onlyKnown?ok:tot,tot)}</b>
+    ${empty?`<p class="muted" style="margin:8px 0">${t('startAbc')}</p><button class="btn" style="width:100%" onclick="A.go('abc')">${t('goAbc')}</button>`:''}
+    ${S.onlyKnown&&nl.length?`<div class="muted" style="margin-top:10px">${t('nextLetters')}</div><div class="next-l">${nl.map(x=>`<span><b>${esc(x.l)}</b> ${esc(snd(byL[x.l]))}${x.n?` · ${t('plusWords',x.n)}`:''}</span>`).join('')}</div>`:''}
+    <label class="switch"><span>${t('onlyKnown')}</span><input type="checkbox" ${S.onlyKnown?'checked':''} onchange="A.only(this.checked)"></label>
+  </div>`;
+}
 function rHome(){
   const all=allWords(),cnt={new:0,learning:0,learned:0,due:0};
   all.forEach(w=>cnt[status(w)]++);
@@ -635,6 +693,7 @@ function rHome(){
       <div><b style="color:var(--accent)">${cnt.due}</b><span>${t('st_due')}</span></div>
     </div>
   </div>
+  ${lettersCard()}
   <h2>${t('themes')}</h2>
   <div class="chips">
     <button class="chip ${S.themes.length?'':'on'}" onclick="A.theme('')">${t('all')}<em>${all.length}</em></button>
@@ -683,14 +742,10 @@ function rSession(){
     ${choices(p.opts,o=>esc(TR_(o)),w)}`;
   }
   else if(tk.t==='L1'){
-    body=`<div class="q-label">${t('whatSound')}</div>
-    <div class="prompt"><div class="big hy">${esc(w[1])} ${esc(w[0])}</div></div>
+    const g=(S.abcUp?esc(w[1]):'')+(S.abcUp&&S.abcLo?' ':'')+(S.abcLo||!S.abcUp?esc(w[0]):'');
+    body=`<div class="q-label">${t('chooseTr')}</div>
+    <div class="prompt letter-q"><div class="big hy">${g}</div></div>
     ${choices(p.opts,o=>esc(snd(o)),w,true)}`;
-  }
-  else if(tk.t==='L2'){
-    body=`<div class="q-label">${t('whichLetter')}</div>
-    <div class="prompt"><div class="big">${esc(snd(w))}</div></div>
-    ${choices(p.opts,o=>esc(o[0]),w,true,'letter')}`;
   }
   else if(tk.t==='build'){
     const parts=w.hy.split(' ').map(units);let k=0;
@@ -722,7 +777,8 @@ function choices(opts,label,target,letter,cls){
     return `<button class="opt ${cls||''} ${c}" onclick="A.choose(${i})">${cls?'':`<span class="n">${i+1}</span>`}${label(o)}</button>`;}).join('')}</div>`;
 }
 function keyboard(){
-  return `<div class="kb">${ABC.map(a=>`<button class="key" onclick="A.key('${a[0]}')">${a[0]}<small>${esc(baseSnd(snd(a)))}</small></button>`).join('')}
+  const K=knownSet();
+  return `<div class="kb">${ABC.map(a=>`<button class="key ${S.onlyKnown&&!K.has(a[0])?'dim':''}" onclick="A.key('${a[0]}')">${a[0]}<small>${esc(snd(a))}</small></button>`).join('')}
   <button class="key wide" onclick="A.key(' ')">${t('space')}</button><button class="key wide" onclick="A.back()">${t('erase')}</button></div>`;
 }
 function feedback(tk){
@@ -746,11 +802,18 @@ function rEnd(){
     <div class="big">${lettersMode||good>=r.length*.7?'🎉':'💪'}</div>
     <h1>${t('doneT')}</h1>
     <p class="muted">+${ses.xp} XP · ${t('today')} ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · ${t('learnedCount')}: ${ses.learned.length}`:''}</p>
+    ${lettersMode?lettersEnd():''}
     ${lettersMode?'':`<ul class="res">${r.map(x=>{const s=peek(x.w.id);
       return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div class="hy">${esc(x.w.hy)}</div><small>[${esc(TR_(x.w))}] — ${esc(MEAN(x.w))}</small></div>
       ${s.lvl>0?`<span class="badge">${t('lvl')} ${s.lvl}</span>`:dots(s)}</li>`;}).join('')}</ul>`}
     <div class="row-btns"><button class="btn ghost" onclick="A.go('home')">${t('home')}</button><button class="btn" onclick="A.start('${ses.kind}')">${t('again')}</button></div>
   </div>`;
+}
+function lettersEnd(){
+  const r=[...ses.res.values()],ok=r.filter(x=>!x.bad).length,gain=pool().length-ses.before;
+  return `<p style="font-size:20px;font-weight:700">${ok} / ${r.length}</p>
+  ${ses.newKnown.length?`<div class="card"><b>${t('newKnown')}</b><div class="next-l" style="justify-content:center">${ses.newKnown.map(l=>`<span><b>${esc(l)}</b> ${esc(snd(byL[l]))}</span>`).join('')}</div>${gain>0?`<p class="muted" style="margin:8px 0 0">${t('unlocked',gain)}</p>`:''}</div>`:''}
+  <div class="next-l" style="justify-content:center;margin:14px 0">${r.map(x=>`<span style="border-color:${x.bad?'var(--bad)':'var(--ok)'}"><b>${esc(x.w[0])}</b> ${esc(snd(x.w))}</span>`).join('')}</div>`;
 }
 function rDict(){
   $app.innerHTML=`
@@ -782,21 +845,37 @@ function rList(){
   const q=dictQ.toLowerCase().trim();
   const list=allWords().filter(w=>(dictF==='all'||status(w)===dictF||(dictF==='learned'&&status(w)==='due'))&&(!q||w.hy.includes(q)||MEAN(w).toLowerCase().includes(q)||TR_(w).toLowerCase().includes(q)));
   const el=document.getElementById('dlist');if(!el)return;
+  const K=knownSet();
   el.innerHTML=list.length?list.map(w=>{const s=peek(w.id),stt=status(w);
     const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${stt==='due'?t('dueBadge'):t('lvl')+' '+s.lvl}</span>`:dots(s);
-    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))} · ${esc(themeName(w.th))}</small></div>${right}
+    const ms=S.onlyKnown?missing(w,K):[];
+    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))} · ${esc(themeName(w.th))}</small>${ms.length?`<div class="lock">${t('needs')} <span class="hy">${ms.map(esc).join(' ')}</span></div>`:''}</div>${right}
     ${hyVoice?`<button class="icon" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}
     <button class="icon" title="${esc(t('resetT'))}" onclick="A.reset('${esc(w.id)}')">↺</button>
     ${w.custom?`<button class="icon" title="${esc(t('delT'))}" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
     :`<p class="muted">${t('nothing')}</p>`;
 }
 function rAbc(){
-  const on=new Set(lettersOn().map(a=>a[0]));
+  const sel=new Set(S.sel),K=knownSet();
+  const order=S.abcSort==='freq'?FREQ.map(l=>byL[l]):ABC;
+  const glyph=a=>(S.abcUp?esc(a[1]):'')+(S.abcLo?`<span class="lo">${esc(a[0])}</span>`:'');
   $app.innerHTML=`${topBar('Այբուբեն',t('abcSub'))}
-  <p class="muted">${t('abcNote')}</p>
-  <div class="chips" style="margin-bottom:12px"><button class="chip" onclick="A.abcAll(true)">${t('selAll')}</button><button class="chip" onclick="A.abcAll(false)">${t('unselAll')}</button><button class="chip on" onclick="A.start('letters')">${t('practice')}</button></div>
-  <div class="abc">${ABC.map(a=>{const r=S.letters[a[0]];const pc=r&&(r.ok+r.bad)?Math.round(r.ok/(r.ok+r.bad)*100)+'%':'';
-    return `<button class="${on.has(a[0])?'on':''}" onclick="A.abcT('${a[0]}')"><b>${a[1]}${a[0].length>1?'':' '+a[0]}</b><small>${esc(snd(a))}</small><span class="acc">${pc}</span></button>`;}).join('')}</div>
+  <p class="muted" style="margin-top:0">${t('abcNote')}</p>
+  <div class="abc-ctl">
+    <div class="seg"><button class="${S.abcSort==='freq'?'on':''}" onclick="A.abcSet('abcSort','freq')">${t('sortFreq')}</button><button class="${S.abcSort!=='freq'?'on':''}" onclick="A.abcSet('abcSort','alpha')">${t('sortAlpha')}</button></div>
+    <div class="seg"><button class="${S.abcUp?'on':''}" onclick="A.abcCase('abcUp')">${t('upper')}</button><button class="${S.abcLo?'on':''}" onclick="A.abcCase('abcLo')">${t('lower')}</button></div>
+  </div>
+  <div class="row-btns" style="margin:0 0 10px"><button class="btn" onclick="A.start('letters')">${sel.size?t('trainSel',sel.size):t('trainAll')}</button></div>
+  <div class="abc-ctl">
+    <button class="chip" onclick="A.mark(true)">${t('markKnown')}</button>
+    <button class="chip" onclick="A.mark(false)">${t('markForgot')}</button>
+    ${sel.size?`<button class="chip" onclick="A.selNone()">${t('clearSel')}</button>`:''}
+  </div>
+  <p style="margin:4px 2px 10px;font-weight:600">${t('knownN',K.size)}</p>
+  <div class="abc">${order.map(a=>{const sk=Math.min(3,streakOf(a[0]));
+    return `<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}" onclick="A.abcT('${a[0]}')"><b>${glyph(a)}</b><small>${esc(snd(a))}</small>
+    <span class="sdots">${[0,1,2].map(i=>`<i class="${i<sk||K.has(a[0])?'on':''}"></i>`).join('')}</span></button>`;}).join('')}</div>
+  <p class="muted">${t('legend')}</p>
   ${navHtml()}`;
 }
 
@@ -853,8 +932,15 @@ const A={
     const ta=document.getElementById('io');if(ta)ta.value=txt;},
   imp(inp){const f=inp.files[0];if(!f)return;f.text().then(x=>{try{loadJSON(x);}catch(e){toast(t('readFail'));}});},
   impText(){try{loadJSON(document.getElementById('io').value);}catch(e){toast(t('readFail'));}},
-  abcT(l){const on=new Set(lettersOn().map(a=>a[0]));on.has(l)?on.delete(l):on.add(l);S.lettersOn=[...on];save();render();},
-  abcAll(v){S.lettersOn=v?null:[];save();render();},
+  abcT(l){S.sel=S.sel.includes(l)?S.sel.filter(x=>x!==l):S.sel.concat(l);save();render();},
+  selNone(){S.sel=[];save();render();},
+  abcSet(k,v){S[k]=v;save();render();},
+  abcCase(k){S[k]=!S[k];if(!S.abcUp&&!S.abcLo)S[k==='abcUp'?'abcLo':'abcUp']=true;save();render();},
+  mark(v){if(!S.sel.length)return toast(t('selectFirst'));
+    if(v)S.known=[...new Set(S.known.concat(S.sel))];
+    else{S.known=S.known.filter(l=>!S.sel.includes(l));S.sel.forEach(l=>{if(S.letters[l])S.letters[l].h=[];});}
+    S.sel=[];save();render();},
+  only(v){S.onlyKnown=v;save();render();},
 };
 
 /* ================= KEYBOARD ================= */
