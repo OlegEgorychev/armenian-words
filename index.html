@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#E8833A">
-<title>Բառեր — армянские слова</title>
+<title>Բառեր — Armenian words</title>
 <style>
 :root{
   --bg:#FBF7F2;--card:#FFFFFF;--ink:#2B2622;--muted:#7A6F66;--line:#ECE3D9;
@@ -63,7 +63,8 @@ nav button.on{color:var(--accent);font-weight:700}
 .q-label{color:var(--muted);font-size:14px;margin-bottom:8px;font-weight:600}
 .prompt{text-align:center;padding:22px 8px 18px}
 .prompt .big{font-size:40px;font-weight:600;line-height:1.2;word-break:break-word}
-.prompt .big.hy{font-size:46px}
+.prompt .big.hy{font-size:clamp(24px,7.5vw,46px)}
+.prompt .big{overflow-wrap:anywhere}
 .prompt .sub{color:var(--muted);margin-top:6px;font-size:17px;min-height:24px}
 .tools{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .tool{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:14px;color:var(--muted)}
@@ -100,7 +101,7 @@ nav button.on{color:var(--accent);font-weight:700}
 .btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line);border-bottom-width:4px}
 .btn:disabled{opacity:.45}
 .intro{text-align:center}
-.intro .big{font:600 52px var(--hy);margin:20px 0 4px}
+.intro .big{font:600 clamp(24px,7.5vw,52px) var(--hy);margin:20px 0 4px;overflow-wrap:anywhere}
 .intro .tr{font-size:20px;color:var(--muted)}
 .intro .ru{font-size:26px;font-weight:700;margin:18px 0 6px}
 .intro .letters{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:18px}
@@ -164,255 +165,316 @@ details summary::-webkit-details-marker{display:none}
 <div id="app"></div>
 <script>
 "use strict";
-/* ================= ДАННЫЕ ================= */
-// формат: армянское | перевод | транскрипция ; строки "# Тема" начинают тему
+/* ================= DATA ================= */
+// format: armenian | russian | english | russian transcription ; "# Тема | Topic" starts a topic
 const RAW = `
-# Основы
-բարև | привет | барев
-շնորհակալություն | спасибо | шнорhакалутюн
-այո | да | айо
-ոչ | нет | воч
-խնդրեմ | пожалуйста | хындрем
-ներողություն | извините | нерогхутюн
-ցտեսություն | до свидания | цтесутюн
-լավ | хорошо | лав
-բարի լույս | доброе утро | бари луйс
-բարի գիշեր | спокойной ночи | бари гишер
-# Семья и люди
-մայր | мать | майр
-հայր | отец | hайр
-եղբայր | брат | егхбайр
-քույր | сестра | куйр
-որդի | сын | ворди
-աղջիկ | девочка, дочь | агхджик
-տղա | мальчик, парень | тыгха
-ընտանիք | семья | ынтаник
-տատիկ | бабушка | татик
-պապիկ | дедушка | папик
-մարդ | человек | мард
-կին | женщина, жена | кин
-ընկեր | друг | ынкер
-երեխա | ребёнок | ереха
-# Еда
-հաց | хлеб | hац
-ջուր | вода | джур
-միս | мясо | мис
-պանիր | сыр | панир
-կաթ | молоко | кат
-ձու | яйцо | дзу
-ձուկ | рыба | дзук
-խնձոր | яблоко | хындзор
-ծիրան | абрикос | циран
-նուռ | гранат | нур
-խաղող | виноград | хагхогх
-միրգ | фрукт | мирг
-լոլիկ | помидор | лолик
-վարունգ | огурец | варунг
-կարտոֆիլ | картофель | картофил
-սուրճ | кофе | сурч
-թեյ | чай | тей
-գինի | вино | гини
-աղ | соль | агх
-շաքար | сахар | шакар
-# Дом
-տուն | дом | тун
-դուռ | дверь | дур
-պատուհան | окно | патуhан
-սեղան | стол | сегхан
-աթոռ | стул | атор
-մահճակալ | кровать | маhчакал
-խոհանոց | кухня | хоhаноц
-սենյակ | комната | сеньяк
-բանալի | ключ | банали
-գիրք | книга | гирк
-գրիչ | ручка | грич
-# Город
-քաղաք | город | кагхак
-փողոց | улица | погхоц
-խանութ | магазин | ханут
-շուկա | рынок | шука
-դպրոց | школа | дыпроц
-հիվանդանոց | больница | hиванданоц
-եկեղեցի | церковь | екегхеци
-կամուրջ | мост | камурдж
-մեքենա | машина | мекена
-ավտոբուս | автобус | автобус
-կանգառ | остановка | кангар
-փող | деньги | погх
-# Природа
-արև | солнце | арев
-լուսին | луна | лусин
-աստղ | звезда | астгх
-երկինք | небо | еркинк
-սար | гора | сар
-ծով | море | цов
-լիճ | озеро | лич
-գետ | река | гет
-ծառ | дерево | цар
-ծաղիկ | цветок | цагхик
-անձրև | дождь | андзрев
-ձյուն | снег | дзюн
-քամի | ветер | ками
-կրակ | огонь | крак
-# Животные
-շուն | собака | шун
-կատու | кошка | кату
-ձի | лошадь | дзи
-կով | корова | ков
-թռչուն | птица | тырчун
-արջ | медведь | ардж
-գայլ | волк | гайл
-ոչխար | овца | вочхар
-հավ | курица | hав
-մուկ | мышь | мук
-# Тело
-գլուխ | голова | глух
-աչք | глаз | ачк
-քիթ | нос | кит
-բերան | рот | беран
-ականջ | ухо | акандж
-մազ | волосы | маз
-ձեռք | рука | дзерк
-ոտք | нога | вотк
-սիրտ | сердце | сирт
-# Числа
-մեկ | один | мек
-երկու | два | ерку
-երեք | три | ерек
-չորս | четыре | чорс
-հինգ | пять | hинг
-վեց | шесть | вец
-յոթ | семь | йот
-ութ | восемь | ут
-ինը | девять | ины
-տաս | десять | тас
-# Цвета и признаки
-սպիտակ | белый | спитак
-սև | чёрный | сев
-կարմիր | красный | кармир
-կանաչ | зелёный | канач
-կապույտ | синий | капуйт
-դեղին | жёлтый | дегхин
-մեծ | большой | мец
-փոքր | маленький | покр
-գեղեցիկ | красивый | гегхецик
-նոր | новый | нор
-հին | старый | hин
-տաք | тёплый, горячий | так
-սառը | холодный | сары
-համեղ | вкусный | hамегх
-# Время
-օր | день | ор
-գիշեր | ночь | гишер
-առավոտ | утро | аравот
-երեկո | вечер | ереко
-այսօր | сегодня | айсор
-վաղը | завтра | вагхы
-երեկ | вчера | ерек
-ժամ | час | жам
-ամիս | месяц | амис
-տարի | год | тари
-# Глаголы
-ուտել | есть (кушать) | утел
-խմել | пить | хмел
-գնալ | идти | гнал
-գալ | приходить | гал
-տեսնել | видеть | теснел
-խոսել | говорить | хосел
-կարդալ | читать | кардал
-գրել | писать | грел
-սիրել | любить | сирел
-ապրել | жить | апрел
-աշխատել | работать | ашхател
-քնել | спать | кнел
-հասկանալ | понимать | hасканал
-ուզել | хотеть | узел
-գիտենալ | знать | гитенал
-սովորել | учить(ся) | соворел
+# Основы | Basics
+բարև | привет | hello | барев
+շնորհակալություն | спасибо | thank you | шнорhакалутюн
+այո | да | yes | айо
+ոչ | нет | no | воч
+խնդրեմ | пожалуйста | please | хындрем
+ներողություն | извините | sorry | нерогхутюн
+ցտեսություն | до свидания | goodbye | цтесутюн
+լավ | хорошо | good, well | лав
+բարի լույս | доброе утро | good morning | бари луйс
+բարի գիշեր | спокойной ночи | good night | бари гишер
+# Семья и люди | Family & people
+մայր | мать | mother | майр
+հայր | отец | father | hайр
+եղբայր | брат | brother | егхбайр
+քույր | сестра | sister | куйр
+որդի | сын | son | ворди
+աղջիկ | девочка, дочь | girl, daughter | агхджик
+տղա | мальчик, парень | boy, guy | тыгха
+ընտանիք | семья | family | ынтаник
+տատիկ | бабушка | grandmother | татик
+պապիկ | дедушка | grandfather | папик
+մարդ | человек | person | мард
+կին | женщина, жена | woman, wife | кин
+ընկեր | друг | friend | ынкер
+երեխա | ребёнок | child | ереха
+# Еда | Food
+հաց | хлеб | bread | hац
+ջուր | вода | water | джур
+միս | мясо | meat | мис
+պանիր | сыр | cheese | панир
+կաթ | молоко | milk | кат
+ձու | яйцо | egg | дзу
+ձուկ | рыба | fish | дзук
+խնձոր | яблоко | apple | хындзор
+ծիրան | абрикос | apricot | циран
+նուռ | гранат | pomegranate | нур
+խաղող | виноград | grapes | хагхогх
+միրգ | фрукт | fruit | мирг
+լոլիկ | помидор | tomato | лолик
+վարունգ | огурец | cucumber | варунг
+կարտոֆիլ | картофель | potato | картофил
+սուրճ | кофе | coffee | сурч
+թեյ | чай | tea | тей
+գինի | вино | wine | гини
+աղ | соль | salt | агх
+շաքար | сахар | sugar | шакар
+# Дом | Home
+տուն | дом | house, home | тун
+դուռ | дверь | door | дур
+պատուհան | окно | window | патуhан
+սեղան | стол | table | сегхан
+աթոռ | стул | chair | атор
+մահճակալ | кровать | bed | маhчакал
+խոհանոց | кухня | kitchen | хоhаноц
+սենյակ | комната | room | сеньяк
+բանալի | ключ | key | банали
+գիրք | книга | book | гирк
+գրիչ | ручка | pen | грич
+# Город | City
+քաղաք | город | city | кагхак
+փողոց | улица | street | погхоц
+խանութ | магазин | shop | ханут
+շուկա | рынок | market | шука
+դպրոց | школа | school | дыпроц
+հիվանդանոց | больница | hospital | hиванданоц
+եկեղեցի | церковь | church | екегхеци
+կամուրջ | мост | bridge | камурдж
+մեքենա | машина | car | мекена
+ավտոբուս | автобус | bus | автобус
+կանգառ | остановка | (bus) stop | кангар
+փող | деньги | money | погх
+# Природа | Nature
+արև | солнце | sun | арев
+լուսին | луна | moon | лусин
+աստղ | звезда | star | астгх
+երկինք | небо | sky | еркинк
+սար | гора | mountain | сар
+ծով | море | sea | цов
+լիճ | озеро | lake | лич
+գետ | река | river | гет
+ծառ | дерево | tree | цар
+ծաղիկ | цветок | flower | цагхик
+անձրև | дождь | rain | андзрев
+ձյուն | снег | snow | дзюн
+քամի | ветер | wind | ками
+կրակ | огонь | fire | крак
+# Животные | Animals
+շուն | собака | dog | шун
+կատու | кошка | cat | кату
+ձի | лошадь | horse | дзи
+կով | корова | cow | ков
+թռչուն | птица | bird | тырчун
+արջ | медведь | bear | ардж
+գայլ | волк | wolf | гайл
+ոչխար | овца | sheep | вочхар
+հավ | курица | chicken, hen | hав
+մուկ | мышь | mouse | мук
+# Тело | Body
+գլուխ | голова | head | глух
+աչք | глаз | eye | ачк
+քիթ | нос | nose | кит
+բերան | рот | mouth | беран
+ականջ | ухо | ear | акандж
+մազ | волосы | hair | маз
+ձեռք | рука | hand, arm | дзерк
+ոտք | нога | foot, leg | вотк
+սիրտ | сердце | heart | сирт
+# Числа | Numbers
+մեկ | один | one | мек
+երկու | два | two | ерку
+երեք | три | three | ерек
+չորս | четыре | four | чорс
+հինգ | пять | five | hинг
+վեց | шесть | six | вец
+յոթ | семь | seven | йот
+ութ | восемь | eight | ут
+ինը | девять | nine | ины
+տաս | десять | ten | тас
+# Цвета и признаки | Colours & qualities
+սպիտակ | белый | white | спитак
+սև | чёрный | black | сев
+կարմիր | красный | red | кармир
+կանաչ | зелёный | green | канач
+կապույտ | синий | blue | капуйт
+դեղին | жёлтый | yellow | дегхин
+մեծ | большой | big | мец
+փոքր | маленький | small | покр
+գեղեցիկ | красивый | beautiful | гегхецик
+նոր | новый | new | нор
+հին | старый | old | hин
+տաք | тёплый, горячий | warm, hot | так
+սառը | холодный | cold | сары
+համեղ | вкусный | tasty | hамегх
+# Время | Time
+օր | день | day | ор
+գիշեր | ночь | night | гишер
+առավոտ | утро | morning | аравот
+երեկո | вечер | evening | ереко
+այսօր | сегодня | today | айсор
+վաղը | завтра | tomorrow | вагхы
+երեկ | вчера | yesterday | ерек
+ժամ | час | hour | жам
+ամիս | месяц | month | амис
+տարի | год | year | тари
+# Глаголы | Verbs
+ուտել | есть (кушать) | to eat | утел
+խմել | пить | to drink | хмел
+գնալ | идти | to go | гнал
+գալ | приходить | to come | гал
+տեսնել | видеть | to see | теснел
+խոսել | говорить | to speak | хосел
+կարդալ | читать | to read | кардал
+գրել | писать | to write | грел
+սիրել | любить | to love | сирел
+ապրել | жить | to live | апрел
+աշխատել | работать | to work | ашхател
+քնել | спать | to sleep | кнел
+հասկանալ | понимать | to understand | hасканал
+ուզել | хотеть | to want | узел
+գիտենալ | знать | to know | гитенал
+սովորել | учить(ся) | to learn | соворел
 `;
 
-// Алфавит: [строчная, заглавная, звук]
+// Alphabet: [lowercase, uppercase, sound RU, sound EN]
 const ABC = [
- ['ա','Ա','а'],['բ','Բ','б'],['գ','Գ','г'],['դ','Դ','д'],['ե','Ե','е / йе'],['զ','Զ','з'],['է','Է','э'],['ը','Ը','ы'],
- ['թ','Թ','т (придых.)'],['ժ','Ժ','ж'],['ի','Ի','и'],['լ','Լ','л'],['խ','Խ','х'],['ծ','Ծ','ц (твёрдое)'],['կ','Կ','к (твёрдое)'],['հ','Հ','h'],
- ['ձ','Ձ','дз'],['ղ','Ղ','гх'],['ճ','Ճ','ч (твёрдое)'],['մ','Մ','м'],['յ','Յ','й'],['ն','Ն','н'],['շ','Շ','ш'],['ո','Ո','о / во'],
- ['չ','Չ','ч (придых.)'],['պ','Պ','п (твёрдое)'],['ջ','Ջ','дж'],['ռ','Ռ','р (раскат.)'],['ս','Ս','с'],['վ','Վ','в'],['տ','Տ','т (твёрдое)'],['ր','Ր','р'],
- ['ց','Ց','ц (придых.)'],['ու','Ու','у'],['փ','Փ','п (придых.)'],['ք','Ք','к (придых.)'],['և','Եվ','ев'],['օ','Օ','о'],['ֆ','Ֆ','ф']
+ ['ա','Ա','а','a'],['բ','Բ','б','b'],['գ','Գ','г','g'],['դ','Դ','д','d'],['ե','Ե','е / йе','e / ye'],['զ','Զ','з','z'],['է','Է','э','e'],['ը','Ը','ы','ə'],
+ ['թ','Թ','т (придых.)','t (aspirated)'],['ժ','Ժ','ж','zh'],['ի','Ի','и','i'],['լ','Լ','л','l'],['խ','Խ','х','kh'],['ծ','Ծ','ц (твёрдое)','ts (hard)'],['կ','Կ','к (твёрдое)','k (hard)'],['հ','Հ','h','h'],
+ ['ձ','Ձ','дз','dz'],['ղ','Ղ','гх','gh'],['ճ','Ճ','ч (твёрдое)','ch (hard)'],['մ','Մ','м','m'],['յ','Յ','й','y'],['ն','Ն','н','n'],['շ','Շ','ш','sh'],['ո','Ո','о / во','o / vo'],
+ ['չ','Չ','ч (придых.)','ch (aspirated)'],['պ','Պ','п (твёрдое)','p (hard)'],['ջ','Ջ','дж','j'],['ռ','Ռ','р (раскат.)','r (rolled)'],['ս','Ս','с','s'],['վ','Վ','в','v'],['տ','Տ','т (твёрдое)','t (hard)'],['ր','Ր','р','r'],
+ ['ց','Ց','ц (придых.)','ts (aspirated)'],['ու','Ու','у','u'],['փ','Փ','п (придых.)','p (aspirated)'],['ք','Ք','к (придых.)','k (aspirated)'],['և','Եվ','ев','yev'],['օ','Օ','о','o'],['ֆ','Ֆ','ф','f']
 ];
-const SOUND = Object.fromEntries(ABC.map(a=>[a[0],a[2].split(' ')[0]]));
 const baseSnd = s => s.split(' ')[0];
 
-const BASE = [];
-(function parse(){
-  let th='';
-  RAW.trim().split('\n').forEach(line=>{
-    line=line.trim(); if(!line) return;
-    if(line.startsWith('#')){th=line.slice(1).trim();return;}
-    const [hy,ru,tr]=line.split('|').map(s=>s.trim());
-    BASE.push({id:hy,hy,ru,tr,th});
-  });
-})();
-const THEMES=[...new Set(BASE.map(w=>w.th))];
+/* ================= I18N ================= */
+const T={
+ru:{appSub:'армянские слова',goal:'Цель на сегодня',st_new:'новые',st_learning:'изучаю',st_learned:'выучено',st_due:'повторить',
+ themes:'Темы',all:'Все',exercises:'Тренировки',dict:'Словарь',alphabet:'Алфавит',lettersN:'букв',
+ foot:'Слово считается выученным, когда пройдено во всех пяти тренировках (Слово→перевод, Перевод→слово, Чтение, Конструктор, Написание). Потом оно уходит в «Повторение».',
+ tr:{brain:['Брейншторм','5 новых слов через все упражнения подряд: знакомство, выбор, чтение, сборка, написание'],
+  wt:['Слово → перевод','Читаешь по-армянски, выбираешь перевод'],tw:['Перевод → слово','Ищешь армянское слово среди похожих'],
+  read:['Чтение','Как читается слово? Выбери транскрипцию'],build:['Конструктор','Собери слово из букв по порядку'],
+  write:['Написание','Напиши слово на армянской клавиатуре'],dict:['Диктант','Пиши по транскрипции — тренирует орфографию'],
+  letters:['Буквы','Буква ↔ звук. Выбери буквы во вкладке «Алфавит»'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней']},
+ newWord:'Новое слово',know:'Уже знаю',next:'Дальше ⏎',pickMeaning:'Выбери перевод',findHy:'Найди слово по-армянски',howRead:'Как читается это слово?',
+ whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из 3',
+ writeHy:'Напиши по-армянски',writeTr:'Напиши по транскрипции',hintTr:'Транскрипция',hintTrs:'Показать транскрипции',hintMean:'Перевод',listen:'🔊 Слушать',
+ dontKnow:'Не знаю',plusLetter:'+ Буква',check:'Проверить',space:'пробел',erase:'⌫ стереть',
+ praise:['Отлично!','Верно!','Так держать!','Супер!','Правильно!'],wrong:'Неправильно',youWrote:'Ты написал:',correct:'Правильно:',learnedNow:' 🎓 Слово выучено!',
+ doneT:'Тренировка завершена',today:'сегодня',learnedCount:'выучено слов',home:'На главную',again:'Ещё раз',lvl:'ур.',dueBadge:'повторить',
+ noNew:'В выбранных темах все слова уже выучены 🎉',noWords:'Нет слов в выбранных темах',noReview:'Пока нечего повторять — выучи слова в тренировках',
+ noLetters:'Отметь буквы во вкладке «Алфавит»',marked:'Слово отмечено как выученное',fillBoth:'Заполни армянское слово и перевод',
+ onlyHy:'В армянском поле должны быть только армянские буквы',exists:'Такое слово уже есть',added:'Добавлено в тему «Мои слова»',
+ delAgain:'Нажми 🗑 ещё раз, чтобы удалить',resetAgain:'Нажми ещё раз, чтобы сбросить весь прогресс (свои слова останутся)',wordReset:'Прогресс слова сброшен',
+ copied:'Прогресс скопирован в буфер обмена',copyField:'Скопируй текст из поля ниже',loaded:'Прогресс загружен',readFail:'Не получилось прочитать',
+ dictSub:'словарь',addWord:'➕ Добавить своё слово',phHy:'Армянское слово (напр. ծիծաղ)',phMean:'Перевод',phTr:'Транскрипция (необязательно)',add:'Добавить',
+ search:'Поиск по-армянски, по переводу или транскрипции',f_all:'Все',f_new:'Новые',f_learning:'Изучаю',f_learned:'Выучено',f_due:'Повторить',
+ settings:'⚙️ Настройки и прогресс',goalXp:'Цель XP в день',exportB:'⬇️ Экспорт прогресса',importF:'⬆️ Импорт из файла',
+ ioPh:'Сюда попадёт JSON при экспорте. Чтобы импортировать — вставь JSON и нажми кнопку ниже',importT:'Импорт из текста',resetAll:'Сбросить весь прогресс',
+ storage:'Прогресс хранится в этом браузере.',voiceY:'Армянский голос найден 🔊',voiceN:'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.',
+ nothing:'Ничего не найдено',resetT:'Сбросить прогресс слова',delT:'Удалить',
+ abcSub:'алфавит',abcNote:'Отметь буквы, которые хочешь тренировать в упражнении «Буквы». Под буквой — звук и процент правильных ответов.',
+ selAll:'Выбрать все',unselAll:'Снять все',practice:'▶ Тренировать',myWords:'Мои слова'},
+en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
+ themes:'Topics',all:'All',exercises:'Exercises',dict:'Dictionary',alphabet:'Alphabet',lettersN:'letters',
+ foot:'A word counts as learned once you pass it in all five exercises (Word→translation, Translation→word, Reading, Builder, Writing). After that it moves to Review.',
+ tr:{brain:['Brainstorm','5 new words through every exercise in a row: intro, choice, reading, building, writing'],
+  wt:['Word → translation','Read the Armenian word, pick its meaning'],tw:['Translation → word','Find the Armenian word among similar ones'],
+  read:['Reading','How is the word read? Pick the transcription'],build:['Builder','Assemble the word letter by letter'],
+  write:['Writing','Type the word on the Armenian keyboard'],dict:['Dictation','Write from the transcription — trains spelling'],
+  letters:['Letters','Letter ↔ sound. Choose letters in the Alphabet tab'],review:['Review','Learned words at 1-3-7-14-30 day intervals']},
+ newWord:'New word',know:'I know it',next:'Continue ⏎',pickMeaning:'Choose the translation',findHy:'Find the Armenian word',howRead:'How is this word read?',
+ whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of 3',
+ writeHy:'Write it in Armenian',writeTr:'Write from the transcription',hintTr:'Transcription',hintTrs:'Show transcriptions',hintMean:'Translation',listen:'🔊 Listen',
+ dontKnow:"I don't know",plusLetter:'+ Letter',check:'Check',space:'space',erase:'⌫ delete',
+ praise:['Great!','Correct!','Keep it up!','Awesome!','Nice!'],wrong:'Incorrect',youWrote:'You wrote:',correct:'Correct:',learnedNow:' 🎓 Word learned!',
+ doneT:'Session complete',today:'today',learnedCount:'words learned',home:'Home',again:'Again',lvl:'lvl',dueBadge:'review',
+ noNew:'All words in the selected topics are learned 🎉',noWords:'No words in the selected topics',noReview:'Nothing to review yet — learn some words first',
+ noLetters:'Select letters in the Alphabet tab',marked:'Word marked as learned',fillBoth:'Fill in the Armenian word and the translation',
+ onlyHy:'The Armenian field must contain Armenian letters only',exists:'This word already exists',added:'Added to “My words”',
+ delAgain:'Tap 🗑 again to delete',resetAgain:'Tap again to reset all progress (your own words stay)',wordReset:'Word progress reset',
+ copied:'Progress copied to clipboard',copyField:'Copy the text from the field below',loaded:'Progress loaded',readFail:'Could not read it',
+ dictSub:'dictionary',addWord:'➕ Add your own word',phHy:'Armenian word (e.g. ծիծաղ)',phMean:'Translation',phTr:'Transcription (optional)',add:'Add',
+ search:'Search in Armenian, translation or transcription',f_all:'All',f_new:'New',f_learning:'Learning',f_learned:'Learned',f_due:'Review',
+ settings:'⚙️ Settings & progress',goalXp:'Daily XP goal',exportB:'⬇️ Export progress',importF:'⬆️ Import from file',
+ ioPh:'Exported JSON appears here. To import, paste JSON and press the button below',importT:'Import from text',resetAll:'Reset all progress',
+ storage:'Progress is stored in this browser.',voiceY:'Armenian voice found 🔊',voiceN:'No Armenian voice on this device — audio is hidden.',
+ nothing:'Nothing found',resetT:'Reset word progress',delT:'Delete',
+ abcSub:'alphabet',abcNote:'Select the letters you want to practise in the Letters exercise. Under each letter: its sound and your accuracy.',
+ selAll:'Select all',unselAll:'Clear all',practice:'▶ Practise',myWords:'My words'}
+};
 
-/* ================= СОСТОЯНИЕ ================= */
+/* ================= STATE ================= */
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1};
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},lettersOn:null};}
+const MY='Мои слова';
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},lettersOn:null,lang:null};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
+if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const L=()=>T[S.lang]||T.ru;
+const t=(k,...a)=>{let s=L()[k];if(s===undefined)s=T.ru[k];a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s;};
+const snd=a=>S.lang==='en'?a[3]:a[2];
+const soundOf=ch=>{const a=ABC.find(x=>x[0]===ch);return a?baseSnd(snd(a)):'';};
 
-function allWords(){return BASE.concat(S.custom.map(c=>({...c,th:'Мои слова',tr:c.tr||translit(c.hy),custom:true})));}
-function themesAll(){return S.custom.length?THEMES.concat('Мои слова'):THEMES;}
+// Cyrillic transcription → Latin
+function cyr2lat(s){
+  const M={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'kh',ц:'ts',ч:'ch',ш:'sh',ы:'ə',э:'e',ю:'yu',я:'ya',ь:'',ё:'yo'};
+  return s.replace(/гх/g,'gh').replace(/дж/g,'j').replace(/[а-яё]/g,c=>M[c]??c);
+}
+
+const BASE=[],THEMES=[];
+(function parse(){
+  let th=null;
+  RAW.trim().split('\n').forEach(line=>{
+    line=line.trim();if(!line)return;
+    if(line.startsWith('#')){const [ru,en]=line.slice(1).split('|').map(x=>x.trim());th={id:ru,ru,en};THEMES.push(th);return;}
+    const [hy,ru,en,trRu]=line.split('|').map(x=>x.trim());
+    BASE.push({id:hy,hy,ru,en,trRu,trEn:cyr2lat(trRu),th:th.id});
+  });
+})();
+const themeName=id=>{if(id===MY)return t('myWords');const x=THEMES.find(z=>z.id===id);return x?x[S.lang]||x.ru:id;};
+function translit(hy,lang){
+  let out='';const s=hy.toLowerCase();const map=Object.fromEntries(ABC.map(a=>[a[0],baseSnd(lang==='en'?a[3]:a[2])]));
+  for(let i=0;i<s.length;i++){
+    const c=s[i],start=i===0||s[i-1]===' ';
+    if(c==='ո'&&s[i+1]==='ւ'){out+=map['ու'];i++;continue;}
+    if(c==='ո'){out+=start?(lang==='en'?'vo':'во'):map['ո'];continue;}
+    if(c==='ե'){out+=start?(lang==='en'?'ye':'е'):(lang==='en'?'e':'е');continue;}
+    out+=map[c]!==undefined?map[c]:c;
+  }
+  return out;
+}
+function allWords(){return BASE.concat(S.custom.map(c=>{const m=c.m||c.ru||'';
+  return {id:c.id,hy:c.hy,ru:m,en:m,trRu:c.tr||translit(c.hy,'ru'),trEn:c.tr||translit(c.hy,'en'),th:MY,custom:true};}));}
+const TR_=w=>S.lang==='en'?w.trEn:w.trRu;
+const MEAN=w=>S.lang==='en'?w.en:w.ru;
+function themesAll(){const ids=THEMES.map(x=>x.id);return S.custom.length?ids.concat(MY):ids;}
 function st(id){return S.w[id]||(S.w[id]={f:{},lvl:0,next:0,err:0});}
 function peek(id){return S.w[id]||{f:{},lvl:0,next:0,err:0};}
 function status(w){const s=peek(w.id);if(s.lvl>0)return s.next<=Date.now()?'due':'learned';return FLAGS.some(f=>s.f[f])?'learning':'new';}
-function pool(){const t=S.themes;return allWords().filter(w=>!t.length||t.includes(w.th));}
+function pool(){const th=S.themes;return allWords().filter(w=>!th.length||th.includes(w.th));}
 function isDue(w){const s=peek(w.id);return s.lvl>0&&s.next<=Date.now();}
 function due(){return allWords().filter(isDue).sort((a,b)=>peek(a.id).next-peek(b.id).next);}
 function today(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function streak(){let n=0,d=new Date();if(!S.xp[today(d)])d.setDate(d.getDate()-1);while(S.xp[today(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 
-/* ================= УТИЛИТЫ ================= */
+/* ================= UTILS ================= */
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
 const rnd=a=>a[Math.random()*a.length|0];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function units(s){const out=[];for(let i=0;i<s.length;i++){const c=s[i];if(c===' ')continue;if(c==='ո'&&s[i+1]==='ւ'){out.push('ու');i++;}else out.push(c);}return out;}
 const norm=s=>s.toLowerCase().replace(/և/g,'եվ').replace(/\s+/g,' ').trim();
-function translit(hy){
-  let out='';const s=hy.toLowerCase();
-  for(let i=0;i<s.length;i++){
-    const c=s[i],start=i===0||s[i-1]===' ';
-    if(c==='ո'&&s[i+1]==='ւ'){out+='у';i++;continue;}
-    if(c==='ո'){out+=start?'во':'о';continue;}
-    if(c==='ե'){out+=start?'е':'е';continue;}
-    if(c==='և'){out+='ев';continue;}
-    out+=SOUND[c]!==undefined?SOUND[c]:c;
-  }
-  return out;
-}
 const isHy=ch=>/^[Ա-և]$/.test(ch);
 
-/* ================= ОЗВУЧКА ================= */
+/* ================= AUDIO ================= */
 let hyVoice=null;
 function initVoices(){try{hyVoice=speechSynthesis.getVoices().find(v=>/^hy/i.test(v.lang))||null;}catch(e){hyVoice=null;}}
 if('speechSynthesis' in window){initVoices();try{speechSynthesis.onvoiceschanged=()=>{const had=!!hyVoice;initVoices();if(!had&&hyVoice)render();};}catch(e){}}
-function say(t){if(!hyVoice)return;try{const u=new SpeechSynthesisUtterance(t);u.voice=hyVoice;u.lang=hyVoice.lang;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
-const spk=t=>hyVoice?`<button class="tool" onclick="A.say('${esc(t)}')">🔊 Слушать</button>`:'';
+function say(x){if(!hyVoice)return;try{const u=new SpeechSynthesisUtterance(x);u.voice=hyVoice;u.lang=hyVoice.lang;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+const spk=x=>hyVoice?`<button class="tool" onclick="A.say('${esc(x)}')">${t('listen')}</button>`:'';
 
-/* ================= ТРЕНИРОВКИ ================= */
-const TR=[
- {k:'brain',ico:'⚡',name:'Брейншторм',desc:'5 новых слов через все упражнения подряд: знакомство, выбор, чтение, сборка, написание'},
- {k:'wt',ico:'🇦🇲',name:'Слово → перевод',desc:'Читаешь по-армянски, выбираешь перевод'},
- {k:'tw',ico:'🔎',name:'Перевод → слово',desc:'Ищешь армянское слово среди похожих'},
- {k:'read',ico:'👁',name:'Чтение',desc:'Как читается слово? Выбери транскрипцию'},
- {k:'build',ico:'🧩',name:'Конструктор',desc:'Собери слово из букв по порядку'},
- {k:'write',ico:'✍️',name:'Написание',desc:'Напиши слово на армянской клавиатуре'},
- {k:'dict',ico:'🎧',name:'Диктант',desc:'Пиши по транскрипции — тренирует орфографию'},
- {k:'letters',ico:'Աա',name:'Буквы',desc:'Буква ↔ звук. Выбери буквы во вкладке «Алфавит»'},
- {k:'review',ico:'🔁',name:'Повторение',desc:'Выученные слова по интервалам 1-3-7-14-30 дней'},
-];
+/* ================= EXERCISES ================= */
+const TR=[{k:'brain',ico:'⚡'},{k:'wt',ico:'🇦🇲'},{k:'tw',ico:'🔎'},{k:'read',ico:'👁'},{k:'build',ico:'🧩'},{k:'write',ico:'✍️'},{k:'dict',ico:'🎧'},{k:'letters',ico:'Աա'},{k:'review',ico:'🔁'}];
+const trName=k=>L().tr[k][0], trDesc=k=>L().tr[k][1];
 function learningOrder(list){
   return list.map((w,i)=>({w,i,n:FLAGS.filter(f=>peek(w.id).f[f]).length})).sort((a,b)=>b.n-a.n||a.i-b.i).map(x=>x.w);
 }
@@ -428,6 +490,7 @@ function pickPractice(n){
   if(c.length<n)c=c.concat(p.filter(w=>status(w)==='new').slice(0,n-c.length));
   return shuffle(c);
 }
+function lettersOn(){return S.lettersOn?ABC.filter(a=>S.lettersOn.includes(a[0])):ABC;}
 function available(k){
   const p=pool();
   if(k==='brain')return p.filter(w=>peek(w.id).lvl===0).length;
@@ -436,19 +499,17 @@ function available(k){
   if(k==='letters')return lettersOn().length;
   return p.length;
 }
-function lettersOn(){return S.lettersOn?ABC.filter(a=>S.lettersOn.includes(a[0])):ABC;}
-
-function options(w,field,k){
+function options(w,fn,k){
   const all=allWords();
-  const same=shuffle(all.filter(x=>x.th===w.th)), other=shuffle(all.filter(x=>x.th!==w.th));
-  const seen=new Set([w[field]]),out=[w];
-  for(const x of same.concat(other)){if(out.length>=k)break;if(seen.has(x[field]))continue;seen.add(x[field]);out.push(x);}
+  const same=shuffle(all.filter(x=>x.th===w.th)),other=shuffle(all.filter(x=>x.th!==w.th));
+  const seen=new Set([fn(w)]),out=[w];
+  for(const x of same.concat(other)){if(out.length>=k)break;if(seen.has(fn(x)))continue;seen.add(fn(x));out.push(x);}
   return shuffle(out);
 }
 function letterOptions(a,k){
-  const pool=shuffle(ABC.filter(x=>x[0]!==a[0]&&baseSnd(x[2])!==baseSnd(a[2])));
-  const out=[a],seen=new Set([baseSnd(a[2])]);
-  for(const x of pool){if(out.length>=k)break;if(seen.has(baseSnd(x[2])))continue;seen.add(baseSnd(x[2]));out.push(x);}
+  const pl=shuffle(ABC.filter(x=>x[0]!==a[0]&&baseSnd(snd(x))!==baseSnd(snd(a))));
+  const out=[a],seen=new Set([baseSnd(snd(a))]);
+  for(const x of pl){if(out.length>=k)break;if(seen.has(baseSnd(snd(x))))continue;seen.add(baseSnd(snd(x)));out.push(x);}
   return shuffle(out);
 }
 
@@ -457,47 +518,48 @@ let screen='home',ses=null,fb=null,dictQ='',dictF='all';
 function start(kind){
   let tasks=[];
   if(kind==='brain'){
-    const ws=pickNew(5);if(!ws.length)return toast('В выбранных темах все слова уже выучены 🎉');
+    const ws=pickNew(5);if(!ws.length)return toast(t('noNew'));
     tasks=ws.map(w=>({t:'intro',w}));
-    for(const t of FLAGS)tasks=tasks.concat(shuffle(ws.map(w=>({t,w}))));
+    for(const f of FLAGS)tasks=tasks.concat(shuffle(ws.map(w=>({t:f,w}))));
   }else if(FLAGS.includes(kind)){
-    const ws=pickFor(kind,10);if(!ws.length)return toast('Нет слов в выбранных темах');
+    const ws=pickFor(kind,10);if(!ws.length)return toast(t('noWords'));
     tasks=ws.map(w=>({t:kind,w}));
   }else if(kind==='dict'){
-    const ws=pickPractice(10);if(!ws.length)return toast('Нет слов в выбранных темах');
+    const ws=pickPractice(10);if(!ws.length)return toast(t('noWords'));
     tasks=ws.map(w=>({t:'dict',w}));
   }else if(kind==='review'){
-    const ws=due().slice(0,15);if(!ws.length)return toast('Пока нечего повторять — выучи слова в тренировках');
+    const ws=due().slice(0,15);if(!ws.length)return toast(t('noReview'));
     tasks=shuffle(ws.map(w=>({t:rnd(['wt','tw','read']),w}))).concat(shuffle(ws.map(w=>({t:rnd(['write','build']),w}))));
   }else if(kind==='letters'){
-    const L=lettersOn();if(!L.length)return toast('Отметь буквы во вкладке «Алфавит»');
+    const Ls=lettersOn();if(!Ls.length)return toast(t('noLetters'));
     const weight=a=>{const r=S.letters[a[0]]||{ok:0,bad:0};return Math.max(.4,1+r.bad*2-r.ok*.25);};
     for(let i=0;i<16;i++){
-      let tot=L.reduce((s,a)=>s+weight(a),0),x=Math.random()*tot,pick=L[0];
-      for(const a of L){x-=weight(a);if(x<=0){pick=a;break;}}
-      if(L.length>1&&tasks.length&&tasks[tasks.length-1].w===pick){i--;continue;}
+      let tot=Ls.reduce((s,a)=>s+weight(a),0),x=Math.random()*tot,pick=Ls[0];
+      for(const a of Ls){x-=weight(a);if(x<=0){pick=a;break;}}
+      if(Ls.length>1&&tasks.length&&tasks[tasks.length-1].w===pick){i--;continue;}
       tasks.push({t:rnd(['L1','L2']),w:pick});
     }
   }
-  ses={kind,tasks,i:0,done:0,total:tasks.filter(t=>!t.retry).length,res:new Map(),xp:0,hint:false,learned:[]};
+  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[]};
   fb=null;screen='session';render();
 }
 function cur(){return ses.tasks[ses.i];}
-function prep(t){
-  if(t.p)return t.p;
-  const w=t.w,p={};
-  if(t.t==='wt')p.opts=options(w,'ru',5);
-  if(t.t==='tw')p.opts=options(w,'hy',5);
-  if(t.t==='read')p.opts=options(w,'tr',4);
-  if(t.t==='L1'||t.t==='L2')p.opts=letterOptions(w,4);
-  if(t.t==='build'){
+function prep(tk){
+  if(tk.p&&tk.p.lang===S.lang)return tk.p;
+  if(tk.p&&(tk.t==='build'||tk.t==='write'||tk.t==='dict')){tk.p.lang=S.lang;return tk.p;}
+  const w=tk.w,p={lang:S.lang};
+  if(tk.t==='wt')p.opts=options(w,MEAN,5);
+  if(tk.t==='tw')p.opts=options(w,x=>x.hy,5);
+  if(tk.t==='read')p.opts=options(w,TR_,4);
+  if(tk.t==='L1'||tk.t==='L2')p.opts=letterOptions(w,4);
+  if(tk.t==='build'){
     p.units=units(w.hy);
     const extra=shuffle(ABC.map(a=>a[0]).filter(u=>!p.units.includes(u))).slice(0,p.units.length>8?2:3);
     p.tiles=shuffle(p.units.concat(extra)).map(u=>({u,used:false}));
     p.placed=[];p.mist=0;
   }
-  if(t.t==='write'||t.t==='dict'){p.typed='';p.hints=0;}
-  return t.p=p;
+  if(tk.t==='write'||tk.t==='dict'){p.typed='';p.hints=0;}
+  return tk.p=p;
 }
 function resOf(w){if(!ses.res.has(w))ses.res.set(w,{w,ok:0,bad:0});return ses.res.get(w);}
 function addXP(n){const d=today();S.xp[d]=(S.xp[d]||0)+n;ses.xp+=n;}
@@ -507,24 +569,23 @@ function setFlag(w,f,ok){
   if(s.lvl===0&&FLAGS.every(x=>s.f[x])){s.lvl=1;s.next=Date.now()+DAY;ses.learned.push(w);}
 }
 function answer(ok,extra){
-  const t=cur();
-  const isWord=!/^L/.test(t.t);
-  if(!t.retry){
-    if(isWord){const r=resOf(t.w);ok?r.ok++:r.bad++;}
-    if(FLAGS.includes(t.t)&&ses.kind!=='review'&&isWord)setFlag(t.w,t.t,ok);
-    if(!isWord){const r=S.letters[t.w[0]]||(S.letters[t.w[0]]={ok:0,bad:0});ok?r.ok++:r.bad++;}
-    if(ses.kind==='review'&&!ok)resOf(t.w).bad=Math.max(1,resOf(t.w).bad);
-  }else if(isWord&&!ok){resOf(t.w);}
-  if(ok){ses.done++;addXP(XP[t.t]||1);}
-  else ses.tasks.push({t:t.t,w:t.w,retry:true});
+  const tk=cur();
+  const isWord=!/^L/.test(tk.t);
+  if(!tk.retry){
+    if(isWord){const r=resOf(tk.w);ok?r.ok++:r.bad++;}
+    if(FLAGS.includes(tk.t)&&ses.kind!=='review'&&isWord)setFlag(tk.w,tk.t,ok);
+    if(!isWord){const r=S.letters[tk.w[0]]||(S.letters[tk.w[0]]={ok:0,bad:0});ok?r.ok++:r.bad++;}
+  }
+  if(ok){ses.done++;addXP(XP[tk.t]||1);}
+  else ses.tasks.push({t:tk.t,w:tk.w,retry:true});
   fb={ok,extra:extra||{}};
   save();render();
-  if(isWord&&hyVoice)say(t.w.hy);
+  if(isWord&&hyVoice)say(tk.w.hy);
 }
 function next(){
   if(!ses)return;
-  const t=cur();
-  if(t&&t.t==='intro'&&!fb){ses.done++;}
+  const tk=cur();
+  if(tk&&tk.t==='intro'&&!fb){ses.done++;}
   fb=null;ses.hint=false;ses.i++;
   if(ses.i>=ses.tasks.length)finish();else{render();const n=cur();if(n.t==='intro'&&hyVoice)say(n.w.hy);}
 }
@@ -533,20 +594,23 @@ function finish(){
     for(const r of ses.res.values()){
       const s=st(r.w.id);
       s.lvl=r.bad?Math.max(1,s.lvl-1):Math.min(s.lvl+1,IV.length-1);
-      s.next=Date.now()+IV[s.lvl]*DAY;r.lvl=s.lvl;
+      s.next=Date.now()+IV[s.lvl]*DAY;
     }
   }
   save();screen='end';render();
 }
 
-/* ================= ОТРИСОВКА ================= */
+/* ================= RENDER ================= */
 const $app=document.getElementById('app');
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2400);}
+function langBtn(){return `<button class="pill" onclick="A.lang()" title="Language / Язык">${S.lang==='en'?'🇬🇧 EN':'🇷🇺 RU'}</button>`;}
 function navHtml(){
   const b=(k,i,n)=>`<button class="${screen===k?'on':''}" onclick="A.go('${k}')"><i>${i}</i>${n}</button>`;
-  return `<nav>${b('home','🏋️','Тренировки')}${b('dict','📖','Словарь')}${b('abc','Աա','Алфавит')}</nav>`;
+  return `<nav>${b('home','🏋️',t('exercises'))}${b('dict','📖',t('dict'))}${b('abc','Աա',t('alphabet'))}</nav>`;
 }
+function topBar(title,sub,extra){return `<div class="top"><div class="logo">${title}<small>${sub}</small></div><div style="display:flex;gap:8px">${extra||''}${langBtn()}</div></div>`;}
 function render(){
+  document.documentElement.lang=S.lang;
   document.querySelectorAll('.fb').forEach(e=>e.remove());
   if(screen==='home')rHome();
   else if(screen==='dict')rDict();
@@ -560,98 +624,96 @@ function rHome(){
   const xp=S.xp[today()]||0,g=S.goal;
   const tc=th=>all.filter(w=>w.th===th).length;
   $app.innerHTML=`
-  <div class="top"><div class="logo">Բառեր<small>армянские слова</small></div><div class="pill">🔥 ${streak()}</div></div>
+  ${topBar('Բառեր',t('appSub'),`<div class="pill">🔥 ${streak()}</div>`)}
   <div class="card">
-    <div class="goal-row"><b>Цель на сегодня</b><span class="muted">${xp} / ${g} XP ${xp>=g?'✅':''}</span></div>
+    <div class="goal-row"><b>${t('goal')}</b><span class="muted">${xp} / ${g} XP ${xp>=g?'✅':''}</span></div>
     <div class="bar"><i style="width:${Math.min(100,xp/g*100)}%"></i></div>
     <div class="stats">
-      <div><b>${cnt.new}</b><span>новые</span></div>
-      <div><b>${cnt.learning}</b><span>изучаю</span></div>
-      <div><b>${cnt.learned+cnt.due}</b><span>выучено</span></div>
-      <div><b style="color:var(--accent)">${cnt.due}</b><span>повторить</span></div>
+      <div><b>${cnt.new}</b><span>${t('st_new')}</span></div>
+      <div><b>${cnt.learning}</b><span>${t('st_learning')}</span></div>
+      <div><b>${cnt.learned+cnt.due}</b><span>${t('st_learned')}</span></div>
+      <div><b style="color:var(--accent)">${cnt.due}</b><span>${t('st_due')}</span></div>
     </div>
   </div>
-  <h2>Темы</h2>
+  <h2>${t('themes')}</h2>
   <div class="chips">
-    <button class="chip ${S.themes.length?'':'on'}" onclick="A.theme('')">Все<em>${all.length}</em></button>
-    ${themesAll().map(th=>`<button class="chip ${S.themes.includes(th)?'on':''}" onclick="A.theme('${esc(th)}')">${esc(th)}<em>${tc(th)}</em></button>`).join('')}
+    <button class="chip ${S.themes.length?'':'on'}" onclick="A.theme('')">${t('all')}<em>${all.length}</em></button>
+    ${themesAll().map(th=>`<button class="chip ${S.themes.includes(th)?'on':''}" onclick="A.theme('${esc(th)}')">${esc(themeName(th))}<em>${tc(th)}</em></button>`).join('')}
   </div>
-  <h2>Тренировки</h2>
+  <h2>${t('exercises')}</h2>
   <div class="grid">
-    ${TR.map((t,i)=>{const n=available(t.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="A.start('${t.k}')">
-      <span class="cnt">${t.k==='letters'?n+' букв':n}</span><div class="ico">${t.ico}</div><b>${t.name}</b><span>${t.desc}</span></button>`;}).join('')}
+    ${TR.map((x,i)=>{const n=available(x.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="A.start('${x.k}')">
+      <span class="cnt">${x.k==='letters'?n+' '+t('lettersN'):n}</span><div class="ico">${x.ico}</div><b>${trName(x.k)}</b><span>${trDesc(x.k)}</span></button>`;}).join('')}
   </div>
-  <p class="muted" style="margin-top:16px">Слово считается выученным, когда пройдено во всех пяти тренировках (Слово→перевод, Перевод→слово, Чтение, Конструктор, Написание). Потом оно уходит в «Повторение».</p>
+  <p class="muted" style="margin-top:16px">${t('foot')}</p>
   ${navHtml()}`;
 }
-
 function sessionTop(){
   return `<div class="s-top"><button class="x" onclick="A.quit()">✕</button><div class="bar"><i style="width:${ses.done/ses.total*100}%"></i></div><div class="xp">+${ses.xp}</div></div>`;
 }
-const hyText=(w,size)=>`<span class="hy">${esc(w.hy)}</span>`;
-function hintBtn(label){return ses.hint||fb?'':`<button class="tool" onclick="A.hint()">💡 ${label||'Транскрипция'}</button>`;}
+function hintBtn(label){return ses.hint||fb?'':`<button class="tool" onclick="A.hint()">💡 ${label||t('hintTr')}</button>`;}
 
 function rSession(){
-  const t=cur(),p=prep(t),w=t.w;let body='';
+  const tk=cur(),p=prep(tk),w=tk.w;let body='';
   const showTr=ses.hint||!!fb;
-  if(t.t==='intro'){
-    body=`<div class="q-label">Новое слово</div>
+  if(tk.t==='intro'){
+    body=`<div class="q-label">${t('newWord')}</div>
     <div class="card intro">
       <div class="big">${esc(w.hy)}</div>
-      <div class="tr">[${esc(w.tr)}]</div>
-      <div class="ru">${esc(w.ru)}</div>
+      <div class="tr">[${esc(TR_(w))}]</div>
+      <div class="ru">${esc(MEAN(w))}</div>
       <div class="tools">${spk(w.hy)}</div>
-      <div class="letters">${units(w.hy).map(u=>`<span><b>${u}</b><small>${esc(SOUND[u]??'')}</small></span>`).join('')}</div>
+      <div class="letters">${units(w.hy).map(u=>`<span><b>${u}</b><small>${esc(soundOf(u))}</small></span>`).join('')}</div>
     </div>
-    <div class="row-btns"><button class="btn ghost" onclick="A.know()">Уже знаю</button><button class="btn" onclick="A.next()">Дальше ⏎</button></div>`;
+    <div class="row-btns"><button class="btn ghost" onclick="A.know()">${t('know')}</button><button class="btn" onclick="A.next()">${t('next')}</button></div>`;
   }
-  else if(t.t==='wt'){
-    body=`<div class="q-label">Выбери перевод</div>
-    <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${showTr?'['+esc(w.tr)+']':''}</div><div class="tools">${hintBtn()}${spk(w.hy)}</div></div>
-    ${choices(p.opts,o=>esc(o.ru),w)}`;
+  else if(tk.t==='wt'){
+    body=`<div class="q-label">${t('pickMeaning')}</div>
+    <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}${spk(w.hy)}</div></div>
+    ${choices(p.opts,o=>esc(MEAN(o)),w)}`;
   }
-  else if(t.t==='tw'){
-    body=`<div class="q-label">Найди слово по-армянски</div>
-    <div class="prompt"><div class="big">${esc(w.ru)}</div><div class="tools">${hintBtn('Показать транскрипции')}</div></div>
-    ${choices(p.opts,o=>`<span><span class="hy">${esc(o.hy)}</span>${showTr?`<small>[${esc(o.tr)}]</small>`:''}</span>`,w)}`;
+  else if(tk.t==='tw'){
+    body=`<div class="q-label">${t('findHy')}</div>
+    <div class="prompt"><div class="big">${esc(MEAN(w))}</div><div class="tools">${hintBtn(t('hintTrs'))}</div></div>
+    ${choices(p.opts,o=>`<span><span class="hy">${esc(o.hy)}</span>${showTr?`<small>[${esc(TR_(o))}]</small>`:''}</span>`,w)}`;
   }
-  else if(t.t==='read'){
-    body=`<div class="q-label">Как читается это слово?</div>
-    <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${fb?esc(w.ru):''}</div></div>
-    ${choices(p.opts,o=>esc(o.tr),w)}`;
+  else if(tk.t==='read'){
+    body=`<div class="q-label">${t('howRead')}</div>
+    <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${fb?esc(MEAN(w)):''}</div></div>
+    ${choices(p.opts,o=>esc(TR_(o)),w)}`;
   }
-  else if(t.t==='L1'){
-    body=`<div class="q-label">Какой это звук?</div>
+  else if(tk.t==='L1'){
+    body=`<div class="q-label">${t('whatSound')}</div>
     <div class="prompt"><div class="big hy">${esc(w[1])} ${esc(w[0])}</div></div>
-    ${choices(p.opts,o=>esc(o[2]),w,true)}`;
+    ${choices(p.opts,o=>esc(snd(o)),w,true)}`;
   }
-  else if(t.t==='L2'){
-    body=`<div class="q-label">Какая буква даёт этот звук?</div>
-    <div class="prompt"><div class="big">${esc(w[2])}</div></div>
+  else if(tk.t==='L2'){
+    body=`<div class="q-label">${t('whichLetter')}</div>
+    <div class="prompt"><div class="big">${esc(snd(w))}</div></div>
     ${choices(p.opts,o=>esc(o[0]),w,true,'letter')}`;
   }
-  else if(t.t==='build'){
+  else if(tk.t==='build'){
     const parts=w.hy.split(' ').map(units);let k=0;
-    body=`<div class="q-label">Собери слово из букв</div>
-    <div class="prompt" style="padding-bottom:6px"><div class="big">${esc(w.ru)}</div><div class="sub">${showTr?'['+esc(w.tr)+']':''}</div><div class="tools">${hintBtn()}</div></div>
+    body=`<div class="q-label">${t('buildQ')}</div>
+    <div class="prompt" style="padding-bottom:6px"><div class="big">${esc(MEAN(w))}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}</div></div>
     <div class="slots">${parts.map(part=>`<div class="slot-word">${part.map(()=>{const u=p.placed[k++];return `<div class="slot ${u?'filled':''}">${u?esc(u):''}</div>`;}).join('')}</div>`).join('')}</div>
     <div class="tiles">${p.tiles.map((x,i)=>`<button class="tile ${x.used?'used':''} ${x.bad?'shake':''}" onclick="A.tile(${i})">${esc(x.u)}</button>`).join('')}</div>
-    <p class="muted" style="text-align:center;margin-top:14px">Ошибок: ${p.mist} из 3</p>`;
+    <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist)}</p>`;
   }
-  else if(t.t==='write'||t.t==='dict'){
-    const isD=t.t==='dict';
+  else if(tk.t==='write'||tk.t==='dict'){
+    const isD=tk.t==='dict';
     const promptHtml=isD
-      ?`<div class="big">[${esc(w.tr)}]</div><div class="sub">${showTr?esc(w.ru):''}</div><div class="tools">${hintBtn('Перевод')}${spk(w.hy)}</div>`
-      :`<div class="big">${esc(w.ru)}</div><div class="sub">${showTr?'['+esc(w.tr)+']':''}</div><div class="tools">${hintBtn()}${spk(w.hy)}</div>`;
+      ?`<div class="big">[${esc(TR_(w))}]</div><div class="sub">${showTr?esc(MEAN(w)):''}</div><div class="tools">${hintBtn(t('hintMean'))}${spk(w.hy)}</div>`
+      :`<div class="big">${esc(MEAN(w))}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}${spk(w.hy)}</div>`;
     const cls=fb?(fb.ok?'ok':'bad'):'';
-    body=`<div class="q-label">${isD?'Напиши по транскрипции':'Напиши по-армянски'}</div>
+    body=`<div class="q-label">${isD?t('writeTr'):t('writeHy')}</div>
     <div class="prompt" style="padding:10px 0 14px">${promptHtml}</div>
     <div class="typed ${cls}"><span class="hy">${esc(p.typed)}</span>${fb?'':'<span class="cur"></span>'}</div>
     ${fb?'':keyboard()}
-    ${fb?'':`<div class="row-btns"><button class="btn ghost" onclick="A.giveup()">Не знаю</button><button class="btn ghost" onclick="A.letter()">+ Буква</button><button class="btn" onclick="A.check()" ${p.typed.trim()?'':'disabled'}>Проверить</button></div>`}`;
+    ${fb?'':`<div class="row-btns"><button class="btn ghost" onclick="A.giveup()">${t('dontKnow')}</button><button class="btn ghost" onclick="A.letter()">${t('plusLetter')}</button><button class="btn" onclick="A.check()" ${p.typed.trim()?'':'disabled'}>${t('check')}</button></div>`}`;
   }
   $app.innerHTML=sessionTop()+body+(fb?'<div class="foot-space"></div>':'');
-  if(fb)document.body.insertAdjacentHTML('beforeend',feedback(t));
+  if(fb)document.body.insertAdjacentHTML('beforeend',feedback(tk));
 }
 function choices(opts,label,target,letter,cls){
   const p=prep(cur());
@@ -660,162 +722,158 @@ function choices(opts,label,target,letter,cls){
     return `<button class="opt ${cls||''} ${c}" onclick="A.choose(${i})">${cls?'':`<span class="n">${i+1}</span>`}${label(o)}</button>`;}).join('')}</div>`;
 }
 function keyboard(){
-  return `<div class="kb">${ABC.map(a=>`<button class="key" onclick="A.key('${a[0]}')">${a[0]}<small>${esc(baseSnd(a[2]))}</small></button>`).join('')}
-  <button class="key wide" onclick="A.key(' ')">пробел</button><button class="key wide" onclick="A.back()">⌫ стереть</button></div>`;
+  return `<div class="kb">${ABC.map(a=>`<button class="key" onclick="A.key('${a[0]}')">${a[0]}<small>${esc(baseSnd(snd(a)))}</small></button>`).join('')}
+  <button class="key wide" onclick="A.key(' ')">${t('space')}</button><button class="key wide" onclick="A.back()">${t('erase')}</button></div>`;
 }
-function feedback(t){
-  const w=t.w,ok=fb.ok;let ans='';
-  if(/^L/.test(t.t)){ans=`<span class="hy">${esc(w[1])} ${esc(w[0])}</span> — ${esc(w[2])}`;}
+function feedback(tk){
+  const w=tk.w,ok=fb.ok;let ans='';
+  if(/^L/.test(tk.t)){ans=`<span class="hy">${esc(w[1])} ${esc(w[0])}</span> — ${esc(snd(w))}`;}
   else{
-    ans=`<span class="hy">${esc(w.hy)}</span> [${esc(w.tr)}] — ${esc(w.ru)}`;
-    if(fb.extra.typed!==undefined&&!ok&&fb.extra.typed)ans=`Ты написал: <span class="hy diff">${diff(fb.extra.typed,w.hy)}</span><br>Правильно: `+ans;
+    ans=`<span class="hy">${esc(w.hy)}</span> [${esc(TR_(w))}] — ${esc(MEAN(w))}`;
+    if(fb.extra.typed!==undefined&&!ok&&fb.extra.typed)ans=`${t('youWrote')} <span class="hy diff">${diff(fb.extra.typed,w.hy)}</span><br>${t('correct')} `+ans;
   }
-  const praise=rnd(['Отлично!','Верно!','Так держать!','Супер!','Правильно!']);
-  const learned=ses.learned.length&&ses.learned[ses.learned.length-1]===w&&ok&&!t.retry?' 🎓 Слово выучено!':'';
-  return `<div class="fb ${ok?'ok':'bad'}"><div class="in"><h3>${ok?praise+learned:'Неправильно'}</h3><div class="ans">${ans}</div>
-  <div class="row-btns" style="margin:0">${!/^L/.test(t.t)&&hyVoice?`<button class="btn ghost" style="flex:0 0 64px" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}<button class="btn" onclick="A.next()">Дальше ⏎</button></div></div></div>`;
+  const learned=ses.learned.length&&ses.learned[ses.learned.length-1]===w&&ok&&!tk.retry?t('learnedNow'):'';
+  return `<div class="fb ${ok?'ok':'bad'}"><div class="in"><h3>${ok?rnd(L().praise)+learned:t('wrong')}</h3><div class="ans">${ans}</div>
+  <div class="row-btns" style="margin:0">${!/^L/.test(tk.t)&&hyVoice?`<button class="btn ghost" style="flex:0 0 64px" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}<button class="btn" onclick="A.next()">${t('next')}</button></div></div></div>`;
 }
-function diff(a,b){
-  const A=[...norm(a)],B=[...norm(b)];
-  return A.map((c,i)=>c===B[i]?esc(c):`<b>${esc(c)}</b>`).join('');
-}
+function diff(a,b){const X=[...norm(a)],Y=[...norm(b)];return X.map((c,i)=>c===Y[i]?esc(c):`<b>${esc(c)}</b>`).join('');}
+function dots(s){return `<span class="dots" title="${FLAGS.map(f=>trName(f)+(s.f[f]?' ✓':'')).join(', ')}">${FLAGS.map(f=>`<i class="${s.f[f]?'on':''}"></i>`).join('')}</span>`;}
 function rEnd(){
   const r=[...ses.res.values()];
   const good=r.filter(x=>!x.bad).length;
   const lettersMode=ses.kind==='letters';
   $app.innerHTML=`<div class="end">
     <div class="big">${lettersMode||good>=r.length*.7?'🎉':'💪'}</div>
-    <h1>Тренировка завершена</h1>
-    <p class="muted">+${ses.xp} XP · сегодня ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · выучено слов: ${ses.learned.length}`:''}</p>
+    <h1>${t('doneT')}</h1>
+    <p class="muted">+${ses.xp} XP · ${t('today')} ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · ${t('learnedCount')}: ${ses.learned.length}`:''}</p>
     ${lettersMode?'':`<ul class="res">${r.map(x=>{const s=peek(x.w.id);
-      return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div class="hy">${esc(x.w.hy)}</div><small>[${esc(x.w.tr)}] — ${esc(x.w.ru)}</small></div>
-      ${s.lvl>0?`<span class="badge">ур. ${s.lvl}</span>`:dots(s)}</li>`;}).join('')}</ul>`}
-    <div class="row-btns"><button class="btn ghost" onclick="A.go('home')">На главную</button><button class="btn" onclick="A.start('${ses.kind}')">Ещё раз</button></div>
+      return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div class="hy">${esc(x.w.hy)}</div><small>[${esc(TR_(x.w))}] — ${esc(MEAN(x.w))}</small></div>
+      ${s.lvl>0?`<span class="badge">${t('lvl')} ${s.lvl}</span>`:dots(s)}</li>`;}).join('')}</ul>`}
+    <div class="row-btns"><button class="btn ghost" onclick="A.go('home')">${t('home')}</button><button class="btn" onclick="A.start('${ses.kind}')">${t('again')}</button></div>
   </div>`;
 }
-function dots(s){return `<span class="dots" title="${FLAGS.map(f=>FLAG_N[f]+(s.f[f]?' ✓':'')).join(', ')}">${FLAGS.map(f=>`<i class="${s.f[f]?'on':''}"></i>`).join('')}</span>`;}
-const FLAG_N={wt:'Слово→перевод',tw:'Перевод→слово',read:'Чтение',build:'Конструктор',write:'Написание'};
-
 function rDict(){
   $app.innerHTML=`
-  <div class="top"><div class="logo">Բառարան<small>словарь</small></div></div>
-  <details class="card"><summary>➕ Добавить своё слово</summary>
+  ${topBar('Բառարան',t('dictSub'))}
+  <details class="card"><summary>${t('addWord')}</summary>
     <div class="form" style="margin-top:12px">
-      <input id="f-hy" class="hy" placeholder="Армянское слово (напр. ծիծաղ)" lang="hy">
-      <input id="f-ru" placeholder="Перевод">
-      <input id="f-tr" placeholder="Транскрипция (необязательно)">
-      <button class="btn" onclick="A.add()">Добавить</button>
+      <input id="f-hy" class="hy" placeholder="${esc(t('phHy'))}" lang="hy">
+      <input id="f-ru" placeholder="${esc(t('phMean'))}">
+      <input id="f-tr" placeholder="${esc(t('phTr'))}">
+      <button class="btn" onclick="A.add()">${t('add')}</button>
     </div></details>
-  <input class="search" placeholder="Поиск по-армянски, по-русски или транскрипции" value="${esc(dictQ)}" oninput="A.q(this.value)">
-  <div class="chips" style="margin-bottom:8px">${[['all','Все'],['new','Новые'],['learning','Изучаю'],['learned','Выучено'],['due','Повторить']].map(([k,n])=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${n}</button>`).join('')}</div>
+  <input class="search" placeholder="${esc(t('search'))}" value="${esc(dictQ)}" oninput="A.q(this.value)">
+  <div class="chips" style="margin-bottom:8px">${['all','new','learning','learned','due'].map(k=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${t('f_'+k)}</button>`).join('')}</div>
   <div id="dlist"></div>
-  <details class="card" style="margin-top:20px"><summary>⚙️ Настройки и прогресс</summary>
+  <details class="card" style="margin-top:20px"><summary>${t('settings')}</summary>
     <div class="form" style="margin-top:12px">
-      <label class="muted">Цель XP в день <input type="number" min="5" max="500" value="${S.goal}" onchange="A.goal(this.value)" style="width:90px;margin-left:8px"></label>
-      <button class="btn ghost" onclick="A.exp()">⬇️ Экспорт прогресса</button>
-      <label class="btn ghost" style="text-align:center">⬆️ Импорт из файла<input type="file" accept=".json" style="display:none" onchange="A.imp(this)"></label>
-      <textarea id="io" rows="3" placeholder="Сюда попадёт JSON при экспорте. Чтобы импортировать — вставь JSON и нажми кнопку ниже" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:12px monospace"></textarea>
-      <button class="btn ghost" onclick="A.impText()">Импорт из текста</button>
-      <button class="btn ghost" style="color:var(--bad)" onclick="A.resetAll()">Сбросить весь прогресс</button>
-      <p class="muted">Прогресс хранится в этом браузере. ${hyVoice?'Армянский голос найден 🔊':'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.'}</p>
+      <label class="muted">${t('goalXp')} <input type="number" min="5" max="500" value="${S.goal}" onchange="A.goal(this.value)" style="width:90px;margin-left:8px"></label>
+      <button class="btn ghost" onclick="A.exp()">${t('exportB')}</button>
+      <label class="btn ghost" style="text-align:center">${t('importF')}<input type="file" accept=".json" style="display:none" onchange="A.imp(this)"></label>
+      <textarea id="io" rows="3" placeholder="${esc(t('ioPh'))}" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:12px monospace"></textarea>
+      <button class="btn ghost" onclick="A.impText()">${t('importT')}</button>
+      <button class="btn ghost" style="color:var(--bad)" onclick="A.resetAll()">${t('resetAll')}</button>
+      <p class="muted">${t('storage')} ${hyVoice?t('voiceY'):t('voiceN')}</p>
     </div></details>
   ${navHtml()}`;
   rList();
 }
 function rList(){
   const q=dictQ.toLowerCase().trim();
-  const list=allWords().filter(w=>(dictF==='all'||status(w)===dictF||(dictF==='learned'&&status(w)==='due'))&&(!q||w.hy.includes(q)||w.ru.toLowerCase().includes(q)||w.tr.toLowerCase().includes(q)));
+  const list=allWords().filter(w=>(dictF==='all'||status(w)===dictF||(dictF==='learned'&&status(w)==='due'))&&(!q||w.hy.includes(q)||MEAN(w).toLowerCase().includes(q)||TR_(w).toLowerCase().includes(q)));
   const el=document.getElementById('dlist');if(!el)return;
   el.innerHTML=list.length?list.map(w=>{const s=peek(w.id),stt=status(w);
-    const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${stt==='due'?'повторить':'ур. '+s.lvl}</span>`:dots(s);
-    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(w.tr)}] — ${esc(w.ru)} · ${esc(w.th)}</small></div>${right}
+    const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${stt==='due'?t('dueBadge'):t('lvl')+' '+s.lvl}</span>`:dots(s);
+    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))} · ${esc(themeName(w.th))}</small></div>${right}
     ${hyVoice?`<button class="icon" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}
-    <button class="icon" title="Сбросить прогресс слова" onclick="A.reset('${esc(w.id)}')">↺</button>
-    ${w.custom?`<button class="icon" title="Удалить" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
-    :'<p class="muted">Ничего не найдено</p>';
+    <button class="icon" title="${esc(t('resetT'))}" onclick="A.reset('${esc(w.id)}')">↺</button>
+    ${w.custom?`<button class="icon" title="${esc(t('delT'))}" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
+    :`<p class="muted">${t('nothing')}</p>`;
 }
 function rAbc(){
   const on=new Set(lettersOn().map(a=>a[0]));
-  $app.innerHTML=`<div class="top"><div class="logo">Այբուբեն<small>алфавит</small></div></div>
-  <p class="muted">Отметь буквы, которые хочешь тренировать в упражнении «Буквы». Под буквой — звук и процент правильных ответов.</p>
-  <div class="chips" style="margin-bottom:12px"><button class="chip" onclick="A.abcAll(true)">Выбрать все</button><button class="chip" onclick="A.abcAll(false)">Снять все</button><button class="chip on" onclick="A.start('letters')">▶ Тренировать</button></div>
+  $app.innerHTML=`${topBar('Այբուբեն',t('abcSub'))}
+  <p class="muted">${t('abcNote')}</p>
+  <div class="chips" style="margin-bottom:12px"><button class="chip" onclick="A.abcAll(true)">${t('selAll')}</button><button class="chip" onclick="A.abcAll(false)">${t('unselAll')}</button><button class="chip on" onclick="A.start('letters')">${t('practice')}</button></div>
   <div class="abc">${ABC.map(a=>{const r=S.letters[a[0]];const pc=r&&(r.ok+r.bad)?Math.round(r.ok/(r.ok+r.bad)*100)+'%':'';
-    return `<button class="${on.has(a[0])?'on':''}" onclick="A.abcT('${a[0]}')"><b>${a[1]}${a[0].length>1?'':' '+a[0]}</b><small>${esc(a[2])}</small><span class="acc">${pc}</span></button>`;}).join('')}</div>
+    return `<button class="${on.has(a[0])?'on':''}" onclick="A.abcT('${a[0]}')"><b>${a[1]}${a[0].length>1?'':' '+a[0]}</b><small>${esc(snd(a))}</small><span class="acc">${pc}</span></button>`;}).join('')}</div>
   ${navHtml()}`;
 }
 
-/* ================= ДЕЙСТВИЯ ================= */
+/* ================= ACTIONS ================= */
+let armed=null;
+function twice(k,msg){if(armed&&armed.k===k&&Date.now()-armed.t<4000){armed=null;return true;}armed={k,t:Date.now()};toast(msg);return false;}
+function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});save();toast(t('loaded'));render();}
 const A={
-  go(s){screen=s;ses=s==='session'?ses:null;fb=null;render();window.scrollTo(0,0);},
+  go(s){screen=s;if(s!=='session')ses=null;fb=null;render();window.scrollTo(0,0);},
   start(k){start(k);window.scrollTo(0,0);},
+  lang(){S.lang=S.lang==='en'?'ru':'en';save();render();},
   theme(th){if(!th)S.themes=[];else S.themes=S.themes.includes(th)?S.themes.filter(x=>x!==th):S.themes.concat(th);save();render();},
   quit(){ses=null;fb=null;screen='home';render();},
-  next,
-  say,
+  next,say,
   hint(){ses.hint=true;render();},
-  know(){const t=cur();const s=st(t.w.id);FLAGS.forEach(f=>s.f[f]=true);if(s.lvl===0){s.lvl=1;s.next=Date.now()+DAY;}
-    ses.tasks=ses.tasks.filter((x,i)=>i<=ses.i||x.w!==t.w);ses.total=ses.tasks.filter(x=>!x.retry).length;save();toast('Слово отмечено как выученное');next();},
-  choose(i){if(fb)return;const t=cur(),p=prep(t);p.picked=i;answer(p.opts[i]===t.w);},
+  know(){const tk=cur();const s=st(tk.w.id);FLAGS.forEach(f=>s.f[f]=true);if(s.lvl===0){s.lvl=1;s.next=Date.now()+DAY;}
+    ses.tasks=ses.tasks.filter((x,i)=>i<=ses.i||x.w!==tk.w);ses.total=ses.tasks.filter(x=>!x.retry).length;save();toast(t('marked'));next();},
+  choose(i){if(fb)return;const tk=cur(),p=prep(tk);p.picked=i;answer(p.opts[i]===tk.w);},
   tile(i){
-    if(fb)return;const p=prep(cur()),x=p.tiles[i];if(x.used)return;
+    if(fb)return;const p=prep(cur()),x=p.tiles[i];if(!x||x.used)return;
     const exp=p.units[p.placed.length];
     if(x.u===exp){x.used=true;p.placed.push(x.u);if(p.placed.length===p.units.length)return answer(p.mist===0);render();}
     else{p.mist++;x.bad=true;render();setTimeout(()=>{x.bad=false;if(screen==='session'&&!fb)render();},350);
-      if(p.mist>=3){p.placed=p.units.slice();p.tiles.forEach(t=>t.used=true);answer(false);}}
+      if(p.mist>=3){p.placed=p.units.slice();p.tiles.forEach(z=>z.used=true);answer(false);}}
   },
   key(ch){if(fb)return;const p=prep(cur());p.typed+=ch;render();},
   back(){if(fb)return;const p=prep(cur());p.typed=p.typed.endsWith('ու')?p.typed.slice(0,-2):p.typed.slice(0,-1);render();},
   letter(){
-    const t=cur(),p=prep(t),tgt=t.w.hy;let i=0;
+    if(fb)return;const tk=cur(),p=prep(tk),tgt=tk.w.hy;let i=0;
     while(i<p.typed.length&&i<tgt.length&&p.typed[i].toLowerCase()===tgt[i])i++;
     let n=i+1;if(tgt[i]==='ո'&&tgt[i+1]==='ւ')n++;if(tgt[i]===' ')n++;
     p.typed=tgt.slice(0,Math.min(n,tgt.length));p.hints++;
     if(norm(p.typed)===norm(tgt))return answer(false,{typed:''});
     render();
   },
-  check(){const t=cur(),p=prep(t);if(fb||!p.typed.trim())return;const ok=norm(p.typed)===norm(t.w.hy);answer(ok&&p.hints===0,{typed:p.typed});},
+  check(){const tk=cur(),p=prep(tk);if(fb||!p.typed.trim())return;answer(norm(p.typed)===norm(tk.w.hy)&&p.hints===0,{typed:p.typed});},
   giveup(){if(fb)return;answer(false,{typed:''});},
   q(v){dictQ=v;rList();},
   f(k){dictF=k;render();},
   add(){
-    const hy=document.getElementById('f-hy').value.trim().toLowerCase(),ru=document.getElementById('f-ru').value.trim(),tr=document.getElementById('f-tr').value.trim();
-    if(!hy||!ru)return toast('Заполни армянское слово и перевод');
-    if(!/^[Ա-և\s]+$/.test(hy))return toast('В армянском поле должны быть только армянские буквы');
-    if(allWords().some(w=>w.id===hy))return toast('Такое слово уже есть');
-    S.custom.push({id:hy,hy,ru,tr});save();toast('Добавлено в тему «Мои слова»');render();
+    const hy=document.getElementById('f-hy').value.trim().toLowerCase(),m=document.getElementById('f-ru').value.trim(),tr=document.getElementById('f-tr').value.trim();
+    if(!hy||!m)return toast(t('fillBoth'));
+    if(!/^[Ա-և\s]+$/.test(hy))return toast(t('onlyHy'));
+    if(allWords().some(w=>w.id===hy))return toast(t('exists'));
+    S.custom.push({id:hy,hy,m,tr});save();toast(t('added'));render();
   },
-  del(id){if(!twice('del'+id,'Нажми 🗑 ещё раз, чтобы удалить'))return;S.custom=S.custom.filter(c=>c.id!==id);delete S.w[id];S.themes=S.themes.filter(t=>t!=='Мои слова'||S.custom.length);save();render();},
-  reset(id){delete S.w[id];save();rList();toast('Прогресс слова сброшен');},
-  resetAll(){if(!twice('reset','Нажми ещё раз, чтобы сбросить весь прогресс (свои слова останутся)'))return;S.w={};S.xp={};S.letters={};save();render();},
+  del(id){if(!twice('del'+id,t('delAgain')))return;S.custom=S.custom.filter(c=>c.id!==id);delete S.w[id];if(!S.custom.length)S.themes=S.themes.filter(x=>x!==MY);save();render();},
+  reset(id){delete S.w[id];save();rList();toast(t('wordReset'));},
+  resetAll(){if(!twice('reset',t('resetAgain')))return;S.w={};S.xp={};S.letters={};save();render();},
   goal(v){S.goal=Math.max(5,Math.min(500,parseInt(v)||30));save();},
   exp(){const txt=JSON.stringify(S);
     try{const b=new Blob([txt],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='armenian-words-progress-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();}catch(e){}
-    try{navigator.clipboard.writeText(txt).then(()=>toast('Прогресс скопирован в буфер обмена (и скачан, если браузер разрешает)'),()=>toast('Скопируй текст из поля ниже'));}catch(e){}
+    try{navigator.clipboard.writeText(txt).then(()=>toast(t('copied')),()=>toast(t('copyField')));}catch(e){toast(t('copyField'));}
     const ta=document.getElementById('io');if(ta)ta.value=txt;},
-  impText(){const ta=document.getElementById('io');try{const d=JSON.parse(ta.value);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d);save();toast('Прогресс загружен');render();}catch(e){toast('Не получилось прочитать текст');}},
-  imp(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{try{const d=JSON.parse(t);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d);save();toast('Прогресс загружен');render();}catch(e){toast('Не получилось прочитать файл');}});},
+  imp(inp){const f=inp.files[0];if(!f)return;f.text().then(x=>{try{loadJSON(x);}catch(e){toast(t('readFail'));}});},
+  impText(){try{loadJSON(document.getElementById('io').value);}catch(e){toast(t('readFail'));}},
   abcT(l){const on=new Set(lettersOn().map(a=>a[0]));on.has(l)?on.delete(l):on.add(l);S.lettersOn=[...on];save();render();},
   abcAll(v){S.lettersOn=v?null:[];save();render();},
 };
-let armed=null;function twice(k,msg){if(armed&&armed.k===k&&Date.now()-armed.t<4000){armed=null;return true;}armed={k,t:Date.now()};toast(msg);return false;}
 
-/* ================= КЛАВИАТУРА ================= */
+/* ================= KEYBOARD ================= */
 document.addEventListener('keydown',e=>{
   if(screen!=='session'||!ses||e.ctrlKey||e.metaKey||e.altKey)return;
-  const t=cur();if(!t)return;
-  if(fb||t.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
-  if(['wt','tw','read','L1','L2'].includes(t.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(t).opts.length){A.choose(n-1);}return;}
-  if(t.t==='build'){
+  const tk=cur();if(!tk)return;
+  if(fb||tk.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
+  if(['wt','tw','read','L1','L2'].includes(tk.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
+  if(tk.t==='build'){
     const k=e.key.toLowerCase();if(!isHy(k)||k==='ւ')return;
-    const p=prep(t),exp=p.units[p.placed.length];
+    const p=prep(tk),exp=p.units[p.placed.length];
     let i=p.tiles.findIndex(x=>!x.used&&x.u===k);
-    if(k==='ո'&&exp==='ու'){i=p.tiles.findIndex(x=>!x.used&&x.u==='ու');}
+    if(k==='ո'&&exp==='ու')i=p.tiles.findIndex(x=>!x.used&&x.u==='ու');
     if(i<0)i=p.tiles.findIndex(x=>!x.used&&x.u.startsWith(k));
     if(i<0)i=p.tiles.findIndex(x=>!x.used&&x.u!==exp);
     if(i>=0)A.tile(i);
     return;
   }
-  if(t.t==='write'||t.t==='dict'){
+  if(tk.t==='write'||tk.t==='dict'){
     if(e.key==='Enter'){e.preventDefault();A.check();return;}
     if(e.key==='Backspace'){e.preventDefault();A.back();return;}
     if(e.key===' '){e.preventDefault();A.key(' ');return;}

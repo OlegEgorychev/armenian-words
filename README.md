@@ -1,41 +1,44 @@
-# Բառեր — тренажёр армянских слов
+# Բառեր — Armenian words trainer
 
-Небольшое веб-приложение для изучения армянских слов в стиле LinguaLeo / Duolingo. Один файл `index.html`, без сборки и зависимостей. Работает в браузере на телефоне и компьютере.
+A small web app for learning Armenian vocabulary, inspired by LinguaLeo and Duolingo. It is a single `index.html` file with no build step and no dependencies, and it works in any browser on phone or desktop.
 
-**Открыть:** https://olegegorychev.github.io/armenian-words/
+**Open the app:** https://olegegorychev.github.io/armenian-words/
 
-## Тренировки
+The interface is available in **English and Russian**. Use the RU / EN button in the top-right corner to switch.
 
-| Тренировка | Что тренирует |
+## Exercises
+
+| Exercise | What it trains |
 |---|---|
-| ⚡ Брейншторм | 5 новых слов проходят все этапы подряд: знакомство → слово-перевод → перевод-слово → чтение → конструктор → написание |
-| 🇦🇲 Слово → перевод | чтение и понимание |
-| 🔎 Перевод → слово | узнавание написания среди похожих слов |
-| 👁 Чтение | выбрать правильную транскрипцию (чистое чтение букв) |
-| 🧩 Конструктор | собрать слово из букв по порядку (до 3 ошибок) |
-| ✍️ Написание | набрать слово на армянской клавиатуре по переводу |
-| 🎧 Диктант | набрать слово по транскрипции (орфография) |
-| Աա Буквы | буква ↔ звук; можно выбрать нужные буквы во вкладке «Алфавит» |
-| 🔁 Повторение | интервальное повторение выученных слов: 1-3-7-14-30-60-120 дней |
+| ⚡ Brainstorm | 5 new words go through every stage in a row: intro → word-translation → translation-word → reading → builder → writing |
+| 🇦🇲 Word → translation | reading and understanding |
+| 🔎 Translation → word | recognising the spelling among similar words |
+| 👁 Reading | picking the right transcription (pure letter reading) |
+| 🧩 Builder | assembling the word letter by letter (up to 3 mistakes) |
+| ✍️ Writing | typing the word on an Armenian keyboard from its translation |
+| 🎧 Dictation | typing the word from its transcription (spelling) |
+| Աա Letters | letter ↔ sound; choose which letters to practise in the Alphabet tab |
+| 🔁 Review | spaced repetition of learned words: 1-3-7-14-30-60-120 days |
 
-Слово считается **выученным**, когда оно правильно пройдено с первого раза во всех пяти основных тренировках. После этого оно уходит в интервальное повторение.
+A word counts as **learned** once it is answered correctly on the first try in all five core exercises. After that it moves into spaced-repetition review.
 
-## Что ещё есть
+## Features
 
-- ~150 слов в 12 темах (основы, семья, еда, дом, город, природа, животные, тело, числа, цвета, время, глаголы), с транскрипцией кириллицей
-- Свои слова (тема «Мои слова»), транскрипция для них строится автоматически
-- XP, дневная цель, серия дней 🔥
-- Экранная армянская клавиатура с подсказками звуков; можно печатать и с физической армянской раскладки
-- Горячие клавиши: `1–5` — выбрать вариант, `Enter` — дальше/проверить
-- Озвучка, если в системе есть армянский голос (на многих устройствах его нет — тогда кнопка скрыта)
-- Экспорт/импорт прогресса в JSON (прогресс хранится в localStorage браузера)
+- ~150 words in 12 topics (basics, family, food, home, city, nature, animals, body, numbers, colours, time, verbs), with Russian and English translations
+- Transcription in Latin (English mode) or Cyrillic (Russian mode)
+- Add your own words (topic “My words”); their transcription is generated automatically
+- XP, daily goal and day streak 🔥
+- On-screen Armenian keyboard with sound hints; a physical Armenian keyboard layout also works
+- Hotkeys: `1–5` to pick an option, `Enter` to continue / check
+- Audio playback if the system has an Armenian voice (many devices don't; the button is hidden then)
+- Export / import progress as JSON (progress is stored in the browser's localStorage)
 
-## Как добавить слова в базовый словарь
+## Adding words to the built-in dictionary
 
-В `index.html` найдите константу `RAW` и добавьте строку в нужную тему:
+In `index.html`, find the `RAW` constant and add a line under the right topic:
 
 ```
-армянское | перевод | транскрипция
+armenian | russian | english | russian transcription
 ```
 
-Транскрипция кириллицей: `h` — հ, `х` — խ, `гх` — ղ, `ы` — ը.
+The Latin transcription is generated from the Cyrillic one. Cyrillic conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը.
