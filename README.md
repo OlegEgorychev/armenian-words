@@ -38,7 +38,8 @@ With **“Only words made of learned letters”** turned on (default), every wor
 
 ## Features
 
-- ~150 words in 12 topics (basics, family, food, home, city, nature, animals, body, numbers, colours, time, verbs), with Russian and English translations
+- ~330 words in 15 topics (basics, common words, family, food, home, city, nature, animals, body, numbers, colours & qualities, time, verbs, study & work, misc), with Russian and English translations
+- the dictionary is tuned so that words appear early: with the 8 most frequent letters learned (ա ն ր ո ե ի մ ու) about 24 words are available, with 10 letters about 60, with 15 letters about 130. Short high-frequency words (pronouns, question words, adverbs) were chosen using an OpenSubtitles frequency list ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords))
 - Transcription in Latin (English mode) or Cyrillic (Russian mode)
 - Add your own words (topic “My words”); their transcription is generated automatically
 - XP, daily goal and day streak 🔥
