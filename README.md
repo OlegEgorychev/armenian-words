@@ -17,6 +17,7 @@ The interface is available in **English and Russian**. Use the RU / EN button in
 | 🧩 Builder | assembling the word letter by letter (up to 3 mistakes) |
 | ✍️ Writing | typing the word on an Armenian keyboard from its translation |
 | 🎧 Dictation | typing the word from its transcription (spelling) |
+| 🖊️ Handwriting | draw letters with finger or mouse on a lined pad: trace the model first, then write from memory and compare with the model (self-graded). Print or handwritten script |
 | Աա Letters | alphabet trainer in the style of [chev.me/armenian](https://chev.me/armenian/): letter → pick its transliteration out of 5, 15 questions |
 | 🔁 Review | spaced repetition of learned words: 1-3-7-14-30-60-120 days |
 
@@ -30,6 +31,8 @@ The Alphabet tab works like [chev.me/armenian](https://chev.me/armenian/) by Ole
 - tap letters to select them, then **Train selected**. If you select fewer than 15 letters, the quiz cycles through them (up to 3 rounds)
 - every letter has a unique transliteration (`'` marks aspirated sounds: թ t', ց ts', չ ch', փ p', ք k'; ռ is rr)
 - a letter becomes **learned** after 3 correct answers in a row, or you can mark the letters you already know with “✓ I know selected”
+
+**Print / Handwritten.** The Alphabet tab has two modes. *Handwritten* shows the school cursive forms (the way Armenian is written by hand), with its own quiz and its own progress. Both modes have a **✍️ Handwriting** button that opens the drawing exercise for the selected letters (or the next 5 unlearned ones).
 
 With **“Only words made of learned letters”** turned on (default), every word exercise except Review uses only words whose letters are all learned. The home screen shows which letters to learn next to unlock the most words, and the dictionary shows 🔒 with the missing letters.
 
@@ -53,3 +56,8 @@ armenian | russian | english | russian transcription
 ```
 
 The Latin transcription is generated from the Cyrillic one. Cyrillic conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը.
+
+## Credits
+
+- Alphabet trainer idea: [chev.me/armenian](https://chev.me/armenian/) by Oleg Kalachev
+- Handwriting font **Arti** by Khajag Apelian for the Hamazkayin Armenian Educational and Cultural Association (2016), free for personal and commercial use, embedded in `index.html` with author credit
