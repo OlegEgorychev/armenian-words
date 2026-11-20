@@ -170,6 +170,16 @@ details summary::-webkit-details-marker{display:none}
 .seg button.on{background:var(--accent);color:var(--accent-ink)}
 .abc-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .key.dim{opacity:.38}
+.lp{margin:6px 0 10px}
+.lp+.lp{margin-top:12px}
+.lp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;font-size:15px}
+.lp-head .pc{font-size:22px;font-weight:800;color:var(--ok);font-variant-numeric:tabular-nums}
+.lp-bar{position:relative;height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.lp-bar i{position:absolute;top:0;bottom:0;left:0;border-radius:99px;transition:width .4s}
+.lp-bar .st{background:var(--ok);opacity:.35}
+.lp-bar .kn{background:var(--ok)}
+.lp-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.lp.dimmed{opacity:.6}
 .lock{color:var(--muted);font-size:12px}
 .switch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:15px}
 .switch input{width:44px;height:24px;accent-color:var(--accent)}
@@ -408,7 +418,7 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  knownN:'Выучено букв: {0} из 39',chooseTr:'Выбери транслитерацию',newKnown:'Новые выученные буквы:',unlocked:'Открыто новых слов: {0}',selectFirst:'Сначала выбери буквы',
  lettersCard:'Буквы: {0}/39 · доступно слов: {1} из {2}',onlyKnown:'Только слова из выученных букв',nextLetters:'Выучи следующими:',plusWords:'+{0} сл.',
  startAbc:'Слова собираются только из выученных букв. Начни с алфавита — выучи несколько букв, и слова из них появятся в тренировках.',goAbc:'Учить алфавит →',needs:'🔒 нужны:',
- letterKnown:'Буква {0} выучена! 🎉',scPrint:'Печатные',scHand:'Рукописные',knownNH:'Рукописных букв выучено: {0} из 39',
+ letterKnown:'Буква {0} выучена! 🎉',inProgress:'ещё {0} в процессе (есть правильные ответы подряд)',abcProg:'Алфавит выучен',wordsAvail:'Доступно слов: {0} из {1}',scPrint:'Печатные',scHand:'Рукописные',knownNH:'Рукописных букв выучено: {0} из 39',
  trainW:'✍️ Письмо',traceQ:'Обведи букву по образцу',memQ:'Напиши букву по памяти',memQh:'Напиши рукописную форму',caseLo:'строчная',caseUp:'заглавная',
  clearW:'🧽 Стереть',compareW:'Сравнить с образцом',gradeOk:'✓ Получилось',gradeBad:'✗ Не похоже',drawFirst:'Сначала напиши букву',
  fontCredit:'Рукописный шрифт Arti — Khajag Apelian / Hamazkayin',noteHand:'Рукописные буквы — так пишут от руки в армянских школах. Тренируй чтение рукописных (тест) и письмо (✍️). Прогресс по рукописным считается отдельно.',
@@ -445,7 +455,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  knownN:'Letters learned: {0} of 39',chooseTr:'Choose the transliteration',newKnown:'Newly learned letters:',unlocked:'New words unlocked: {0}',selectFirst:'Select letters first',
  lettersCard:'Letters: {0}/39 · words available: {1} of {2}',onlyKnown:'Only words made of learned letters',nextLetters:'Learn next:',plusWords:'+{0} words',
  startAbc:'Words only use letters you have learned. Start with the alphabet — learn a few letters and words made of them will appear here.',goAbc:'Learn the alphabet →',needs:'🔒 needs:',
- letterKnown:'Letter {0} learned! 🎉',scPrint:'Print',scHand:'Handwritten',knownNH:'Handwritten letters learned: {0} of 39',
+ letterKnown:'Letter {0} learned! 🎉',inProgress:'{0} more in progress (correct answers in a row)',abcProg:'Alphabet learned',wordsAvail:'Words available: {0} of {1}',scPrint:'Print',scHand:'Handwritten',knownNH:'Handwritten letters learned: {0} of 39',
  trainW:'✍️ Handwriting',traceQ:'Trace the letter',memQ:'Write the letter from memory',memQh:'Write the handwritten form',caseLo:'lowercase',caseUp:'capital',
  clearW:'🧽 Clear',compareW:'Compare with model',gradeOk:'✓ Got it',gradeBad:'✗ Not quite',drawFirst:'Draw the letter first',
  fontCredit:'Handwriting font Arti — Khajag Apelian / Hamazkayin',noteHand:'Handwritten letters are how Armenian is written by hand in school. Practise reading them (quiz) and writing them (✍️). Handwritten progress is tracked separately.',
@@ -695,11 +705,23 @@ function render(){
   else if(screen==='session')rSession();
   else if(screen==='end')rEnd();
 }
+function letterProgress(sc,dim){
+  const K=new Set(knownList(sc)),n=ABC.length,k=K.size;
+  const started=ABC.filter(a=>!K.has(a[0])&&streakOf(a[0],sc)>0).length;
+  const pc=Math.round(k/n*100);
+  return `<div class="lp ${dim?'dimmed':''}">
+    <div class="lp-head"><b>${isHand(sc)?t('scHand'):t('scPrint')} <span class="${gcls(sc)}">Աա</span></b><span><span class="pc">${pc}%</span> <span class="muted">${k}/${n}</span></span></div>
+    <div class="lp-bar"><i class="st" style="width:${(k+started)/n*100}%"></i><i class="kn" style="width:${k/n*100}%"></i></div>
+    ${started?`<div class="lp-sub">${t('inProgress',started)}</div>`:''}
+  </div>`;
+}
 function lettersCard(){
   const K=knownSet(),ok=pool().length,tot=themed().length,nl=nextLetters(4);
   const empty=S.onlyKnown&&ok===0;
   return `<div class="card ${empty?'cta':''}">
-    <b>${t('lettersCard',K.size,S.onlyKnown?ok:tot,tot)}</b>
+    <h3 style="margin:0 0 4px;font-size:17px">${t('abcProg')}</h3>
+    ${letterProgress('print')}${letterProgress('hand',!S.hknown.length)}
+    <div style="margin-top:12px;font-weight:600">${t('wordsAvail',S.onlyKnown?ok:tot,tot)}</div>
     ${empty?`<p class="muted" style="margin:8px 0">${t('startAbc')}</p><button class="btn" style="width:100%" onclick="A.go('abc')">${t('goAbc')}</button>`:''}
     ${S.onlyKnown&&nl.length?`<div class="muted" style="margin-top:10px">${t('nextLetters')}</div><div class="next-l">${nl.map(x=>`<span><b>${esc(x.l)}</b> ${esc(snd(byL[x.l]))}${x.n?` · ${t('plusWords',x.n)}`:''}</span>`).join('')}</div>`:''}
     <label class="switch"><span>${t('onlyKnown')}</span><input type="checkbox" ${S.onlyKnown?'checked':''} onchange="A.only(this.checked)"></label>
@@ -952,7 +974,7 @@ function rAbc(){
     <button class="chip" onclick="A.mark(false)">${t('markForgot')}</button>
     ${sel.size?`<button class="chip" onclick="A.selNone()">${t('clearSel')}</button>`:''}
   </div>
-  <p style="margin:4px 2px 10px;font-weight:600">${hand?t('knownNH',K.size):t('knownN',K.size)}</p>
+  <div class="card" style="padding:12px 14px">${letterProgress(hand?'hand':'print')}${letterProgress(hand?'print':'hand',true)}</div>
   <div class="abc ${hand?'cur':''}">${order.map(a=>{const sk=Math.min(3,streakOf(a[0]));
     return `<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}" onclick="A.abcT('${a[0]}')"><b>${glyph(a)}</b><small>${esc(snd(a))}</small>
     <span class="sdots">${[0,1,2].map(i=>`<i class="${i<sk||K.has(a[0])?'on':''}"></i>`).join('')}</span></button>`;}).join('')}</div>
