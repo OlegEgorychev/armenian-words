@@ -44,7 +44,7 @@ With **“Only words made of learned letters”** turned on (default), every wor
 - Add your own words (topic “My words”); their transcription is generated automatically
 - XP, daily goal and day streak 🔥
 - On-screen Armenian keyboard with sound hints; a physical Armenian keyboard layout also works
-- Hotkeys: `1–5` to pick an option, `Enter` to continue / check
+- Hotkeys: `1–5` pick an option · `Enter` continue / check · `Tab` show transcription (translation in Dictation) · `→` next letter hint · `Shift+Enter` “I don't know” · `Backspace` delete
 - Audio playback if the system has an Armenian voice (many devices don't; the button is hidden then)
 - Export / import progress as JSON (progress is stored in the browser's localStorage)
 

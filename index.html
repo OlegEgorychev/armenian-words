@@ -170,6 +170,9 @@ details summary::-webkit-details-marker{display:none}
 .seg button.on{background:var(--accent);color:var(--accent-ink)}
 .abc-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .key.dim{opacity:.38}
+kbd{display:none;font:600 11px system-ui;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;margin-left:6px;color:var(--muted);background:var(--bg);vertical-align:middle}
+@media (hover:hover) and (pointer:fine){kbd{display:inline-block}}
+.btn kbd{color:inherit;background:transparent;border-color:currentColor;opacity:.7}
 .lp{margin:6px 0 10px}
 .lp+.lp{margin-top:12px}
 .lp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;font-size:15px}
@@ -957,7 +960,7 @@ function rHome(){
 function sessionTop(){
   return `<div class="s-top"><button class="x" onclick="A.quit()">✕</button><div class="bar"><i style="width:${ses.done/ses.total*100}%"></i></div><div class="xp">+${ses.xp}</div></div>`;
 }
-function hintBtn(label){return ses.hint||fb?'':`<button class="tool" onclick="A.hint()">💡 ${label||t('hintTr')}</button>`;}
+function hintBtn(label){return ses.hint||fb?'':`<button class="tool" onclick="A.hint()">💡 ${label||t('hintTr')}<kbd>Tab</kbd></button>`;}
 
 function rSession(){
   const tk=cur(),p=prep(tk),w=tk.w;let body='';
@@ -1024,7 +1027,7 @@ function rSession(){
     <div class="prompt" style="padding:10px 0 14px">${promptHtml}</div>
     <div class="typed ${cls}"><span class="hy">${esc(p.typed)}</span>${fb?'':'<span class="cur"></span>'}</div>
     ${fb?'':keyboard()}
-    ${fb?'':`<div class="row-btns"><button class="btn ghost" onclick="A.giveup()">${t('dontKnow')}</button><button class="btn ghost" onclick="A.letter()">${t('plusLetter')}</button><button class="btn" onclick="A.check()" ${p.typed.trim()?'':'disabled'}>${t('check')}</button></div>`}`;
+    ${fb?'':`<div class="row-btns"><button class="btn ghost" onclick="A.giveup()">${t('dontKnow')}<kbd>Shift+Enter</kbd></button><button class="btn ghost" onclick="A.letter()">${t('plusLetter')}<kbd>→</kbd></button><button class="btn" onclick="A.check()" ${p.typed.trim()?'':'disabled'}>${t('check')}<kbd>Enter</kbd></button></div>`}`;
   }
   $app.innerHTML=sessionTop()+body+(fb?'<div class="foot-space"></div>':'');
   if(fb)document.body.insertAdjacentHTML('beforeend',feedback(tk));
@@ -1252,6 +1255,7 @@ document.addEventListener('keydown',e=>{
   if(screen!=='session'||!ses||e.ctrlKey||e.metaKey||e.altKey)return;
   const tk=cur();if(!tk)return;
   if(fb||tk.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
+  if(e.key==='Tab'){e.preventDefault();if(!ses.hint&&['wt','tw','build','write','dict'].includes(tk.t))A.hint();return;}
   if(['wt','tw','read','L1','L2'].includes(tk.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
   if(tk.t==='build'){
     const k=e.key.toLowerCase();if(!isHy(k)||k==='ւ')return;
@@ -1264,7 +1268,9 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if(tk.t==='write'||tk.t==='dict'){
+    if(e.key==='Enter'&&e.shiftKey){e.preventDefault();A.giveup();return;}
     if(e.key==='Enter'){e.preventDefault();A.check();return;}
+    if(e.key==='ArrowRight'){e.preventDefault();A.letter();return;}
     if(e.key==='Backspace'){e.preventDefault();A.back();return;}
     if(e.key===' '){e.preventDefault();A.key(' ');return;}
     if(e.key.length===1&&isHy(e.key.toLowerCase())){e.preventDefault();A.key(e.key.toLowerCase());}
