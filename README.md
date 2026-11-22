@@ -1,6 +1,6 @@
 # Բառեր — Armenian words trainer
 
-A small web app for learning Armenian vocabulary, inspired by LinguaLeo and Duolingo. It is a single `index.html` file with no build step and no dependencies, and it works in any browser on phone or desktop.
+A small web app for learning Armenian vocabulary, inspired by LinguaLeo and Duolingo. It is one `index.html` file plus the dictionary `words.json`, with no build step and no dependencies, and it works in any browser on phone or desktop. It can be installed on the home screen and works offline.
 
 **Open the app:** https://olegegorychev.github.io/armenian-words/
 
@@ -37,36 +37,61 @@ The Alphabet tab works like [chev.me/armenian](https://chev.me/armenian/) by Ole
 
 With **“Only words made of learned letters”** turned on (default), every word exercise except Review uses only words whose letters are all learned. The home screen shows which letters to learn next to unlock the most words, and the dictionary shows 🔒 with the missing letters.
 
+## Dictionary: 2000 most frequent words
+
+- **2068 words** with Russian and English translations: the 2000 most frequent words of Eastern Armenian (`words.json`) plus 68 everyday words from the original list (greetings, food, animals: բարև, լավաշ, խորոված…)
+- every word has a **frequency rank** (1 = most frequent), a **part of speech** and a **level**: Top 500 / 1000 / 1500 / 2000
+- **new words come in frequency order** — the most useful words first. In Settings you can switch to "By topic"
+- **filters**: level and part of speech (nouns, verbs, adjectives, adverbs, pronouns, function words). On the home screen they apply to all exercises; the dictionary has its own filters and sorting (by frequency, A–Z, by topic). They combine with "Only words made of learned letters"
+- the home screen shows progress per level: "Top 500: 37 / 500 learned"
+- 15 topics from the original list are kept (basics, common words, family, food, home, city, nature, animals, body, numbers, colours & qualities, time, verbs, study & work, misc); new words are in the topic "Other words"
+- words appear early: with the 8 most frequent letters learned (ա ն ր ո ե ի մ ու) about 28 words are available, with 10 letters about 90, with 15 letters about 390, with 20 letters about 720
+
+**Where the frequency comes from.** Rank = 0.5 × lemma frequency in the [UD Armenian-ArmTDP](https://universaldependencies.org/treebanks/hy_armtdp/) corpus + 0.5 × frequency in OpenSubtitles ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords)), both per million words, followed by manual cleanup (proper nouns, junk). The corpus is mostly news and literature, so the list includes some bookish words. Transcription is letter-by-letter.
+
 ## Features
 
-- ~330 words in 15 topics (basics, common words, family, food, home, city, nature, animals, body, numbers, colours & qualities, time, verbs, study & work, misc), with Russian and English translations
-- the dictionary is tuned so that words appear early: with the 8 most frequent letters learned (ա ն ր ո ե ի մ ու) about 24 words are available, with 10 letters about 60, with 15 letters about 130. Short high-frequency words (pronouns, question words, adverbs) were chosen using an OpenSubtitles frequency list ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords))
 - Transcription in Latin (English mode) or Cyrillic (Russian mode)
 - Add your own words (topic “My words”); their transcription is generated automatically
 - XP, daily goal and day streak 🔥
 - On-screen Armenian keyboard with sound hints; a physical Armenian keyboard layout also works
-- Hotkeys: `1–5` pick an option · `Enter` continue / check · `Tab` show transcription (translation in Dictation) · `→` next letter hint · `Shift+Enter` “I don't know” · `Backspace` delete
+- Hotkeys: `1–5` pick an option · `Enter` continue / check · `Enter` with no answer = “I don't know” (also `Shift+Enter`) · `Tab` show transcription (translation in Dictation) · `→` next letter hint · `Backspace` delete
 - Audio playback if the system has an Armenian voice (many devices don't; the button is hidden then)
 - Export / import progress as JSON (progress is stored in the browser's localStorage)
+- **Install and offline (PWA):** on a phone, open the app and choose “Add to Home Screen” (Safari: Share → Add to Home Screen; Chrome: ⋮ → Install app). After the first visit it works without internet
 
-## Adding words to the built-in dictionary
+## Adding words
 
-In `index.html`, find the `RAW` constant and add a line under the right topic:
+Add an entry to the `words` array in `words.json`:
+
+```json
+{ "id": "ծիծաղ", "hy": "ծիծաղ", "ru": "смех", "en": "laughter", "pos": "noun",
+  "translit": { "ru": "цицагх", "en": "tsitsagh" }, "rank": 2001, "posRank": 911, "level": 4 }
+```
+
+- `id` must be the Armenian word itself (progress is saved under it), all lowercase
+- `pos`: `noun, verb, adj, adv, pron, num, adp, conj, part, intj`
+- `rank`: overall frequency rank; `posRank`: rank within the part of speech; `level`: 1 = ranks 1–500, 2 = 501–1000, 3 = 1001–1500, 4 = 1501–2000
+- Cyrillic transcription conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը
+
+A word that should have a topic can also go into the `RAW` constant in `index.html` (`armenian | russian | english | russian transcription` under a `# Topic | Topic` line). If the same word is in both, the translation comes from `words.json` and the topic from `RAW`. After changing files, bump `APP_VERSION` in `index.html` so installed apps refresh their offline copy.
+
+## Running locally
+
+The app loads `words.json` with `fetch()`, which browsers block for files opened straight from disk (`file://`). Start a small local server in the project folder and open http://localhost:8000:
 
 ```
-armenian | russian | english | russian transcription
+python3 -m http.server
 ```
-
-The Latin transcription is generated from the Cyrillic one. Cyrillic conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը.
 
 ## Version and roadmap
 
-Current version: **0.5.2** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+Current version: **0.5.5** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
 
 | Version | Milestone | Tasks |
 |---|---|---|
 | 0.5.0 | Baseline | everything built before versioning |
-| **0.6.0** | Every day | ✅ Daily lesson · PWA (install + offline) · Enter without an answer = "I don't know" · emoji for words · dictionary moved to `words.json` |
+| **0.6.0** | Every day | ✅ Daily lesson · ✅ dictionary moved to `words.json` (2000 words) · ✅ Enter without an answer = "I don't know" · ✅ PWA (install + offline) · emoji for words |
 | **0.7.0** | Memory and sound | smart spaced repetition (FSRS/SM-2) · recorded mp3 audio · listening exercise · stats and "hard words" |
 | **0.8.0** | Everywhere | cloud sync · reminders (push) · own words: edit + RU/EN · CSV/Anki import · topics for life in Yerevan |
 | **0.9.0** | Living language | phrases and short sentences · "Expressions" exercise · grammar mini-lessons · reading real signs |
