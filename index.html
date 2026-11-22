@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#E8833A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Բառեր">
 <title>Բառեր — Armenian words</title>
 <style>
 /* Arti — Armenian school handwriting font © Khajag Apelian 2016, Hamazkayin. Free for personal & commercial use; redistributed with author credit. */
@@ -707,7 +713,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.4';
+const APP_VERSION='0.5.5';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -1529,6 +1535,10 @@ function boot(){
     .catch(e=>{LOAD_ERR=String(e&&e.message||e);render();});
 }
 boot();
+// PWA: offline + install. The version in the address makes the cache refresh on every new APP_VERSION.
+if('serviceWorker' in navigator&&location.protocol!=='file:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js?v='+APP_VERSION).catch(()=>{}));
+}
 </script>
 </body>
 </html>

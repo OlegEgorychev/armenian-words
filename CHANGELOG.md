@@ -9,6 +9,13 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.5] — 2026-11-22
+
+### Added
+- **PWA: install and offline.** `manifest.json` (name, icons 192/512, `display: standalone`, theme colour) and `service-worker.js`. Open the app once, and after that it works without internet; on a phone it can be added to the home screen as an app.
+- The service worker downloads files from the network first (so you always get the newest version and words.json) and uses the saved copy when offline. The cache name includes the app version, so every new `APP_VERSION` refreshes the cache and removes the old one.
+- App icons and a favicon.
+
 ## [0.5.4] — 2026-11-22
 
 ### Added
