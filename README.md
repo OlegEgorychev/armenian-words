@@ -14,7 +14,7 @@ The interface is available in **English and Russian**. Use the RU / EN button in
 | 🇦🇲 Word → translation | reading and understanding |
 | 🔎 Translation → word | recognising the spelling among similar words |
 | 👁 Reading | picking the right transcription (pure letter reading) |
-| 🧩 Builder | assembling the word letter by letter (up to 3 mistakes) |
+| 🧩 Builder | assembling the word letter by letter (up to 3 mistakes); tap tiles or type — Armenian layout, or by sound in Latin/Cyrillic (`t` → տ/թ; the matching tile is picked) |
 | ✍️ Writing | typing the word on an Armenian keyboard from its translation |
 | 🎧 Dictation | typing the word from its transcription (spelling) |
 | 🖊️ Handwriting | draw letters with finger or mouse on a lined pad: trace the model first, then write from memory and compare with the model (self-graded). Print or handwritten script |

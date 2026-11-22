@@ -594,7 +594,7 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
   letters:['Буквы','Как на chev.me: буква → транслитерация, 15 вопросов'],
   writing:['Письмо','Пиши буквы пальцем или мышью: сначала обводка, потом по памяти. Печатные и рукописные'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней']},
  newWord:'Новое слово',know:'Уже знаю',next:'Дальше ⏎',pickMeaning:'Выбери перевод',findHy:'Найди слово по-армянски',howRead:'Как читается это слово?',
- whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из 3',
+ whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из 3',buildKbd:'Можно печатать: армянской раскладкой или по звуку кириллицей/латиницей (т → տ или թ — подставится нужная)',
  writeHy:'Напиши по-армянски',writeTr:'Напиши по транскрипции',hintTr:'Транскрипция',hintTrs:'Показать транскрипции',hintMean:'Перевод',listen:'🔊 Слушать',
  dontKnow:'Не знаю',plusLetter:'+ Буква',check:'Проверить',space:'пробел',erase:'⌫ стереть',
  praise:['Отлично!','Верно!','Так держать!','Супер!','Правильно!'],wrong:'Неправильно',youWrote:'Ты написал:',correct:'Правильно:',learnedNow:' 🎓 Слово выучено!',
@@ -631,7 +631,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
   letters:['Letters','Like chev.me: letter → transliteration, 15 questions'],
   writing:['Handwriting','Draw letters with finger or mouse: trace first, then from memory. Print and handwritten'],review:['Review','Learned words at 1-3-7-14-30 day intervals']},
  newWord:'New word',know:'I know it',next:'Continue ⏎',pickMeaning:'Choose the translation',findHy:'Find the Armenian word',howRead:'How is this word read?',
- whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of 3',
+ whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of 3',buildKbd:'You can type: Armenian layout, or by sound in Latin/Cyrillic (t → տ or թ — the right one is picked)',
  writeHy:'Write it in Armenian',writeTr:'Write from the transcription',hintTr:'Transcription',hintTrs:'Show transcriptions',hintMean:'Translation',listen:'🔊 Listen',
  dontKnow:"I don't know",plusLetter:'+ Letter',check:'Check',space:'space',erase:'⌫ delete',
  praise:['Great!','Correct!','Keep it up!','Awesome!','Nice!'],wrong:'Incorrect',youWrote:'You wrote:',correct:'Correct:',learnedNow:' 🎓 Word learned!',
@@ -739,6 +739,14 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function units(s){const out=[];for(let i=0;i<s.length;i++){const c=s[i];if(c===' ')continue;if(c==='ո'&&s[i+1]==='ւ'){out.push('ու');i++;}else out.push(c);}return out;}
 const norm=s=>s.toLowerCase().replace(/և/g,'եվ').replace(/\s+/g,' ').trim();
 const isHy=ch=>/^[Ա-և]$/.test(ch);
+const PHON={
+ a:['ա'],b:['բ'],g:['գ','ղ'],d:['դ','ձ','ջ'],e:['ե','է','և','ը'],z:['զ','ժ','ձ'],i:['ի'],l:['լ'],x:['խ'],k:['կ','ք','խ'],h:['հ','խ'],
+ m:['մ'],y:['յ','ը','ե'],n:['ն'],s:['ս','շ'],o:['ո','օ','ու'],c:['ց','ծ','չ','ճ'],p:['պ','փ'],j:['ջ','ժ'],r:['ր','ռ'],v:['վ','ո','և'],
+ t:['տ','թ','ծ','ց'],u:['ու'],w:['ու','վ'],f:['ֆ'],q:['ք'],
+ 'а':['ա'],'б':['բ'],'в':['վ','ո','և'],'г':['գ','ղ'],'д':['դ','ձ','ջ'],'е':['ե','է','և'],'ё':['ե'],'ж':['ժ'],'з':['զ','ձ'],'и':['ի'],'й':['յ'],
+ 'к':['կ','ք'],'л':['լ'],'м':['մ'],'н':['ն'],'о':['ո','օ','ու'],'п':['պ','փ'],'р':['ր','ռ'],'с':['ս'],'т':['տ','թ'],'у':['ու'],'ф':['ֆ'],
+ 'х':['խ','հ'],'ц':['ց','ծ'],'ч':['չ','ճ'],'ш':['շ'],'щ':['շ'],'ы':['ը'],'э':['է','ե'],'ю':['յ'],'я':['յ']
+};
 
 /* ================= AUDIO ================= */
 let hyVoice=null;
@@ -1015,7 +1023,8 @@ function rSession(){
     <div class="prompt" style="padding-bottom:6px"><div class="big">${esc(MEAN(w))}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}</div></div>
     <div class="slots">${parts.map(part=>`<div class="slot-word">${part.map(()=>{const u=p.placed[k++];return `<div class="slot ${u?'filled':''}">${u?esc(u):''}</div>`;}).join('')}</div>`).join('')}</div>
     <div class="tiles">${p.tiles.map((x,i)=>`<button class="tile ${x.used?'used':''} ${x.bad?'shake':''}" onclick="A.tile(${i})">${esc(x.u)}</button>`).join('')}</div>
-    <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist)}</p>`;
+    <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist)}</p>
+    <p class="muted" style="text-align:center;font-size:13px;margin-top:-6px">⌨️ ${t('buildKbd')}</p>`;
   }
   else if(tk.t==='write'||tk.t==='dict'){
     const isD=tk.t==='dict';
@@ -1259,12 +1268,16 @@ window.addEventListener('keydown',e=>{
   if(fb||tk.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
   if(['wt','tw','read','L1','L2'].includes(tk.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
   if(tk.t==='build'){
-    const k=e.key.toLowerCase();if(!isHy(k)||k==='ւ')return;
-    const p=prep(tk),exp=p.units[p.placed.length];
-    let i=p.tiles.findIndex(x=>!x.used&&x.u===k);
-    if(k==='ո'&&exp==='ու')i=p.tiles.findIndex(x=>!x.used&&x.u==='ու');
-    if(i<0)i=p.tiles.findIndex(x=>!x.used&&x.u.startsWith(k));
-    if(i<0)i=p.tiles.findIndex(x=>!x.used&&x.u!==exp);
+    if(e.key.length!==1||e.key===' ')return;
+    const k=e.key.toLowerCase();
+    let cands;
+    if(isHy(k)){if(k==='ւ')return;cands=k==='ո'?['ու','ո']:[k];}
+    else{cands=PHON[k];if(!cands)return;}
+    e.preventDefault();
+    const p=prep(tk),exp=p.units[p.placed.length],free=x=>!x.used;
+    let i=cands.includes(exp)?p.tiles.findIndex(x=>free(x)&&x.u===exp):-1;
+    if(i<0)i=p.tiles.findIndex(x=>free(x)&&cands.includes(x.u));
+    if(i<0)i=p.tiles.findIndex(x=>free(x)&&x.u!==exp);
     if(i>=0)A.tile(i);
     return;
   }
