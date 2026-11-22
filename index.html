@@ -212,6 +212,9 @@ kbd{display:none;font:600 11px system-ui;border:1px solid var(--line);border-bot
 .wprompt .glyph{font:600 46px var(--hy)}
 .wprompt .snd{font-size:30px;font-weight:700}
 .wprompt .case{font-size:14px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 10px}
+.flt{display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.flt>.muted{font-size:12px}
+.flt .chip{padding:4px 10px;font-size:13px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:20;font-size:14px;max-width:90%;text-align:center}
 </style>
 </head>
@@ -638,7 +641,17 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  lsetCount:'Выбрано: {0}',lsetNone:'Ничего не выбрано — тест будет по всем 39 буквам',lsetStart:'▶ Начать ({0})',lsetStartAll:'▶ Начать — все буквы',
  lsetNext:'+ 5 следующих',nextTap:'Нажми на букву, чтобы добавить её в тест',trainPicked:'▶ Учить выбранные ({0})',
  dailyT:'Урок дня',dailyD:'Повторение, новые буквы и новые слова — одной кнопкой',dailyDone:'✅ Сегодня пройден — можно ещё раз',
- dailyRev:'🔁 повторить: {0}',dailyLet:'Աա букв: {0}',dailyNew:'🆕 слов: {0}',dailyMin:'≈{0} мин',dailyEmpty:'Пока нечего проходить: выучи буквы во вкладке «Алфавит»'},
+ dailyRev:'🔁 повторить: {0}',dailyLet:'Աա букв: {0}',dailyNew:'🆕 слов: {0}',dailyMin:'≈{0} мин',dailyEmpty:'Пока нечего проходить: выучи буквы во вкладке «Алфавит»',
+ loading:'Загружаю словарь…',loadFail:'Не получилось загрузить словарь (words.json).',
+ loadHintFile:'Файл открыт напрямую с диска — так браузер не даёт загрузить words.json. Запусти локальный сервер в папке приложения:',loadHintFile2:'и открой http://localhost:8000',
+ loadHintNet:'Проверь интернет и обнови страницу.',retry:'Обновить',
+ lvlAll:'Все',lvlTop:'Топ {0}',posAll:'Все',
+ posF:{noun:'Сущ.',verb:'Глаголы',adj:'Прил.',adv:'Наречия',pron:'Местоим.',func:'Служебные'},
+ posN:{noun:'сущ.',verb:'глагол',adj:'прил.',adv:'наречие',pron:'местоим.',num:'числит.',adp:'предлог',conj:'союз',part:'частица',intj:'междом.'},
+ fLevel:'Уровень',fPos:'Часть речи',sortBy:'Сортировка',sortRank:'По частоте',sortAz:'А–Я',sortTopic:'По темам',
+ f_avail:'🔓 Доступные',shown:'Показано {0} из {1}',showMore:'Показать ещё',
+ orderT:'Порядок новых слов',orderFreq:'По частоте',orderTopic:'По темам',
+ levelsT:'Частотный словарь',levelRow:'Топ {0}',levelLearned:'{0} / {1} выучено'},
 en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
  themes:'Topics',all:'All',exercises:'Exercises',dict:'Dictionary',alphabet:'Alphabet',lettersN:'letters',
  foot:'A word counts as learned once you pass it in all five exercises (Word→translation, Translation→word, Reading, Builder, Writing). After that it moves to Review.',
@@ -680,16 +693,26 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  lsetCount:'Selected: {0}',lsetNone:'Nothing selected — the quiz will use all 39 letters',lsetStart:'▶ Start ({0})',lsetStartAll:'▶ Start — all letters',
  lsetNext:'+ next 5',nextTap:'Tap a letter to add it to the quiz',trainPicked:'▶ Train selected ({0})',
  dailyT:'Daily lesson',dailyD:'Review, new letters and new words — in one tap',dailyDone:'✅ Done today — you can go again',
- dailyRev:'🔁 review: {0}',dailyLet:'Աա letters: {0}',dailyNew:'🆕 words: {0}',dailyMin:'≈{0} min',dailyEmpty:'Nothing to do yet: learn some letters in the Alphabet tab'}
+ dailyRev:'🔁 review: {0}',dailyLet:'Աա letters: {0}',dailyNew:'🆕 words: {0}',dailyMin:'≈{0} min',dailyEmpty:'Nothing to do yet: learn some letters in the Alphabet tab',
+ loading:'Loading the dictionary…',loadFail:'Could not load the dictionary (words.json).',
+ loadHintFile:'The file is opened straight from disk, and the browser does not allow loading words.json that way. Start a local server in the app folder:',loadHintFile2:'and open http://localhost:8000',
+ loadHintNet:'Check your connection and reload the page.',retry:'Reload',
+ lvlAll:'All',lvlTop:'Top {0}',posAll:'All',
+ posF:{noun:'Nouns',verb:'Verbs',adj:'Adjectives',adv:'Adverbs',pron:'Pronouns',func:'Function words'},
+ posN:{noun:'noun',verb:'verb',adj:'adj.',adv:'adverb',pron:'pronoun',num:'numeral',adp:'adposition',conj:'conj.',part:'particle',intj:'interj.'},
+ fLevel:'Level',fPos:'Part of speech',sortBy:'Sort',sortRank:'By frequency',sortAz:'A–Z',sortTopic:'By topic',
+ f_avail:'🔓 Available',shown:'Showing {0} of {1}',showMore:'Show more',
+ orderT:'Order of new words',orderFreq:'By frequency',orderTopic:'By topic',
+ levelsT:'Frequency dictionary',levelRow:'Top {0}',levelLearned:'{0} / {1} learned'}
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.2';
+const APP_VERSION='0.5.3';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
 const MY='Мои слова';
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null};}
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all'};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
 if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
@@ -706,16 +729,45 @@ function cyr2lat(s){
   return s.replace(/гх/g,'gh').replace(/дж/g,'j').replace(/[а-яё]/g,c=>M[c]??c);
 }
 
-const BASE=[],THEMES=[];
+/* The dictionary has two sources:
+   1) RAW above — the old built-in list with topics (~330 words);
+   2) words.json — the 2000-word frequency dictionary (loaded with fetch() on startup).
+   They are merged into BASE by mergeWords() once words.json has loaded. */
+const BASE=[],THEMES=[],RAWLIST=[];
+
+// topic for words.json words that are not in RAW
+const OTHER='Другие слова';
+// part of speech for the RAW words that are not in words.json (they have no rank)
+const RAW_POS=(()=>{const m={},add=(p,s)=>s.split(' ').forEach(w=>m[w]=p);
+  add('intj','բարև խնդրեմ ցտեսություն երանի');
+  add('num','ինը տաս');
+  add('pron','նրան իրեն');
+  add('verb','կա արա արի եկ տուր կեր վաճառել');
+  add('adj','դեղին համեղ կեղտոտ տկար մանր հիմար');
+  add('noun','տատիկ պապիկ պանիր ծիրան նուռ խաղող լոլիկ վարունգ կարտոֆիլ սուրճ թեյ աղ շաքար խոհանոց գրիչ կանգառ կատու թռչուն արջ գայլ մուկ ընկերուհի լավաշ մածուն խորոված կերակուր աղցան կարագ բրինձ մեղր ընկույզ սեխ ձմերուկ տանձ կաղամբ սոխ սխտոր օղի աման օդանավ տաքսի արմատ տառ աշակերտ համակարգիչ');
+  m['բարի լույս']=m['բարի գիշեր']='intj';
+  return m;})();
 (function parse(){
   let th=null;
   RAW.trim().split('\n').forEach(line=>{
     line=line.trim();if(!line)return;
     if(line.startsWith('#')){const [ru,en]=line.slice(1).split('|').map(x=>x.trim());th=THEMES.find(x=>x.id===ru)||{id:ru,ru,en};if(!THEMES.includes(th))THEMES.push(th);return;}
     const [hy,ru,en,trRu]=line.split('|').map(x=>x.trim());
-    BASE.push({id:hy,hy,ru,en,trRu,trEn:cyr2lat(trRu),th:th.id});
+    RAWLIST.push({id:hy,hy,ru,en,trRu,trEn:cyr2lat(trRu),th:th.id,pos:RAW_POS[hy]});
   });
 })();
+THEMES.push({id:OTHER,ru:'Другие слова',en:'Other words'});
+let READY=false,LOAD_ERR=null;
+// word in both lists: translation + transcription from words.json, topic from RAW
+function mergeWords(json){
+  const J=new Map(json.words.map(w=>[w.id,w]));
+  const fromJ=(j,th)=>({id:j.id,hy:j.hy,ru:j.ru,en:j.en,trRu:j.translit.ru,trEn:j.translit.en,th,pos:j.pos,rank:j.rank,level:j.level});
+  BASE.length=0;
+  RAWLIST.forEach(r=>{const j=J.get(r.id);if(j){BASE.push(fromJ(j,r.th));J.delete(r.id);}else BASE.push(r);});
+  json.words.forEach(j=>{if(J.has(j.id))BASE.push(fromJ(j,OTHER));});
+  BASE.forEach((w,i)=>{w.i=i;w.us=[...new Set(units(w.hy))];});
+  dirty();
+}
 const themeName=id=>{if(id===MY)return t('myWords');const x=THEMES.find(z=>z.id===id);return x?x[S.lang]||x.ru:id;};
 function translit(hy,lang){
   let out='';const s=hy.toLowerCase();const map=Object.fromEntries(ABC.map(a=>[a[0],baseSnd(lang==='en'?a[3]:a[2])]));
@@ -728,8 +780,31 @@ function translit(hy,lang){
   }
   return out;
 }
-function allWords(){return BASE.concat(S.custom.map(c=>{const m=c.m||c.ru||'';
-  return {id:c.id,hy:c.hy,ru:m,en:m,trRu:c.tr||translit(c.hy,'ru'),trEn:c.tr||translit(c.hy,'en'),th:MY,custom:true};}));}
+/* All words = BASE + "My words". The list is built once and cached in ALL;
+   call dirty() after anything that changes S.custom (add, delete, import). */
+let ALL=null,ALLV=0;
+const MEMO=new Map();
+function dirty(){ALL=null;ALLV++;MEMO.clear();}
+function allWords(){
+  if(ALL)return ALL;
+  const ids=new Set(BASE.map(w=>w.id));
+  // an own word that is now in the built-in dictionary is shown once (the built-in one); it stays in S.custom
+  const mine=S.custom.filter(c=>!ids.has(c.id)).map((c,k)=>{const m=c.m||c.ru||'';
+    return {id:c.id,hy:c.hy,ru:m,en:m,trRu:c.tr||translit(c.hy,'ru'),trEn:c.tr||translit(c.hy,'en'),th:MY,custom:true,i:BASE.length+k,us:[...new Set(units(c.hy))]};});
+  ALL=BASE.concat(mine);
+  WMAP=new Map(ALL.map(w=>[w.id,w]));
+  return ALL;
+}
+let WMAP=new Map();
+// remember the result of fn() until the key changes (letters, filters, word list)
+function memo(name,key,fn){const k=name+'|'+ALLV+'|'+key;if(!MEMO.has(k)){if(MEMO.size>60)MEMO.clear();MEMO.set(k,fn());}return MEMO.get(k);}
+/* Filters: level (top 500/1000/1500/2000, 0 = all) and part of speech */
+const LEVELS=[500,1000,1500,2000];
+const POSF=['noun','verb','adj','adv','pron','func'];
+const FUNC=new Set(['adp','conj','part','intj','num']);
+const posGroup=p=>FUNC.has(p)?'func':p;
+const passLvl=(w,lv)=>!lv||(w.rank>0&&w.rank<=lv);
+const passPos=(w,pf)=>!pf||pf==='all'||posGroup(w.pos)===pf;
 const TR_=w=>S.lang==='en'?w.trEn:w.trRu;
 const MEAN=w=>S.lang==='en'?w.en:w.ru;
 function themesAll(){const ids=THEMES.map(x=>x.id);return S.custom.length?ids.concat(MY):ids;}
@@ -741,15 +816,25 @@ const isHand=sc=>(sc||S.script)==='hand';
 const lkey=(l,sc)=>isHand(sc)?'h:'+l:l;
 const knownList=sc=>isHand(sc)?S.hknown:S.known;
 const gcls=sc=>isHand(sc)?'cur':'hy';
-function missing(w,K){K=K||knownSet();return [...new Set(units(w.hy))].filter(u=>!K.has(u));}
-function wordOK(w,K){return missing(w,K).length===0;}
-function themed(){const th=S.themes;return allWords().filter(w=>!th.length||th.includes(w.th));}
-function pool(){const K=knownSet();return themed().filter(w=>!S.onlyKnown||wordOK(w,K));}
+function missing(w,K){K=K||knownSet();return (w.us||[...new Set(units(w.hy))]).filter(u=>!K.has(u));}
+function wordOK(w,K){K=K||knownSet();return (w.us||units(w.hy)).every(u=>K.has(u));}
+const knownKey=()=>S.known.slice().sort().join('');
+const filtKey=()=>S.themes.join(',')+'|'+S.lvlF+'|'+S.posF;
+// words that pass the practice filters (topics on the home screen + level + part of speech)
+function themed(){return memo('themed',filtKey(),()=>{const th=S.themes;
+  return allWords().filter(w=>(!th.length||th.includes(w.th))&&passLvl(w,S.lvlF)&&passPos(w,S.posF));});}
+// ...and, if "only learned letters" is on, made of learned letters
+function pool(){return memo('pool',filtKey()+'|'+S.onlyKnown+'|'+knownKey(),()=>{const K=knownSet();return themed().filter(w=>!S.onlyKnown||wordOK(w,K));});}
+// all words made of learned letters, ignoring filters (used for answer options)
+function okAll(){return memo('okAll',knownKey(),()=>{const K=knownSet();return allWords().filter(w=>wordOK(w,K));});}
+// letters that unlock the most words within the current filters (words missing exactly this one letter)
 function nextLetters(n){
-  const K=knownSet(),cnt={};
-  themed().forEach(w=>{const m=missing(w,K);if(m.length===1)cnt[m[0]]=(cnt[m[0]]||0)+1;});
-  const unk=FREQ.filter(l=>!K.has(l));
-  return unk.map(l=>({l,n:cnt[l]||0})).sort((a,b)=>b.n-a.n||FREQ.indexOf(a.l)-FREQ.indexOf(b.l)).slice(0,n);
+  const all=memo('next',filtKey()+'|'+knownKey(),()=>{
+    const K=knownSet(),cnt={};
+    themed().forEach(w=>{const m=missing(w,K);if(m.length===1)cnt[m[0]]=(cnt[m[0]]||0)+1;});
+    return FREQ.filter(l=>!K.has(l)).map(l=>({l,n:cnt[l]||0})).sort((a,b)=>b.n-a.n||FREQ.indexOf(a.l)-FREQ.indexOf(b.l));
+  });
+  return all.slice(0,n);
 }
 function isDue(w){const s=peek(w.id);return s.lvl>0&&s.next<=Date.now();}
 function due(){return allWords().filter(isDue).sort((a,b)=>peek(a.id).next-peek(b.id).next);}
@@ -785,13 +870,18 @@ const trName=k=>L().tr[k][0], trDesc=k=>L().tr[k][1];
 function learningOrder(list){
   return list.map((w,i)=>({w,i,n:FLAGS.filter(f=>peek(w.id).f[f]).length})).sort((a,b)=>b.n-a.n||a.i-b.i).map(x=>x.w);
 }
+// order of new words: "freq" = lowest rank first (words without rank after them), "topic" = dictionary order
+function newOrder(list){
+  if(S.order==='topic')return list;
+  return list.slice().sort((a,b)=>(a.rank||1e9)-(b.rank||1e9)||a.i-b.i);
+}
 function pickFor(flag,n){
   const p=pool();
-  let c=learningOrder(p.filter(w=>peek(w.id).lvl===0&&!peek(w.id).f[flag])).slice(0,n);
+  let c=learningOrder(newOrder(p.filter(w=>peek(w.id).lvl===0&&!peek(w.id).f[flag]))).slice(0,n);
   if(c.length<n){const rest=shuffle(p.filter(w=>!c.includes(w)&&(peek(w.id).lvl>0||FLAGS.some(f=>peek(w.id).f[f]))));c=c.concat(rest.slice(0,n-c.length));}
   return c;
 }
-function pickNew(n){return learningOrder(pool().filter(w=>peek(w.id).lvl===0)).slice(0,n);}
+function pickNew(n){return learningOrder(newOrder(pool().filter(w=>peek(w.id).lvl===0))).slice(0,n);}
 function pickPractice(n){
   const p=pool();let c=shuffle(p.filter(w=>status(w)!=='new')).slice(0,n);
   if(c.length<n)c=c.concat(p.filter(w=>status(w)==='new').slice(0,n-c.length));
@@ -806,12 +896,15 @@ function available(k){
   if(k==='letters'||k==='writing')return lettersOn().length;
   return p.length;
 }
+// answer options: the word + k-1 others; same part of speech first, then same topic, then any
 function options(w,fn,k){
   let all=allWords();
-  if(S.onlyKnown){const K=knownSet(),ok=all.filter(x=>wordOK(x,K));if(ok.length>=k*2)all=ok;}
-  const same=shuffle(all.filter(x=>x.th===w.th)),other=shuffle(all.filter(x=>x.th!==w.th));
+  if(S.onlyKnown){const ok=okAll();if(ok.length>=k*2)all=ok;}
+  const topic=w.th!==OTHER&&w.th!==MY?w.th:null;
+  const score=x=>(w.pos&&x.pos===w.pos?2:0)+(topic&&x.th===topic?1:0);
+  const groups=[[],[],[],[]];all.forEach(x=>{if(x!==w)groups[3-score(x)].push(x);});
   const seen=new Set([fn(w)]),out=[w];
-  for(const x of same.concat(other)){if(out.length>=k)break;if(seen.has(fn(x)))continue;seen.add(fn(x));out.push(x);}
+  for(const g of groups){for(const x of shuffle(g)){if(out.length>=k)break;if(seen.has(fn(x)))continue;seen.add(fn(x));out.push(x);}if(out.length>=k)break;}
   return shuffle(out);
 }
 function letterOptions(a,k){
@@ -820,7 +913,7 @@ function letterOptions(a,k){
   return shuffle(out);
 }
 
-let screen='home',ses=null,fb=null,dictQ='',dictF='all';
+let screen='home',ses=null,fb=null,dictQ='',dictF='all',dictLvl=0,dictPos='all',dictSort='rank',dictN=100;
 
 /* Daily lesson: review that is due + the letters that unlock the most words + a few new words */
 function dailyPlan(){
@@ -954,9 +1047,19 @@ function navHtml(){
   return `<nav>${b('home','🏋️',t('exercises'))}${b('dict','📖',t('dict'))}${b('abc','Աա',t('alphabet'))}</nav>`;
 }
 function topBar(title,sub,extra){return `<div class="top"><div class="logo">${title}<small>${sub}</small></div><div style="display:flex;gap:8px">${extra||''}${langBtn()}</div></div>`;}
+function loadScreen(){
+  if(!LOAD_ERR)return `${topBar('Բառեր',t('appSub'))}<div class="card" style="text-align:center;padding:40px 16px"><div class="hy" style="font-size:40px">Ա</div><p class="muted">${t('loading')}</p></div>`;
+  const file=location.protocol==='file:';
+  return `${topBar('Բառեր',t('appSub'))}<div class="card cta"><b>${t('loadFail')}</b>
+    <p class="muted">${file?t('loadHintFile'):t('loadHintNet')}</p>
+    ${file?`<pre style="background:var(--bg);padding:10px;border-radius:10px;overflow:auto">python3 -m http.server</pre><p class="muted">${t('loadHintFile2')}</p>`:''}
+    <p class="muted" style="font-size:12px">${esc(LOAD_ERR)}</p>
+    <button class="btn" style="width:100%" onclick="location.reload()">${t('retry')}</button></div>`;
+}
 function render(){
   document.documentElement.lang=S.lang;
   document.querySelectorAll('.fb').forEach(e=>e.remove());
+  if(!READY){$app.innerHTML=loadScreen();return;}
   if(screen==='home')rHome();
   else if(screen==='dict')rDict();
   else if(screen==='abc')rAbc();
@@ -1006,11 +1109,13 @@ function rHome(){
   </div>
   ${dailyCard()}
   ${lettersCard()}
+  ${levelsCard()}
   <h2>${t('themes')}</h2>
   <div class="chips">
     <button class="chip ${S.themes.length?'':'on'}" onclick="A.theme('')">${t('all')}<em>${all.length}</em></button>
     ${themesAll().map(th=>`<button class="chip ${S.themes.includes(th)?'on':''}" onclick="A.theme('${esc(th)}')">${esc(themeName(th))}<em>${tc(th)}</em></button>`).join('')}
   </div>
+  ${filterChips(S.lvlF,S.posF,'A.lvl','A.pos')}
   <h2>${t('exercises')}</h2>
   <div class="grid">
     ${TR.map((x,i)=>{const n=available(x.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="${x.k==='letters'?"A.go('lsetup')":`A.start('${x.k}')`}">
@@ -1019,6 +1124,21 @@ function rHome(){
   <p class="muted" style="margin-top:16px">${t('foot')}</p>
   <a class="ver" href="https://github.com/OlegEgorychev/armenian-words/blob/main/CHANGELOG.md" target="_blank" rel="noopener">v${APP_VERSION}</a>
   ${navHtml()}`;
+}
+// chips for level + part of speech; used on the home screen (practice) and in the dictionary
+function filterChips(lv,pf,onLvl,onPos){
+  const c=(on,js,label)=>`<button class="chip ${on?'on':''}" onclick="${js}">${label}</button>`;
+  return `<div class="flt"><span class="muted">${t('fLevel')}</span><div class="chips">${LEVELS.map(n=>c(lv===n,`${onLvl}(${n})`,t('lvlTop',n))).join('')}${c(!lv,`${onLvl}(0)`,t('lvlAll'))}</div></div>
+  <div class="flt"><span class="muted">${t('fPos')}</span><div class="chips">${c(pf==='all',`${onPos}('all')`,t('posAll'))}${POSF.map(k=>c(pf===k,`${onPos}('${k}')`,L().posF[k])).join('')}</div></div>`;
+}
+// "Top 500: 37 / 500 learned" for every level
+function levelsCard(){
+  const learned=LEVELS.map(()=>0),total=LEVELS.map(()=>0);
+  BASE.forEach(w=>{if(!w.rank)return;const on=peek(w.id).lvl>0;LEVELS.forEach((n,i)=>{if(w.rank<=n){total[i]++;if(on)learned[i]++;}});});
+  return `<div class="card"><h3 style="margin:0 0 10px;font-size:17px">${t('levelsT')}</h3>
+    ${LEVELS.map((n,i)=>`<div class="lp"><div class="lp-head"><b>${t('levelRow',n)}</b><span class="muted">${t('levelLearned',learned[i],total[i])}</span></div>
+    <div class="lp-bar"><i class="kn" style="width:${total[i]?learned[i]/total[i]*100:0}%"></i></div></div>`).join('')}
+  </div>`;
 }
 function dailyCard(){
   const d=dailyPlan(),done=S.dailyDone===today(),empty=!d.tasks;
@@ -1202,10 +1322,13 @@ function rDict(){
       <button class="btn" onclick="A.add()">${t('add')}</button>
     </div></details>
   <input class="search" placeholder="${esc(t('search'))}" value="${esc(dictQ)}" oninput="A.q(this.value)">
-  <div class="chips" style="margin-bottom:8px">${['all','new','learning','learned','due'].map(k=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${t('f_'+k)}</button>`).join('')}</div>
+  <div class="chips" style="margin-bottom:8px">${['all','avail','new','learning','learned','due'].map(k=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${t('f_'+k)}</button>`).join('')}</div>
+  ${filterChips(dictLvl,dictPos,'A.dlvl','A.dpos')}
+  <div class="flt" style="margin-bottom:8px"><span class="muted">${t('sortBy')}</span><div class="seg" style="align-self:flex-start">${[['rank','sortRank'],['alpha','sortAz'],['topic','sortTopic']].map(([k,l])=>`<button class="${dictSort===k?'on':''}" onclick="A.dsort('${k}')">${t(l)}</button>`).join('')}</div></div>
   <div id="dlist"></div>
   <details class="card" style="margin-top:20px"><summary>${t('settings')}</summary>
     <div class="form" style="margin-top:12px">
+      <div class="muted">${t('orderT')}<div class="seg" style="margin-left:8px;vertical-align:middle"><button class="${S.order!=='topic'?'on':''}" onclick="A.order('freq')">${t('orderFreq')}</button><button class="${S.order==='topic'?'on':''}" onclick="A.order('topic')">${t('orderTopic')}</button></div></div>
       <label class="muted">${t('goalXp')} <input type="number" min="5" max="500" value="${S.goal}" onchange="A.goal(this.value)" style="width:90px;margin-left:8px"></label>
       <button class="btn ghost" onclick="A.exp()">${t('exportB')}</button>
       <label class="btn ghost" style="text-align:center">${t('importF')}<input type="file" accept=".json" style="display:none" onchange="A.imp(this)"></label>
@@ -1217,19 +1340,34 @@ function rDict(){
   ${navHtml()}`;
   rList();
 }
+const themeIdx=th=>{if(th===MY)return 999;const i=THEMES.findIndex(x=>x.id===th);return i<0?998:i;};
+const byRank=(a,b)=>(a.rank||1e9)-(b.rank||1e9)||a.i-b.i;
+function dictList(){
+  const q=dictQ.toLowerCase().trim(),K=knownSet();
+  const list=allWords().filter(w=>passLvl(w,dictLvl)&&passPos(w,dictPos)
+    &&(dictF==='all'||(dictF==='avail'?wordOK(w,K):(status(w)===dictF||(dictF==='learned'&&status(w)==='due'))))
+    &&(!q||w.hy.includes(q)||MEAN(w).toLowerCase().includes(q)||TR_(w).toLowerCase().includes(q)));
+  if(dictSort==='alpha')list.sort((a,b)=>a.hy.localeCompare(b.hy,'hy'));
+  else if(dictSort==='topic')list.sort((a,b)=>themeIdx(a.th)-themeIdx(b.th)||byRank(a,b));
+  else list.sort(byRank);
+  return list;
+}
+// "verb · #12"
+function posRank(w){return [w.pos?L().posN[w.pos]:'',w.rank?'#'+w.rank:''].filter(Boolean).join(' · ');}
 function rList(){
-  const q=dictQ.toLowerCase().trim();
-  const list=allWords().filter(w=>(dictF==='all'||status(w)===dictF||(dictF==='learned'&&status(w)==='due'))&&(!q||w.hy.includes(q)||MEAN(w).toLowerCase().includes(q)||TR_(w).toLowerCase().includes(q)));
   const el=document.getElementById('dlist');if(!el)return;
+  const all=dictList(),list=all.slice(0,dictN);
   const K=knownSet();
-  el.innerHTML=list.length?list.map(w=>{const s=peek(w.id),stt=status(w);
+  el.innerHTML=`<p class="muted" style="margin:4px 2px">${t('shown',list.length,all.length)}</p>`+(list.length?list.map(w=>{const s=peek(w.id),stt=status(w);
     const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${stt==='due'?t('dueBadge'):t('lvl')+' '+s.lvl}</span>`:dots(s);
     const ms=S.onlyKnown?missing(w,K):[];
-    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))} · ${esc(themeName(w.th))}</small>${ms.length?`<div class="lock">${t('needs')} <span class="hy">${ms.map(esc).join(' ')}</span></div>`:''}</div>${right}
+    const meta=[w.th===OTHER?'':themeName(w.th),posRank(w)].filter(Boolean).join(' · ');
+    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))}${meta?' · '+esc(meta):''}</small>${ms.length?`<div class="lock">${t('needs')} <span class="hy">${ms.map(esc).join(' ')}</span></div>`:''}</div>${right}
     ${hyVoice?`<button class="icon" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}
     <button class="icon" title="${esc(t('resetT'))}" onclick="A.reset('${esc(w.id)}')">↺</button>
     ${w.custom?`<button class="icon" title="${esc(t('delT'))}" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
-    :`<p class="muted">${t('nothing')}</p>`;
+    +(all.length>list.length?`<button class="btn ghost" style="width:100%;margin-top:12px" onclick="A.more()">${t('showMore')}</button>`:'')
+    :`<p class="muted">${t('nothing')}</p>`);
 }
 function rLetSetup(){
   const sel=new Set(S.sel),K=new Set(knownList()),hand=isHand();
@@ -1270,7 +1408,7 @@ function rAbc(){
 /* ================= ACTIONS ================= */
 let armed=null;
 function twice(k,msg){if(armed&&armed.k===k&&Date.now()-armed.t<4000){armed=null;return true;}armed={k,t:Date.now()};toast(msg);return false;}
-function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});save();toast(t('loaded'));render();}
+function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});dirty();save();toast(t('loaded'));render();}
 const A={
   go(s){screen=s;if(s!=='session')ses=null;fb=null;render();window.scrollTo(0,0);},
   start(k){start(k);window.scrollTo(0,0);},
@@ -1301,16 +1439,23 @@ const A={
   },
   check(){const tk=cur(),p=prep(tk);if(fb||!p.typed.trim())return;answer(norm(p.typed)===norm(tk.w.hy)&&p.hints===0,{typed:p.typed});},
   giveup(){if(fb)return;answer(false,{typed:''});},
-  q(v){dictQ=v;rList();},
-  f(k){dictF=k;render();},
+  q(v){dictQ=v;dictN=100;rList();},
+  f(k){dictF=k;dictN=100;render();},
+  dlvl(v){dictLvl=v;dictN=100;render();},
+  dpos(v){dictPos=v;dictN=100;render();},
+  dsort(v){dictSort=v;dictN=100;render();},
+  more(){dictN+=200;rList();},
+  lvl(v){S.lvlF=v;save();render();},
+  pos(v){S.posF=v;save();render();},
+  order(v){S.order=v;save();render();},
   add(){
     const hy=document.getElementById('f-hy').value.trim().toLowerCase(),m=document.getElementById('f-ru').value.trim(),tr=document.getElementById('f-tr').value.trim();
     if(!hy||!m)return toast(t('fillBoth'));
     if(!/^[Ա-և\s]+$/.test(hy))return toast(t('onlyHy'));
     if(allWords().some(w=>w.id===hy))return toast(t('exists'));
-    S.custom.push({id:hy,hy,m,tr});save();toast(t('added'));render();
+    S.custom.push({id:hy,hy,m,tr});dirty();save();toast(t('added'));render();
   },
-  del(id){if(!twice('del'+id,t('delAgain')))return;S.custom=S.custom.filter(c=>c.id!==id);delete S.w[id];if(!S.custom.length)S.themes=S.themes.filter(x=>x!==MY);save();render();},
+  del(id){if(!twice('del'+id,t('delAgain')))return;S.custom=S.custom.filter(c=>c.id!==id);dirty();delete S.w[id];if(!S.custom.length)S.themes=S.themes.filter(x=>x!==MY);save();render();},
   reset(id){delete S.w[id];save();rList();toast(t('wordReset'));},
   resetAll(){if(!twice('reset',t('resetAgain')))return;S.w={};S.xp={};S.letters={};save();render();},
   goal(v){S.goal=Math.max(5,Math.min(500,parseInt(v)||30));save();},
@@ -1368,7 +1513,16 @@ window.addEventListener('keydown',e=>{
     if(e.key.length===1&&isHy(e.key.toLowerCase())){e.preventDefault();A.key(e.key.toLowerCase());}
   }
 },true);
-render();
+/* ================= START ================= */
+// load words.json, merge it with RAW, then draw the app
+function boot(){
+  render();
+  fetch('words.json',{cache:'no-cache'})
+    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(j=>{mergeWords(j);READY=true;render();})
+    .catch(e=>{LOAD_ERR=String(e&&e.message||e);render();});
+}
+boot();
 </script>
 </body>
 </html>

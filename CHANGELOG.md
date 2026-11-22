@@ -9,6 +9,21 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.3] — 2026-11-22
+
+### Added
+- **2000-word frequency dictionary.** Words now load from `words.json` (2000 most frequent words, ranked by the UD Armenian-ArmTDP corpus + OpenSubtitles). It is merged with the old built-in list: shared words take the translation and transcription from `words.json` and keep their topic; the 68 old-only words (lavash, khorovats, barev…) stay; the 1736 new words go to the new topic "Other words". 2068 words in total.
+- **New words in frequency order** (the most common words first). Settings → "Order of new words": By frequency (default) / By topic.
+- **Filters: level and part of speech** — on the home screen (they apply to all exercises) and in the dictionary. Level: Top 500 / 1000 / 1500 / 2000 / All. Part of speech: nouns, verbs, adjectives, adverbs, pronouns, function words.
+- Dictionary: part of speech and rank on every word ("verb · #12"), sort by frequency / A–Z / topic, a "🔓 Available" filter (words made of learned letters), the list shows 100 words at a time with "Show more".
+- Home screen: "Frequency dictionary" card with progress for Top 500 / 1000 / 1500 / 2000.
+
+### Changed
+- Wrong answer options now prefer the same part of speech (a verb gets verbs as distractors).
+- The "Learn next" letters are counted within the current filters.
+- Faster on phones: the lists of available words are computed once and reused.
+- If `words.json` cannot be loaded (for example, `index.html` opened directly from disk), the app shows how to start a local server.
+
 ## [0.5.2] — 2026-11-22
 
 ### Added
