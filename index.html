@@ -154,6 +154,19 @@ nav button.on{color:var(--accent);font-weight:700}
 .dots i.on{background:var(--ok)}
 .badge{font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--ok-soft);color:var(--ok);white-space:nowrap}
 .badge.due{background:var(--accent-soft);color:var(--accent)}
+.sb{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-family:system-ui,sans-serif}
+.s-new{background:rgba(140,140,140,.16);color:#7a7a7a}
+.s-learning{background:rgba(52,120,246,.14);color:#3478f6}
+.s-hard{background:rgba(240,130,30,.16);color:#e07010}
+.s-learned{background:rgba(52,168,83,.15);color:#2e9a4c}
+.s-due{background:rgba(240,190,0,.2);color:#b38600}
+.s-mastered{background:rgba(20,110,60,.2);color:#1d8a4a}
+.hard-line{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;padding:10px 14px;border-radius:12px;border:1px solid rgba(240,130,30,.4);background:rgba(240,130,30,.08);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.hard-line span{color:#e07010}
+.aside{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.aside button{border:1px solid rgba(240,130,30,.5);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:16px;cursor:pointer}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px}
+.ov .card{max-width:420px;width:100%;margin:0}
 
 /* dictionary */
 .search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;margin-bottom:10px}
@@ -614,9 +627,9 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
   read:['Чтение','Как читается слово? Выбери транскрипцию'],build:['Конструктор','Собери слово из букв по порядку'],
   write:['Написание','Напиши слово на армянской клавиатуре'],dict:['Диктант','Пиши по транскрипции — тренирует орфографию'],
   letters:['Буквы','Как на chev.me: буква → транслитерация, 15 вопросов'],
-  writing:['Письмо','Пиши буквы пальцем или мышью: сначала обводка, потом по памяти. Печатные и рукописные'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней']},
+  writing:['Письмо','Пиши буквы пальцем или мышью: сначала обводка, потом по памяти. Печатные и рукописные'],review:['Повторение','Выученные слова по интервалам 1-3-7-14-30 дней'],hard:['Трудные слова','Слова, которые пока не даются: до 10 штук, разные упражнения']},
  newWord:'Новое слово',know:'Уже знаю',next:'Дальше ⏎',pickMeaning:'Выбери перевод',findHy:'Найди слово по-армянски',howRead:'Как читается это слово?',
- whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из 3',buildKbd:'Можно печатать: армянской раскладкой или по звуку кириллицей/латиницей (т → տ или թ — подставится нужная)',
+ whatSound:'Какой это звук?',whichLetter:'Какая буква даёт этот звук?',buildQ:'Собери слово из букв',mistakes:'Ошибок: {0} из {1}',buildKbd:'Можно печатать: армянской раскладкой или по звуку кириллицей/латиницей (т → տ или թ — подставится нужная)',
  writeHy:'Напиши по-армянски',writeTr:'Напиши по транскрипции',hintTr:'Транскрипция',hintTrs:'Показать транскрипции',hintMean:'Перевод',listen:'🔊 Слушать',
  dontKnow:'Не знаю',plusLetter:'+ Буква',check:'Проверить',space:'пробел',erase:'⌫ стереть',
  praise:['Отлично!','Верно!','Так держать!','Супер!','Правильно!'],wrong:'Неправильно',youWrote:'Ты написал:',correct:'Правильно:',learnedNow:' 🎓 Слово выучено!',
@@ -661,7 +674,11 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  fLevel:'Уровень',fPos:'Часть речи',sortBy:'Сортировка',sortRank:'По частоте',sortAz:'А–Я',sortTopic:'По темам',
  f_avail:'🔓 Доступные',shown:'Показано {0} из {1}',showMore:'Показать ещё',
  orderT:'Порядок новых слов',orderFreq:'По частоте',orderTopic:'По темам',
- levelsT:'Частотный словарь',levelRow:'Топ {0}',levelLearned:'{0} / {1} выучено'},
+ levelsT:'Частотный словарь',levelRow:'Топ {0}',levelLearned:'{0} / {1} выучено',
+ sb_new:'Новое',sb_learning:'Учу',sb_hard:'Не выучено',sb_due:'Пора повторить',sb_learned:'Выучено',sb_mastered:'Закреплено',
+ f_hard:'Не выучено',f_mastered:'Закреплено',
+ setAside:'Отложим это слово, вернёмся к нему позже',noHard:'Трудных слов нет 🎉',hardLine:'Не выучено: {0}',hardGo:'Потренировать →',
+ setAsideN:'Отложено',stubborn:'Сегодня слова упрямые. Они вернутся в следующий раз',close:'Закрыть'},
 en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
  themes:'Topics',all:'All',exercises:'Exercises',dict:'Dictionary',alphabet:'Alphabet',lettersN:'letters',
  foot:'A word counts as learned once you pass it in all five exercises (Word→translation, Translation→word, Reading, Builder, Writing). After that it moves to Review.',
@@ -670,9 +687,9 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
   read:['Reading','How is the word read? Pick the transcription'],build:['Builder','Assemble the word letter by letter'],
   write:['Writing','Type the word on the Armenian keyboard'],dict:['Dictation','Write from the transcription — trains spelling'],
   letters:['Letters','Like chev.me: letter → transliteration, 15 questions'],
-  writing:['Handwriting','Draw letters with finger or mouse: trace first, then from memory. Print and handwritten'],review:['Review','Learned words at 1-3-7-14-30 day intervals']},
+  writing:['Handwriting','Draw letters with finger or mouse: trace first, then from memory. Print and handwritten'],review:['Review','Learned words at 1-3-7-14-30 day intervals'],hard:['Tricky words',"Words that won't stick yet: up to 10, mixed exercises"]},
  newWord:'New word',know:'I know it',next:'Continue ⏎',pickMeaning:'Choose the translation',findHy:'Find the Armenian word',howRead:'How is this word read?',
- whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of 3',buildKbd:'You can type: Armenian layout, or by sound in Latin/Cyrillic (t → տ or թ — the right one is picked)',
+ whatSound:'What sound is this?',whichLetter:'Which letter makes this sound?',buildQ:'Build the word from letters',mistakes:'Mistakes: {0} of {1}',buildKbd:'You can type: Armenian layout, or by sound in Latin/Cyrillic (t → տ or թ — the right one is picked)',
  writeHy:'Write it in Armenian',writeTr:'Write from the transcription',hintTr:'Transcription',hintTrs:'Show transcriptions',hintMean:'Translation',listen:'🔊 Listen',
  dontKnow:"I don't know",plusLetter:'+ Letter',check:'Check',space:'space',erase:'⌫ delete',
  praise:['Great!','Correct!','Keep it up!','Awesome!','Nice!'],wrong:'Incorrect',youWrote:'You wrote:',correct:'Correct:',learnedNow:' 🎓 Word learned!',
@@ -717,14 +734,28 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  fLevel:'Level',fPos:'Part of speech',sortBy:'Sort',sortRank:'By frequency',sortAz:'A–Z',sortTopic:'By topic',
  f_avail:'🔓 Available',shown:'Showing {0} of {1}',showMore:'Show more',
  orderT:'Order of new words',orderFreq:'By frequency',orderTopic:'By topic',
- levelsT:'Frequency dictionary',levelRow:'Top {0}',levelLearned:'{0} / {1} learned'}
+ levelsT:'Frequency dictionary',levelRow:'Top {0}',levelLearned:'{0} / {1} learned',
+ sb_new:'New',sb_learning:'Learning',sb_hard:'Struggling',sb_due:'Due',sb_learned:'Learned',sb_mastered:'Mastered',
+ f_hard:'Struggling',f_mastered:'Mastered',
+ setAside:"Let's set this word aside for now",noHard:'No tricky words 🎉',hardLine:'Struggling: {0}',hardGo:'Practice →',
+ setAsideN:'Set aside',stubborn:"These words are stubborn today. They'll be back next time",close:'Close'}
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.8';
+const APP_VERSION='0.5.9';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
+/* Mistake limit and "Struggling" words (see DESIGN_word_status.md). All balance numbers live here. */
+const MISS_PER_TASK = 2;   // mistakes per task (word + exercise type), then the task is removed
+const MISS_PER_WORD = 3;   // mistakes per word across the whole session, then the word is set aside
+const RETRY_GAP     = 3;   // a missed task comes back after this many other tasks
+const BUILD_SLIPS   = 1;   // Builder: wrong letters forgiven before the attempt fails
+const HARD_EXIT     = 2;   // mistake-free sessions in a row that clear "Struggling"
+const HARD_IN_NEW   = 2;   // max Struggling words in one Brainstorm / daily lesson
+const HARD_SHARE    = 0.3; // max share of Struggling words in a single-exercise training
+const HARD_MAX      = 10;  // words in one "Tricky words" training
+const retryXP = x=>Math.floor(x/2);   // XP for a correct answer on a retry
 const MY='Мои слова';
 function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all',u:{}};}
 let S=defaults();
@@ -822,9 +853,22 @@ const passPos=(w,pf)=>!pf||pf==='all'||posGroup(w.pos)===pf;
 const TR_=w=>S.lang==='en'?w.trEn:w.trRu;
 const MEAN=w=>S.lang==='en'?w.en:w.ru;
 function themesAll(){const ids=THEMES.map(x=>x.id);return S.custom.length?ids.concat(MY):ids;}
-function st(id){return S.w[id]||(S.w[id]={f:{},lvl:0,next:0,err:0});}
+// st(id) = the word's record for writing; old records get the new fields here (no migration needed)
+function st(id){const s=S.w[id]||(S.w[id]={f:{},lvl:0,next:0,err:0});
+  if(!s.f)s.f={};
+  if(s.seen===undefined)s.seen=(s.lvl>0||FLAGS.some(f=>s.f[f]))?1:0;
+  if(s.hard===undefined)s.hard=0;
+  if(s.hardAt===undefined)s.hardAt=0;
+  if(s.okSes===undefined)s.okSes=0;
+  return s;}
 function peek(id){return S.w[id]||{f:{},lvl:0,next:0,err:0};}
-function status(w){const s=peek(w.id);if(s.lvl>0)return s.next<=Date.now()?'due':'learned';return FLAGS.some(f=>s.f[f])?'learning':'new';}
+// word status, in priority order: hard → due → mastered → learned → learning → new
+const STATUSES=['new','learning','hard','learned','due','mastered'];
+function status(w){const s=peek(w.id);
+  if(s.hard)return 'hard';
+  if(s.lvl>0){if(s.next<=Date.now())return 'due';return s.lvl>=5?'mastered':'learned';}
+  return (s.seen||FLAGS.some(f=>s.f[f]))?'learning':'new';}
+const sBadge=w=>{const k=status(w);return `<span class="sb s-${k}">${t('sb_'+k)}</span>`;};
 function knownSet(){return new Set(S.known);}
 const isHand=sc=>(sc||S.script)==='hand';
 const lkey=(l,sc)=>isHand(sc)?'h:'+l:l;
@@ -879,7 +923,7 @@ function say(x){if(!hyVoice)return;try{const u=new SpeechSynthesisUtterance(x);u
 const spk=x=>hyVoice?`<button class="tool" onclick="A.say('${esc(x)}')">${t('listen')}</button>`:'';
 
 /* ================= EXERCISES ================= */
-const TR=[{k:'brain',ico:'⚡'},{k:'wt',ico:'🇦🇲'},{k:'tw',ico:'🔎'},{k:'read',ico:'👁'},{k:'build',ico:'🧩'},{k:'write',ico:'✍️'},{k:'dict',ico:'🎧'},{k:'letters',ico:'Աա'},{k:'writing',ico:'🖊️'},{k:'review',ico:'🔁'}];
+const TR=[{k:'brain',ico:'⚡'},{k:'wt',ico:'🇦🇲'},{k:'tw',ico:'🔎'},{k:'read',ico:'👁'},{k:'build',ico:'🧩'},{k:'write',ico:'✍️'},{k:'dict',ico:'🎧'},{k:'letters',ico:'Աա'},{k:'writing',ico:'🖊️'},{k:'review',ico:'🔁'},{k:'hard',ico:'💪'}];
 const trName=k=>L().tr[k][0], trDesc=k=>L().tr[k][1];
 function learningOrder(list){
   return list.map((w,i)=>({w,i,n:FLAGS.filter(f=>peek(w.id).f[f]).length})).sort((a,b)=>b.n-a.n||a.i-b.i).map(x=>x.w);
@@ -889,13 +933,31 @@ function newOrder(list){
   if(S.order==='topic')return list;
   return list.slice().sort((a,b)=>(a.rank||1e9)-(b.rank||1e9)||a.i-b.i);
 }
+const isHard=w=>!!peek(w.id).hard;
+const byHardAt=(a,b)=>(peek(a.id).hardAt||0)-(peek(b.id).hardAt||0);
+// Struggling words available now (filters + learned letters), oldest first
+function hardPool(){return pool().filter(isHard).sort(byHardAt);}
+// single-exercise training: Struggling words first, but at most HARD_SHARE of the set
 function pickFor(flag,n){
   const p=pool();
-  let c=learningOrder(newOrder(p.filter(w=>peek(w.id).lvl===0&&!peek(w.id).f[flag]))).slice(0,n);
-  if(c.length<n){const rest=shuffle(p.filter(w=>!c.includes(w)&&(peek(w.id).lvl>0||FLAGS.some(f=>peek(w.id).f[f]))));c=c.concat(rest.slice(0,n-c.length));}
+  const hardAll=p.filter(w=>isHard(w)&&peek(w.id).lvl===0&&!peek(w.id).f[flag]).sort(byHardAt);
+  let c=hardAll.slice(0,Math.floor(n*HARD_SHARE));
+  c=c.concat(learningOrder(newOrder(p.filter(w=>!isHard(w)&&peek(w.id).lvl===0&&!peek(w.id).f[flag]))).slice(0,n-c.length));
+  if(c.length<n){const rest=shuffle(p.filter(w=>!c.includes(w)&&!isHard(w)&&(peek(w.id).lvl>0||FLAGS.some(f=>peek(w.id).f[f]))));c=c.concat(rest.slice(0,n-c.length));}
+  if(c.length<n)c=c.concat(hardAll.filter(w=>!c.includes(w)).slice(0,n-c.length));   // nothing else left: more Struggling words
   return c;
 }
-function pickNew(n){return learningOrder(newOrder(pool().filter(w=>peek(w.id).lvl===0))).slice(0,n);}
+// new words: up to HARD_IN_NEW Struggling words (not yet learned, oldest first), then new words
+function pickNew(n){
+  const p=pool();
+  const hard=p.filter(w=>isHard(w)&&peek(w.id).lvl===0).sort(byHardAt);
+  let c=hard.slice(0,Math.min(HARD_IN_NEW,n));
+  c=c.concat(learningOrder(newOrder(p.filter(w=>!isHard(w)&&peek(w.id).lvl===0))).slice(0,n-c.length));
+  if(c.length<n)c=c.concat(hard.filter(w=>!c.includes(w)).slice(0,n-c.length));
+  return c;
+}
+// exercise types a word still has to pass (a Struggling word continues from where it stopped)
+function todo(w){const s=peek(w.id),left=FLAGS.filter(f=>!s.f[f]);return left.length?left:FLAGS;}
 function pickPractice(n){
   const p=pool();let c=shuffle(p.filter(w=>status(w)!=='new')).slice(0,n);
   if(c.length<n)c=c.concat(p.filter(w=>status(w)==='new').slice(0,n-c.length));
@@ -907,6 +969,7 @@ function available(k){
   if(k==='brain')return p.filter(w=>peek(w.id).lvl===0).length;
   if(FLAGS.includes(k))return p.filter(w=>peek(w.id).lvl===0&&!peek(w.id).f[k]).length;
   if(k==='review')return due().length;
+  if(k==='hard')return Math.min(HARD_MAX,hardPool().length);
   if(k==='letters'||k==='writing')return lettersOn().length;
   return p.length;
 }
@@ -946,7 +1009,7 @@ function dailyTasks(){
   for(let r=0;r<3;r++){let sh=shuffle(d.lets);if(seq.length&&d.lets.length>1&&sh[0]===seq[seq.length-1])sh.push(sh.shift());seq=seq.concat(sh);}
   tasks=tasks.concat(seq.map(a=>({t:'L1',w:a,sc:S.script})));
   tasks=tasks.concat(d.fresh.map(w=>({t:'intro',w})));
-  for(const f of FLAGS)tasks=tasks.concat(shuffle(d.fresh.map(w=>({t:f,w}))));
+  for(const f of FLAGS)tasks=tasks.concat(shuffle(d.fresh.filter(w=>todo(w).includes(f)).map(w=>({t:f,w}))));
   return {tasks,rev:new Set(d.rev)};
 }
 
@@ -959,7 +1022,7 @@ function start(kind){
   }else if(kind==='brain'){
     const ws=pickNew(5);if(!ws.length)return toast(t('noNew'));
     tasks=ws.map(w=>({t:'intro',w}));
-    for(const f of FLAGS)tasks=tasks.concat(shuffle(ws.map(w=>({t:f,w}))));
+    for(const f of FLAGS)tasks=tasks.concat(shuffle(ws.filter(w=>todo(w).includes(f)).map(w=>({t:f,w}))));
   }else if(FLAGS.includes(kind)){
     const ws=pickFor(kind,10);if(!ws.length)return toast(t('noWords'));
     tasks=ws.map(w=>({t:kind,w}));
@@ -969,6 +1032,12 @@ function start(kind){
   }else if(kind==='review'){
     const ws=due().slice(0,15);if(!ws.length)return toast(t('noReview'));
     tasks=shuffle(ws.map(w=>({t:rnd(['wt','tw','read']),w}))).concat(shuffle(ws.map(w=>({t:rnd(['write','build']),w}))));
+  }else if(kind==='hard'){
+    // Tricky words: only Struggling words, 2 different exercise types each, rotating through all 5
+    const ws=hardPool().slice(0,HARD_MAX);if(!ws.length)return toast(t('noHard'));
+    const type=(w,i,r)=>{const left=peek(w.id).lvl>0?FLAGS:todo(w);return left[(i+r)%left.length];};
+    const r1=ws.map((w,i)=>({t:type(w,i,0),w})),r2=ws.map((w,i)=>({t:type(w,i,1),w})).filter((x,i)=>x.t!==r1[i].t);
+    tasks=shuffle(r1).concat(shuffle(r2));
   }else if(kind==='letters'){
     const Ls=lettersOn(),rounds=Math.min(3,Math.ceil(15/Ls.length));let seq=[];
     for(let r=0;r<rounds;r++){let sh=shuffle(Ls);if(seq.length&&Ls.length>1&&sh[0]===seq[seq.length-1])sh.push(sh.shift());seq=seq.concat(sh);}
@@ -980,7 +1049,8 @@ function start(kind){
     const cs=()=>S.abcUp&&S.abcLo?rnd(['lo','lo','up']):(S.abcUp?'up':'lo');
     tasks=picks.map(a=>({t:'W',w:a,mode:'trace',cs:cs(),sc:S.script})).concat(shuffle(picks).map(a=>({t:'W',w:a,mode:'mem',cs:cs(),sc:S.script})));
   }
-  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length,sc:S.script,rev};
+  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length,sc:S.script,rev,
+    missT:{},missW:{},dropped:[]};   // mistake counters for this session only (not saved)
   fb=null;screen='session';render();
 }
 function cur(){return ses.tasks[ses.i];}
@@ -1009,7 +1079,7 @@ function resOf(w){if(!ses.res.has(w))ses.res.set(w,{w,ok:0,bad:0});return ses.re
 function addXP(n){const d=today();S.xp[d]=(S.xp[d]||0)+n;ses.xp+=n;}
 function setFlag(w,f,ok){
   const s=st(w.id);
-  if(ok)s.f[f]=true;else{s.f[f]=false;s.err++;}
+  if(ok)s.f[f]=true;else s.f[f]=false;
   if(s.lvl===0&&FLAGS.every(x=>s.f[x])){s.lvl=1;s.next=Date.now()+DAY;ses.learned.push(w);}
 }
 function answer(ok,extra){
@@ -1025,17 +1095,51 @@ function answer(ok,extra){
     const KL=knownList(tk.sc);
     if(streakOf(l,tk.sc)>=3&&!KL.includes(l)){KL.push(l);ses.newKnown.push(l);toast(t('letterKnown',l));}
   }
-  if(ok){ses.done++;addXP(XP[tk.t]||1);}
-  else ses.tasks.push({t:tk.t,w:tk.w,retry:true,mode:tk.mode,cs:tk.cs,sc:tk.sc,rev:tk.rev});
+  if(isWord){const s=st(tk.w.id);if(!s.seen)s.seen=Date.now();}
+  if(ok){ses.done++;const x=XP[tk.t]||1;addXP(tk.retry&&isWord?retryXP(x):x);}
+  else if(isWord)wordMiss(tk);
+  else ses.tasks.push({t:tk.t,w:tk.w,retry:true,mode:tk.mode,cs:tk.cs,sc:tk.sc,rev:tk.rev});   // letters: as before
   fb={ok,extra:extra||{}};
   save();render();
   if(isWord&&hyVoice)say(tk.w.hy);
   if(tk.t==='L1'&&ok){const at=ses.i;setTimeout(()=>{if(ses&&fb&&fb.ok&&ses.i===at&&screen==='session')next();},650);}
 }
+/* A mistake on a word task. In plain words:
+   - 3 mistakes on one word in this session → the word is set aside (all its remaining tasks go away);
+   - 2 mistakes on the same task → this task goes away (if it was the word's last task, the word is set aside);
+   - otherwise the task comes back RETRY_GAP tasks later, not right away.
+   ses.total counts the tasks still to be done, so it shrinks with every task that goes away. */
+function wordMiss(tk){
+  const w=tk.w,kT=w.id+'|'+tk.t;
+  ses.missT[kT]=(ses.missT[kT]||0)+1;ses.missW[w.id]=(ses.missW[w.id]||0)+1;
+  st(w.id).err++;
+  const ahead=ses.tasks.slice(ses.i+1);
+  if(ses.missW[w.id]>=MISS_PER_WORD){
+    const left=ahead.filter(x=>x.w===w).length;
+    ses.tasks=ses.tasks.filter((x,j)=>j<=ses.i||x.w!==w);
+    ses.total-=1+left;dropWord(w);
+  }else if(ses.missT[kT]>=MISS_PER_TASK){
+    ses.total--;
+    if(!ahead.some(x=>x.w===w&&x.t!=='intro'))dropWord(w);
+  }else{
+    const r={t:tk.t,w,retry:true,rev:tk.rev};
+    const pos=ses.i+1+RETRY_GAP;
+    if(pos>=ses.tasks.length||ahead.every(x=>x.w===w))ses.tasks.push(r);else ses.tasks.splice(pos,0,r);
+  }
+  ses.total=Math.max(ses.total,ses.done);
+}
+// the word goes to "Struggling"; flags it already passed are kept
+function dropWord(w){
+  const s=st(w.id),now=Date.now();
+  s.hard=1;s.hardAt=now;s.okSes=0;
+  if(s.lvl>0){s.lvl=1;s.next=now+DAY;}   // failed in review: back to the start of the review ladder, due tomorrow
+  if(!ses.dropped.includes(w))ses.dropped.push(w);
+  toast(t('setAside'));
+}
 function next(){
   if(!ses)return;
   const tk=cur();
-  if(tk&&tk.t==='intro'&&!fb){ses.done++;}
+  if(tk&&tk.t==='intro'&&!fb){ses.done++;const s=st(tk.w.id);if(!s.seen)s.seen=Date.now();}
   fb=null;ses.hint=false;ses.i++;
   if(ses.i>=ses.tasks.length)finish();else{render();const n=cur();if(n.t==='intro'&&hyVoice)say(n.w.hy);}
 }
@@ -1043,10 +1147,20 @@ function finish(){
   if(ses.kind==='review'||ses.kind==='daily'){
     for(const r of ses.res.values()){
       if(ses.kind==='daily'&&!ses.rev.has(r.w))continue;
+      if(ses.dropped.includes(r.w))continue;   // already moved to lvl 1, due tomorrow
       const s=st(r.w.id);
       s.lvl=r.bad?Math.max(1,s.lvl-1):Math.min(s.lvl+1,IV.length-1);
       s.next=Date.now()+IV[s.lvl]*DAY;
     }
+  }
+  // Struggling words: a mistake-free session counts towards clearing the status
+  const seen=new Set();
+  for(const x of ses.tasks){const w=x.w;if(/^[LW]/.test(x.t)||seen.has(w))continue;seen.add(w);
+    const s=peek(w.id);if(!s.hard||ses.dropped.includes(w))continue;
+    const S_=st(w.id);
+    if(ses.learned.includes(w)){S_.hard=0;S_.okSes=0;continue;}
+    if(ses.missW[w.id]){S_.okSes=0;continue;}
+    S_.okSes++;if(S_.okSes>=HARD_EXIT){S_.hard=0;S_.okSes=0;}
   }
   if(ses.kind==='daily')S.dailyDone=today();
   save();screen='end';render();
@@ -1072,7 +1186,7 @@ function loadScreen(){
 }
 function render(){
   document.documentElement.lang=S.lang;
-  document.querySelectorAll('.fb').forEach(e=>e.remove());
+  document.querySelectorAll('.fb,.ov').forEach(e=>e.remove());
   if(!READY){$app.innerHTML=loadScreen();return;}
   if(screen==='home')rHome();
   else if(screen==='dict')rDict();
@@ -1105,7 +1219,7 @@ function lettersCard(){
   </div>`;
 }
 function rHome(){
-  const all=allWords(),cnt={new:0,learning:0,learned:0,due:0};
+  const all=allWords(),cnt={new:0,learning:0,hard:0,learned:0,due:0,mastered:0};
   all.forEach(w=>cnt[status(w)]++);
   const xp=S.xp[today()]||0,g=S.goal;
   const tc=th=>all.filter(w=>w.th===th).length;
@@ -1117,9 +1231,10 @@ function rHome(){
     <div class="stats">
       <div><b>${cnt.new}</b><span>${t('st_new')}</span></div>
       <div><b>${cnt.learning}</b><span>${t('st_learning')}</span></div>
-      <div><b>${cnt.learned+cnt.due}</b><span>${t('st_learned')}</span></div>
+      <div><b>${cnt.learned+cnt.due+cnt.mastered}</b><span>${t('st_learned')}</span></div>
       <div><b style="color:var(--accent)">${cnt.due}</b><span>${t('st_due')}</span></div>
     </div>
+    ${cnt.hard?`<button class="hard-line" onclick="A.start('hard')">${t('hardLine',cnt.hard)}<span>${t('hardGo')}</span></button>`:''}
   </div>
   ${dailyCard()}
   ${lettersCard()}
@@ -1133,7 +1248,7 @@ function rHome(){
   <h2>${t('exercises')}</h2>
   <div class="grid">
     ${TR.map((x,i)=>{const n=available(x.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="${x.k==='letters'?"A.go('lsetup')":`A.start('${x.k}')`}">
-      <span class="cnt">${x.k==='letters'?n+' '+t('lettersN'):n}</span><div class="ico">${x.ico}</div><b>${trName(x.k)}</b><span>${trDesc(x.k)}</span></button>`;}).join('')}
+      <span class="cnt">${x.k==='letters'?n+' '+t('lettersN'):n}</span><div class="ico">${x.ico}</div><b>${trName(x.k)}</b><span>${x.k==='hard'&&!n?t('noHard'):trDesc(x.k)}</span></button>`;}).join('')}
   </div>
   <p class="muted" style="margin-top:16px">${t('foot')}</p>
   <a class="ver" href="https://github.com/OlegEgorychev/armenian-words/blob/main/CHANGELOG.md" target="_blank" rel="noopener">v${APP_VERSION}</a>
@@ -1223,7 +1338,7 @@ function rSession(){
     <div class="slots">${parts.map(part=>`<div class="slot-word">${part.map(()=>{const u=p.placed[k++];return `<div class="slot ${u?'filled':''}">${u?esc(u):''}</div>`;}).join('')}</div>`).join('')}</div>
     <div class="tiles">${p.tiles.map((x,i)=>`<button class="tile ${x.used?'used':''} ${x.bad?'shake':''}" onclick="A.tile(${i})">${esc(x.u)}</button>`).join('')}</div>
     ${dkBtn()}
-    <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist)}</p>
+    <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist,BUILD_SLIPS+1)}</p>
     <p class="muted" style="text-align:center;font-size:13px;margin-top:-6px">⌨️ ${t('buildKbd')}</p>`;
   }
   else if(tk.t==='write'||tk.t==='dict'){
@@ -1271,14 +1386,16 @@ function rEnd(){
   const good=r.filter(x=>!x.bad).length;
   const lettersMode=ses.kind==='letters'||ses.kind==='writing';
   const daily=ses.kind==='daily',wr=r.filter(x=>!Array.isArray(x.w));
+  const allDropped=ses.dropped.length>0&&wr.every(x=>ses.dropped.includes(x.w));
   $app.innerHTML=`<div class="end">
     <div class="big">${lettersMode||good>=r.length*.7?'🎉':'💪'}</div>
     <h1>${t('doneT')}</h1>
-    <p class="muted">+${ses.xp} XP · ${t('today')} ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · ${t('learnedCount')}: ${ses.learned.length}`:''}</p>
+    <p class="muted">+${ses.xp} XP · ${t('today')} ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · ${t('learnedCount')}: ${ses.learned.length}`:''}${ses.dropped.length?` · ${t('setAsideN')}: ${ses.dropped.length}`:''}</p>
+    ${ses.dropped.length?`${allDropped?`<p>${t('stubborn')}</p>`:''}<div class="aside">${ses.dropped.map(w=>`<button class="hy" onclick="A.card('${esc(w.id)}')">${esc(w.hy)}</button>`).join('')}</div>`:''}
     ${lettersMode?lettersEnd():''}
     ${daily&&r.length>wr.length?lettersEnd():''}
     ${lettersMode?'':`<ul class="res">${(daily?wr:r).map(x=>{const s=peek(x.w.id);
-      return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div class="hy">${esc(x.w.hy)}</div><small>[${esc(TR_(x.w))}] — ${esc(MEAN(x.w))}</small></div>
+      return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div><span class="hy">${esc(x.w.hy)}</span>${sBadge(x.w)}</div><small>[${esc(TR_(x.w))}] — ${esc(MEAN(x.w))}</small></div>
       ${s.lvl>0?`<span class="badge">${t('lvl')} ${s.lvl}</span>`:dots(s)}</li>`;}).join('')}</ul>`}
     <div class="row-btns"><button class="btn ghost" onclick="A.go('home')">${t('home')}</button><button class="btn" onclick="A.start('${ses.kind}')">${t('again')}</button></div>
   </div>`;
@@ -1338,7 +1455,7 @@ function rDict(){
       <button class="btn" onclick="A.add()">${t('add')}</button>
     </div></details>
   <input class="search" placeholder="${esc(t('search'))}" value="${esc(dictQ)}" oninput="A.q(this.value)">
-  <div class="chips" style="margin-bottom:8px">${['all','avail','new','learning','learned','due'].map(k=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${t('f_'+k)}</button>`).join('')}</div>
+  <div class="chips" style="margin-bottom:8px">${['all','avail',...STATUSES].map(k=>`<button class="chip ${dictF===k?'on':''}" onclick="A.f('${k}')">${t('f_'+k)}</button>`).join('')}</div>
   ${filterChips(dictLvl,dictPos,'A.dlvl','A.dpos')}
   <div class="flt" style="margin-bottom:8px"><span class="muted">${t('sortBy')}</span><div class="seg" style="align-self:flex-start">${[['rank','sortRank'],['alpha','sortAz'],['topic','sortTopic']].map(([k,l])=>`<button class="${dictSort===k?'on':''}" onclick="A.dsort('${k}')">${t(l)}</button>`).join('')}</div></div>
   <div id="dlist"></div>
@@ -1362,7 +1479,7 @@ const byRank=(a,b)=>(a.rank||1e9)-(b.rank||1e9)||a.i-b.i;
 function dictList(){
   const q=dictQ.toLowerCase().trim(),K=knownSet();
   const list=allWords().filter(w=>passLvl(w,dictLvl)&&passPos(w,dictPos)
-    &&(dictF==='all'||(dictF==='avail'?wordOK(w,K):(status(w)===dictF||(dictF==='learned'&&status(w)==='due'))))
+    &&(dictF==='all'||(dictF==='avail'?wordOK(w,K):status(w)===dictF))
     &&(!q||w.hy.includes(q)||MEAN(w).toLowerCase().includes(q)||TR_(w).toLowerCase().includes(q)));
   if(dictSort==='alpha')list.sort((a,b)=>a.hy.localeCompare(b.hy,'hy'));
   else if(dictSort==='topic')list.sort((a,b)=>themeIdx(a.th)-themeIdx(b.th)||byRank(a,b));
@@ -1376,10 +1493,10 @@ function rList(){
   const all=dictList(),list=all.slice(0,dictN);
   const K=knownSet();
   el.innerHTML=`<p class="muted" style="margin:4px 2px">${t('shown',list.length,all.length)}</p>`+(list.length?list.map(w=>{const s=peek(w.id),stt=status(w);
-    const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${stt==='due'?t('dueBadge'):t('lvl')+' '+s.lvl}</span>`:dots(s);
+    const right=s.lvl>0?`<span class="badge ${stt==='due'?'due':''}">${t('lvl')+' '+s.lvl}</span>`:dots(s);
     const ms=S.onlyKnown?missing(w,K):[];
     const meta=[w.th===OTHER?'':themeName(w.th),posRank(w)].filter(Boolean).join(' · ');
-    return `<div class="wrow"><div class="grow"><div class="hy">${esc(w.hy)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))}${meta?' · '+esc(meta):''}</small>${ms.length?`<div class="lock">${t('needs')} <span class="hy">${ms.map(esc).join(' ')}</span></div>`:''}</div>${right}
+    return `<div class="wrow"><div class="grow"><div><span class="hy">${esc(w.hy)}</span>${sBadge(w)}</div><small>[${esc(TR_(w))}] — ${esc(MEAN(w))}${meta?' · '+esc(meta):''}</small>${ms.length?`<div class="lock">${t('needs')} <span class="hy">${ms.map(esc).join(' ')}</span></div>`:''}</div>${right}
     ${hyVoice?`<button class="icon" onclick="A.say('${esc(w.hy)}')">🔊</button>`:''}
     <button class="icon" title="${esc(t('resetT'))}" onclick="A.reset('${esc(w.id)}')">↺</button>
     ${w.custom?`<button class="icon" title="${esc(t('delT'))}" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
@@ -1439,14 +1556,17 @@ const A={
   next,say,
   hint(){ses.hint=true;render();},
   know(){const tk=cur();const s=st(tk.w.id);FLAGS.forEach(f=>s.f[f]=true);if(s.lvl===0){s.lvl=1;s.next=Date.now()+DAY;}
-    ses.tasks=ses.tasks.filter((x,i)=>i<=ses.i||x.w!==tk.w);ses.total=ses.tasks.filter(x=>!x.retry).length;save();toast(t('marked'));next();},
+    const left=ses.tasks.slice(ses.i+1).filter(x=>x.w===tk.w).length;
+    ses.tasks=ses.tasks.filter((x,i)=>i<=ses.i||x.w!==tk.w);ses.total=Math.max(ses.done,ses.total-left);save();toast(t('marked'));next();},
   choose(i){if(fb)return;const tk=cur(),p=prep(tk);p.picked=i;answer(p.opts[i]===tk.w);},
   tile(i){
     if(fb)return;const p=prep(cur()),x=p.tiles[i];if(!x||x.used)return;
     const exp=p.units[p.placed.length];
-    if(x.u===exp){x.used=true;p.placed.push(x.u);if(p.placed.length===p.units.length)return answer(p.mist===0);render();}
-    else{p.mist++;x.bad=true;render();setTimeout(()=>{x.bad=false;if(screen==='session'&&!fb)render();},350);
-      if(p.mist>=3){p.placed=p.units.slice();p.tiles.forEach(z=>z.used=true);answer(false);}}
+    if(x.u===exp){x.used=true;p.placed.push(x.u);if(p.placed.length===p.units.length)return answer(true);render();}
+    else{p.mist++;
+      // the first BUILD_SLIPS wrong letters are only highlighted; the next one fails the attempt and shows the word
+      if(p.mist>BUILD_SLIPS){p.placed=p.units.slice();p.tiles.forEach(z=>z.used=true);return answer(false);}
+      x.bad=true;render();setTimeout(()=>{x.bad=false;if(screen==='session'&&!fb)render();},350);}
   },
   key(ch){if(fb)return;const p=prep(cur());p.typed+=ch;render();},
   back(){if(fb)return;const p=prep(cur());p.typed=p.typed.endsWith('ու')?p.typed.slice(0,-2):p.typed.slice(0,-1);render();},
@@ -1504,10 +1624,18 @@ const A={
   wclear(){const p=prep(cur());p.strokes=[];render();},
   wcheck(){const p=prep(cur());if(!p.strokes.length)return toast(t('drawFirst'));p.revealed=true;render();},
   wgrade(ok){if(fb)return;answer(ok);},
+  // calm word card (no test): opened from the "Set aside" words on the summary screen
+  card(id){const w=WMAP.get(id);if(!w)return;document.querySelectorAll('.ov').forEach(e=>e.remove());
+    document.body.insertAdjacentHTML('beforeend',`<div class="ov" onclick="if(event.target===this)this.remove()"><div class="card intro">
+      <div class="big">${esc(w.hy)}</div><div class="tr">[${esc(TR_(w))}]</div><div class="ru">${esc(MEAN(w))}</div>
+      <div class="tools">${spk(w.hy)}</div>
+      <div class="letters">${units(w.hy).map(u=>`<span><b>${u}</b><small>${esc(soundOf(u))}</small></span>`).join('')}</div>
+      <button class="btn" style="width:100%;margin-top:14px" onclick="this.closest('.ov').remove()">${t('close')}</button></div></div>`);},
 };
 
 /* ================= KEYBOARD ================= */
 window.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const o=document.querySelector('.ov');if(o){o.remove();return;}}
   if(screen!=='session'||!ses||e.ctrlKey||e.metaKey||e.altKey)return;
   if(document.activeElement&&document.activeElement!==document.body)document.activeElement.blur();
   const tk=cur();if(!tk)return;

@@ -9,6 +9,23 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.9] — 2026-11-22
+
+### Added
+- **Word statuses** (a 0.7.0 roadmap task, done early): New, Learning, Struggling, Due, Learned, Mastered. Coloured badge on every word in the dictionary and on the summary screen, plus a status filter in the dictionary.
+- **Mistake limit in a session.** A missed task comes back 3 tasks later instead of right away; 2 mistakes on one task remove the task; 3 mistakes on one word set the word aside as *Struggling*. Already passed exercises are kept. A word that fails in Review goes back to level 1, due tomorrow.
+- **💪 Tricky words** training and a "Struggling: N → Practice" line on the home screen. Struggling words also come back in Brainstorm / the daily lesson (max 2) and in single-exercise trainings (max 30%). Two mistake-free sessions in a row clear the status.
+- Summary screen: "Set aside: N" with the words; tap one to open a calm word card (translation, transcription, letters, audio). If every word was set aside, a gentle "These words are stubborn today" message.
+- Brainstorm and the daily lesson skip the exercises a word has already passed.
+
+### Changed
+- Builder: the first wrong letter is only highlighted; the second one fails the attempt (was: up to 3 mistakes, and any mistake made the answer wrong).
+- A correct answer on a retry gives half XP.
+- The progress bar shrinks when tasks are removed, so it no longer gets stuck.
+
+### Fixed
+- README.md was accidentally emptied in 0.5.8; it is restored.
+
 ## [0.5.8] — 2026-11-22
 
 ### Added
