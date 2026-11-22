@@ -721,7 +721,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.7';
+const APP_VERSION='0.5.8';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -1556,7 +1556,7 @@ const SYNC_FLAG='hy-sync-on';
 const MAPS={w:'w',letters:'l',xp:'x'};
 const SETS=['known','hknown'];   // learned letters: every letter is synced on its own
 const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&!SETS.includes(k)&&k!=='custom'&&k!=='u');
-const SYNC={user:null,status:'off',err:'',last:0,timer:null,fb:null,busy:false,again:false};
+const SYNC={user:null,status:'off',err:'',last:0,timer:null,fb:null,busy:false,again:false,cloud:null};
 let accOpen=false;
 
 // one JSON string per piece of progress
@@ -1605,6 +1605,19 @@ function syncText(){const s=SYNC.status;
 function accBtn(){const u=SYNC.user,dot=SYNC.status==='err'?'var(--bad)':SYNC.status==='offline'?'var(--muted)':SYNC.status==='ok'?'var(--ok)':'transparent';
   const face=u&&u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer" style="width:22px;height:22px;border-radius:50%;display:block">`:(u?esc((u.displayName||u.email||'?')[0].toUpperCase()):'👤');
   return `<button id="accB" class="pill" onclick="A.acct()" title="${esc(t('accTitle'))}" style="position:relative;padding:5px 9px">${face}${u?`<i style="position:absolute;right:2px;bottom:2px;width:8px;height:8px;border-radius:50%;background:${dot};border:1px solid var(--card)"></i>`:''}</button>`;}
+// short summary of a progress copy, for the "Details" block
+function sumUp(s){const w=s.w||{},xp=s.xp||{};
+  return{words:Object.keys(w).length,learned:Object.values(w).filter(r=>r&&(r.lvl||0)>0).length,
+    letters:(s.known||[]).length,hletters:(s.hknown||[]).length,xp:Object.values(xp).reduce((a,b)=>a+(+b||0),0)};}
+function syncDetails(){const loc=sumUp(S),c=SYNC.cloud,en=S.lang==='en';
+  const row=(n,x)=>x?`${n}: ${en?'words':'слов'} ${x.words} (${en?'learned':'выучено'} ${x.learned}) · ${en?'letters':'букв'} ${x.letters}+${x.hletters} · XP ${x.xp}`:`${n}: —`;
+  const when=c&&c.ts?new Date(c.ts).toLocaleString(en?'en-GB':'ru-RU'):'';
+  return `<details style="font-size:12px" class="muted"><summary>${en?'Details':'Подробности'}</summary><div style="margin-top:6px;line-height:1.6">
+    ${en?'App':'Приложение'} v${APP_VERSION} · ${esc(SYNC.user.email||'')} · id …${esc(SYNC.user.uid.slice(-6))}<br>
+    ${row(en?'This device':'Это устройство',loc)}<br>
+    ${c&&c.none?(en?'Cloud: empty (nothing saved yet)':'Облако: пусто (ещё ничего не сохранено)'):row(en?'Cloud (before merge)':'Облако (до объединения)',c)}
+    ${c&&c.ts?`<br>${en?'Cloud saved':'Облако сохранено'}: ${esc(when)} · v${esc(c.v)}`:''}
+    ${SYNC.err?`<br><span style="color:var(--bad)">${esc(SYNC.err)}</span>`:''}</div></details>`;}
 function accHtml(){const u=SYNC.user;
   if(!u)return `<div class="form" style="margin-top:12px"><p class="muted" style="margin:0">${t('accHint')}</p>
     <button class="btn" onclick="A.signIn()" ${SYNC.status==='load'?'disabled':''}>${SYNC.status==='load'?t('sy_load'):t('signIn')}</button>
@@ -1615,6 +1628,7 @@ function accHtml(){const u=SYNC.user;
       <div style="min-width:0"><b>${esc(u.displayName||'')}</b><div class="muted" style="font-size:14px;overflow:hidden;text-overflow:ellipsis">${esc(u.email||'')}</div></div>
     </div>
     <p class="muted" style="margin:0" id="syncSt">${syncText()}</p>
+    ${syncDetails()}
     <button class="btn ghost" onclick="A.syncNow()">🔄 ${t('syncNow')}</button>
     <button class="btn ghost" onclick="A.signOut()">${t('signOut')}</button></div>`;}
 
@@ -1655,6 +1669,7 @@ async function syncNow(manual){
   try{const f=await fbLoad(),ref=f.fs.doc(f.db,'users',SYNC.user.uid);
     const snap=await f.fs.getDoc(ref);
     let remote=null;if(snap.exists()){try{remote=JSON.parse(snap.data().data);}catch(e){}}
+    SYNC.cloud=snap.exists()?Object.assign(sumUp(remote||{}),{ts:snap.data().ts||0,v:snap.data().v||'?'}):{none:true};
     if(remote&&typeof remote.w==='object'){
       const before=JSON.stringify(S),lang=S.lang;
       S=mergeState(S,remote);S.lang=lang||S.lang;
@@ -1663,8 +1678,10 @@ async function syncNow(manual){
     }
     await f.fs.setDoc(ref,{data:JSON.stringify(S),ts:Date.now(),v:APP_VERSION});
     SYNC.last=Date.now();setSync('ok');if(manual)toast(syncText());
+    if(screen==='dict'){const d=document.getElementById('acct');if(d)d.innerHTML=`<summary>${t('acc')}</summary>${accHtml()}`;}
   }catch(e){const c=e&&e.code||String(e&&e.message||e);
-    setSync(navigator.onLine&&c!=='unavailable'?'err':'offline',c);}
+    setSync(navigator.onLine&&c!=='unavailable'?'err':'offline',c);
+    if(screen==='dict'){const d=document.getElementById('acct');if(d)d.innerHTML=`<summary>${t('acc')}</summary>${accHtml()}`;}}
   SYNC.busy=false;
   if(SYNC.again){SYNC.again=false;syncSoon();}}
 // called by save(): sends changes to the cloud a few seconds after the last change

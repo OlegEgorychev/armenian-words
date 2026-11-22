@@ -9,6 +9,14 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.8] — 2026-11-22
+
+### Added
+- **Sync details.** "👤 Account & sync" → "Details" shows the app version, the account, what is on this device and what was in the cloud (words, learned words, letters, XP), when the cloud copy was saved and by which version, and the exact error if there is one. Helps to see where sync stops.
+
+### Fixed
+- The service worker now always asks the server whether a file has changed, so a phone no longer keeps an old version of the app for up to 10 minutes after an update.
+
 ## [0.5.7] — 2026-11-22
 
 ### Fixed

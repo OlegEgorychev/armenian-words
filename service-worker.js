@@ -45,7 +45,7 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
   event.respondWith(
-    fetch(req)
+    fetch(req,{cache:'no-cache'})   // ask the server if the file changed (skip the browser's 10-minute HTTP cache)
       .then(res => {
         if (res.ok) {
           const copy = res.clone();
