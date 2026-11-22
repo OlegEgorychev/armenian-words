@@ -52,6 +52,16 @@ h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute
 .tr-card.wide span{color:#fff;opacity:.9}
 .tr-card.wide .cnt{background:rgba(255,255,255,.25);color:#fff}
 .tr-card.dim{opacity:.5}
+.daily{width:100%;margin:0 0 14px;border:0;border-radius:var(--radius);padding:16px;text-align:left;color:#fff;background:linear-gradient(135deg,#2F7A5B,#3FA27A);display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.daily:active{transform:scale(.99)}
+.daily .d-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.daily b{font-size:19px}
+.daily .d-sub{font-size:13px;opacity:.92}
+.daily .d-mix{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.daily .d-mix span{background:rgba(255,255,255,.2);border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600}
+.daily.done{background:linear-gradient(135deg,#5E7F70,#7A9A8B)}
+.daily.dim{opacity:.55}
+.ver{display:block;text-align:center;font-size:12px;margin:14px 0 4px;color:var(--muted);text-decoration:none}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5}
 nav button{flex:1;max-width:190px;border:0;background:none;padding:10px 0 12px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button i{font-style:normal;font-size:20px}
@@ -620,7 +630,9 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  trainW:'✍️ Письмо',traceQ:'Обведи букву по образцу',memQ:'Напиши букву по памяти',memQh:'Напиши рукописную форму',caseLo:'строчная',caseUp:'заглавная',
  clearW:'🧽 Стереть',compareW:'Сравнить с образцом',gradeOk:'✓ Получилось',gradeBad:'✗ Не похоже',drawFirst:'Сначала напиши букву',
  fontCredit:'Рукописный шрифт Arti — Khajag Apelian / Hamazkayin',noteHand:'Рукописные буквы — так пишут от руки в армянских школах. Тренируй чтение рукописных (тест) и письмо (✍️). Прогресс по рукописным считается отдельно.',
- selAll:'Выбрать все',unselAll:'Снять все',practice:'▶ Тренировать',myWords:'Мои слова'},
+ selAll:'Выбрать все',unselAll:'Снять все',practice:'▶ Тренировать',myWords:'Мои слова',
+ dailyT:'Урок дня',dailyD:'Повторение, новые буквы и новые слова — одной кнопкой',dailyDone:'✅ Сегодня пройден — можно ещё раз',
+ dailyRev:'🔁 повторить: {0}',dailyLet:'Աա букв: {0}',dailyNew:'🆕 слов: {0}',dailyMin:'≈{0} мин',dailyEmpty:'Пока нечего проходить: выучи буквы во вкладке «Алфавит»'},
 en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
  themes:'Topics',all:'All',exercises:'Exercises',dict:'Dictionary',alphabet:'Alphabet',lettersN:'letters',
  foot:'A word counts as learned once you pass it in all five exercises (Word→translation, Translation→word, Reading, Builder, Writing). After that it moves to Review.',
@@ -657,15 +669,18 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  trainW:'✍️ Handwriting',traceQ:'Trace the letter',memQ:'Write the letter from memory',memQh:'Write the handwritten form',caseLo:'lowercase',caseUp:'capital',
  clearW:'🧽 Clear',compareW:'Compare with model',gradeOk:'✓ Got it',gradeBad:'✗ Not quite',drawFirst:'Draw the letter first',
  fontCredit:'Handwriting font Arti — Khajag Apelian / Hamazkayin',noteHand:'Handwritten letters are how Armenian is written by hand in school. Practise reading them (quiz) and writing them (✍️). Handwritten progress is tracked separately.',
- selAll:'Select all',unselAll:'Clear all',practice:'▶ Practise',myWords:'My words'}
+ selAll:'Select all',unselAll:'Clear all',practice:'▶ Practise',myWords:'My words',
+ dailyT:'Daily lesson',dailyD:'Review, new letters and new words — in one tap',dailyDone:'✅ Done today — you can go again',
+ dailyRev:'🔁 review: {0}',dailyLet:'Աա letters: {0}',dailyNew:'🆕 words: {0}',dailyMin:'≈{0} min',dailyEmpty:'Nothing to do yet: learn some letters in the Alphabet tab'}
 };
 
 /* ================= STATE ================= */
+const APP_VERSION='0.5.1';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
 const MY='Мои слова';
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null};}
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
 if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
@@ -798,9 +813,34 @@ function letterOptions(a,k){
 
 let screen='home',ses=null,fb=null,dictQ='',dictF='all';
 
+/* Daily lesson: review that is due + the letters that unlock the most words + a few new words */
+function dailyPlan(){
+  const rev=due().slice(0,8);
+  const lets=nextLetters(3).map(x=>byL[x.l]).filter(Boolean);
+  const nNew=lets.length?3:(rev.length?4:5);
+  const fresh=pickNew(nNew);
+  const tasks=rev.length*2+lets.length*3+fresh.length*(FLAGS.length+1);
+  return {rev,lets,fresh,tasks,min:Math.max(1,Math.round(tasks*20/60))};
+}
+function dailyTasks(){
+  const d=dailyPlan();let tasks=[];
+  tasks=tasks.concat(shuffle(d.rev.map(w=>({t:rnd(['wt','tw','read']),w,rev:true}))));
+  tasks=tasks.concat(shuffle(d.rev.map(w=>({t:rnd(['write','build']),w,rev:true}))));
+  let seq=[];
+  for(let r=0;r<3;r++){let sh=shuffle(d.lets);if(seq.length&&d.lets.length>1&&sh[0]===seq[seq.length-1])sh.push(sh.shift());seq=seq.concat(sh);}
+  tasks=tasks.concat(seq.map(a=>({t:'L1',w:a,sc:S.script})));
+  tasks=tasks.concat(d.fresh.map(w=>({t:'intro',w})));
+  for(const f of FLAGS)tasks=tasks.concat(shuffle(d.fresh.map(w=>({t:f,w}))));
+  return {tasks,rev:new Set(d.rev)};
+}
+
 function start(kind){
   let tasks=[];
-  if(kind==='brain'){
+  let rev=null;
+  if(kind==='daily'){
+    const d=dailyTasks();if(!d.tasks.length)return toast(t('dailyEmpty'));
+    tasks=d.tasks;rev=d.rev;
+  }else if(kind==='brain'){
     const ws=pickNew(5);if(!ws.length)return toast(t('noNew'));
     tasks=ws.map(w=>({t:'intro',w}));
     for(const f of FLAGS)tasks=tasks.concat(shuffle(ws.map(w=>({t:f,w}))));
@@ -824,7 +864,7 @@ function start(kind){
     const cs=()=>S.abcUp&&S.abcLo?rnd(['lo','lo','up']):(S.abcUp?'up':'lo');
     tasks=picks.map(a=>({t:'W',w:a,mode:'trace',cs:cs(),sc:S.script})).concat(shuffle(picks).map(a=>({t:'W',w:a,mode:'mem',cs:cs(),sc:S.script})));
   }
-  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length,sc:S.script};
+  ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length,sc:S.script,rev};
   fb=null;screen='session';render();
 }
 function cur(){return ses.tasks[ses.i];}
@@ -861,7 +901,7 @@ function answer(ok,extra){
   const isWord=!/^[LW]/.test(tk.t);
   if(!tk.retry){
     {const r=resOf(tk.w);ok?r.ok++:r.bad++;}
-    if(FLAGS.includes(tk.t)&&ses.kind!=='review'&&isWord)setFlag(tk.w,tk.t,ok);
+    if(FLAGS.includes(tk.t)&&ses.kind!=='review'&&!tk.rev&&isWord)setFlag(tk.w,tk.t,ok);
   }
   if(!isWord&&!(tk.t==='W'&&tk.mode==='trace')){
     const l=tk.w[0],k=lkey(l,tk.sc),r=S.letters[k]||(S.letters[k]={ok:0,bad:0});ok?r.ok++:r.bad++;
@@ -870,7 +910,7 @@ function answer(ok,extra){
     if(streakOf(l,tk.sc)>=3&&!KL.includes(l)){KL.push(l);ses.newKnown.push(l);toast(t('letterKnown',l));}
   }
   if(ok){ses.done++;addXP(XP[tk.t]||1);}
-  else ses.tasks.push({t:tk.t,w:tk.w,retry:true,mode:tk.mode,cs:tk.cs,sc:tk.sc});
+  else ses.tasks.push({t:tk.t,w:tk.w,retry:true,mode:tk.mode,cs:tk.cs,sc:tk.sc,rev:tk.rev});
   fb={ok,extra:extra||{}};
   save();render();
   if(isWord&&hyVoice)say(tk.w.hy);
@@ -884,13 +924,15 @@ function next(){
   if(ses.i>=ses.tasks.length)finish();else{render();const n=cur();if(n.t==='intro'&&hyVoice)say(n.w.hy);}
 }
 function finish(){
-  if(ses.kind==='review'){
+  if(ses.kind==='review'||ses.kind==='daily'){
     for(const r of ses.res.values()){
+      if(ses.kind==='daily'&&!ses.rev.has(r.w))continue;
       const s=st(r.w.id);
       s.lvl=r.bad?Math.max(1,s.lvl-1):Math.min(s.lvl+1,IV.length-1);
       s.next=Date.now()+IV[s.lvl]*DAY;
     }
   }
+  if(ses.kind==='daily')S.dailyDone=today();
   save();screen='end';render();
 }
 
@@ -951,6 +993,7 @@ function rHome(){
       <div><b style="color:var(--accent)">${cnt.due}</b><span>${t('st_due')}</span></div>
     </div>
   </div>
+  ${dailyCard()}
   ${lettersCard()}
   <h2>${t('themes')}</h2>
   <div class="chips">
@@ -963,7 +1006,17 @@ function rHome(){
       <span class="cnt">${x.k==='letters'?n+' '+t('lettersN'):n}</span><div class="ico">${x.ico}</div><b>${trName(x.k)}</b><span>${trDesc(x.k)}</span></button>`;}).join('')}
   </div>
   <p class="muted" style="margin-top:16px">${t('foot')}</p>
+  <a class="ver" href="https://github.com/OlegEgorychev/armenian-words/blob/main/CHANGELOG.md" target="_blank" rel="noopener">v${APP_VERSION}</a>
   ${navHtml()}`;
+}
+function dailyCard(){
+  const d=dailyPlan(),done=S.dailyDone===today(),empty=!d.tasks;
+  const mix=[d.rev.length?t('dailyRev',d.rev.length):'',d.lets.length?t('dailyLet',d.lets.map(a=>a[0]).join(' ')):'',d.fresh.length?t('dailyNew',d.fresh.length):'',empty?'':t('dailyMin',d.min)].filter(Boolean);
+  return `<button class="daily ${done?'done':''} ${empty?'dim':''}" onclick="A.start('daily')">
+    <div class="d-head"><b>🎯 ${t('dailyT')}</b><span>▶</span></div>
+    <div class="d-sub">${empty?t('dailyEmpty'):(done?t('dailyDone'):t('dailyD'))}</div>
+    ${mix.length?`<div class="d-mix">${mix.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
+  </button>`;
 }
 function sessionTop(){
   return `<div class="s-top"><button class="x" onclick="A.quit()">✕</button><div class="bar"><i style="width:${ses.done/ses.total*100}%"></i></div><div class="xp">+${ses.xp}</div></div>`;
@@ -1070,19 +1123,21 @@ function rEnd(){
   const r=[...ses.res.values()];
   const good=r.filter(x=>!x.bad).length;
   const lettersMode=ses.kind==='letters'||ses.kind==='writing';
+  const daily=ses.kind==='daily',wr=r.filter(x=>!Array.isArray(x.w));
   $app.innerHTML=`<div class="end">
     <div class="big">${lettersMode||good>=r.length*.7?'🎉':'💪'}</div>
     <h1>${t('doneT')}</h1>
     <p class="muted">+${ses.xp} XP · ${t('today')} ${S.xp[today()]||0} / ${S.goal}${ses.learned.length?` · ${t('learnedCount')}: ${ses.learned.length}`:''}</p>
     ${lettersMode?lettersEnd():''}
-    ${lettersMode?'':`<ul class="res">${r.map(x=>{const s=peek(x.w.id);
+    ${daily&&r.length>wr.length?lettersEnd():''}
+    ${lettersMode?'':`<ul class="res">${(daily?wr:r).map(x=>{const s=peek(x.w.id);
       return `<li><span>${x.bad?'❌':'✅'}</span><div class="grow"><div class="hy">${esc(x.w.hy)}</div><small>[${esc(TR_(x.w))}] — ${esc(MEAN(x.w))}</small></div>
       ${s.lvl>0?`<span class="badge">${t('lvl')} ${s.lvl}</span>`:dots(s)}</li>`;}).join('')}</ul>`}
     <div class="row-btns"><button class="btn ghost" onclick="A.go('home')">${t('home')}</button><button class="btn" onclick="A.start('${ses.kind}')">${t('again')}</button></div>
   </div>`;
 }
 function lettersEnd(){
-  const r=[...ses.res.values()],ok=r.filter(x=>!x.bad).length,gain=pool().length-ses.before;
+  const r=[...ses.res.values()].filter(x=>Array.isArray(x.w)),ok=r.filter(x=>!x.bad).length,gain=pool().length-ses.before;
   return `<p style="font-size:20px;font-weight:700">${ok} / ${r.length}</p>
   ${ses.newKnown.length?`<div class="card"><b>${t('newKnown')}</b><div class="next-l" style="justify-content:center">${ses.newKnown.map(l=>`<span><b class="${gcls(ses.sc)}">${esc(l)}</b> ${esc(snd(byL[l]))}</span>`).join('')}</div>${gain>0?`<p class="muted" style="margin:8px 0 0">${t('unlocked',gain)}</p>`:''}</div>`:''}
   <div class="next-l" style="justify-content:center;margin:14px 0">${r.map(x=>`<span style="border-color:${x.bad?'var(--bad)':'var(--ok)'}"><b class="${gcls(ses.sc)}">${esc(x.w[0])}</b> ${esc(snd(x.w))}</span>`).join('')}</div>`;

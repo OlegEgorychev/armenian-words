@@ -10,6 +10,7 @@ The interface is available in **English and Russian**. Use the RU / EN button in
 
 | Exercise | What it trains |
 |---|---|
+| 🎯 Daily lesson | one tap for today: due reviews + the 3 letters that unlock the most words + 3–5 new words (≈10–15 min) |
 | ⚡ Brainstorm | 5 new words go through every stage in a row: intro → word-translation → translation-word → reading → builder → writing |
 | 🇦🇲 Word → translation | reading and understanding |
 | 🔎 Translation → word | recognising the spelling among similar words |
@@ -57,6 +58,19 @@ armenian | russian | english | russian transcription
 ```
 
 The Latin transcription is generated from the Cyrillic one. Cyrillic conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը.
+
+## Version and roadmap
+
+Current version: **0.5.1** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+
+| Version | Milestone | Tasks |
+|---|---|---|
+| 0.5.0 | Baseline | everything built before versioning |
+| **0.6.0** | Every day | ✅ Daily lesson · PWA (install + offline) · Enter without an answer = "I don't know" · emoji for words · dictionary moved to `words.json` |
+| **0.7.0** | Memory and sound | smart spaced repetition (FSRS/SM-2) · recorded mp3 audio · listening exercise · stats and "hard words" |
+| **0.8.0** | Everywhere | cloud sync · reminders (push) · own words: edit + RU/EN · CSV/Anki import · topics for life in Yerevan |
+| **0.9.0** | Living language | phrases and short sentences · "Expressions" exercise · grammar mini-lessons · reading real signs |
+| **1.0.0** | Release | AI conversation practice · citizenship exam track · Android app in Google Play · promotion in Armenian communities |
 
 ## Credits
 
