@@ -707,7 +707,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.3';
+const APP_VERSION='0.5.4';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -1152,6 +1152,7 @@ function dailyCard(){
 function sessionTop(){
   return `<div class="s-top"><button class="x" onclick="A.quit()">✕</button><div class="bar"><i style="width:${ses.done/ses.total*100}%"></i></div><div class="xp">+${ses.xp}</div></div>`;
 }
+function dkBtn(){return fb?'':`<div class="row-btns"><button class="btn ghost" onclick="A.giveup()">${t('dontKnow')}<kbd>Enter</kbd></button></div>`;}
 function hintBtn(label){return ses.hint||fb?'':`<button class="tool" onclick="A.hint()">💡 ${label||t('hintTr')}<kbd>Tab</kbd></button>`;}
 
 function rSession(){
@@ -1171,23 +1172,23 @@ function rSession(){
   else if(tk.t==='wt'){
     body=`<div class="q-label">${t('pickMeaning')}</div>
     <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}${spk(w.hy)}</div></div>
-    ${choices(p.opts,o=>esc(MEAN(o)),w)}`;
+    ${choices(p.opts,o=>esc(MEAN(o)),w)}${dkBtn()}`;
   }
   else if(tk.t==='tw'){
     body=`<div class="q-label">${t('findHy')}</div>
     <div class="prompt"><div class="big">${esc(MEAN(w))}</div><div class="tools">${hintBtn(t('hintTrs'))}</div></div>
-    ${choices(p.opts,o=>`<span><span class="hy">${esc(o.hy)}</span>${showTr?`<small>[${esc(TR_(o))}]</small>`:''}</span>`,w)}`;
+    ${choices(p.opts,o=>`<span><span class="hy">${esc(o.hy)}</span>${showTr?`<small>[${esc(TR_(o))}]</small>`:''}</span>`,w)}${dkBtn()}`;
   }
   else if(tk.t==='read'){
     body=`<div class="q-label">${t('howRead')}</div>
     <div class="prompt"><div class="big hy">${esc(w.hy)}</div><div class="sub">${fb?esc(MEAN(w)):''}</div></div>
-    ${choices(p.opts,o=>esc(TR_(o)),w)}`;
+    ${choices(p.opts,o=>esc(TR_(o)),w)}${dkBtn()}`;
   }
   else if(tk.t==='L1'){
     const g=(S.abcUp?esc(w[1]):'')+(S.abcUp&&S.abcLo?' ':'')+(S.abcLo||!S.abcUp?esc(w[0]):'');
     body=`<div class="q-label">${t('chooseTr')}</div>
     <div class="prompt letter-q"><div class="big ${gcls(tk.sc)}">${g}</div></div>
-    ${choices(p.opts,o=>esc(snd(o)),w,true)}`;
+    ${choices(p.opts,o=>esc(snd(o)),w,true)}${dkBtn()}`;
   }
   else if(tk.t==='W'){
     const gl=tk.cs==='up'?w[1]:w[0],trace=tk.mode==='trace',hand=isHand(tk.sc);
@@ -1207,6 +1208,7 @@ function rSession(){
     <div class="prompt" style="padding-bottom:6px"><div class="big">${esc(MEAN(w))}</div><div class="sub">${showTr?'['+esc(TR_(w))+']':''}</div><div class="tools">${hintBtn()}</div></div>
     <div class="slots">${parts.map(part=>`<div class="slot-word">${part.map(()=>{const u=p.placed[k++];return `<div class="slot ${u?'filled':''}">${u?esc(u):''}</div>`;}).join('')}</div>`).join('')}</div>
     <div class="tiles">${p.tiles.map((x,i)=>`<button class="tile ${x.used?'used':''} ${x.bad?'shake':''}" onclick="A.tile(${i})">${esc(x.u)}</button>`).join('')}</div>
+    ${dkBtn()}
     <p class="muted" style="text-align:center;margin-top:14px">${t('mistakes',p.mist)}</p>
     <p class="muted" style="text-align:center;font-size:13px;margin-top:-6px">⌨️ ${t('buildKbd')}</p>`;
   }
@@ -1438,7 +1440,10 @@ const A={
     render();
   },
   check(){const tk=cur(),p=prep(tk);if(fb||!p.typed.trim())return;answer(norm(p.typed)===norm(tk.w.hy)&&p.hints===0,{typed:p.typed});},
-  giveup(){if(fb)return;answer(false,{typed:''});},
+  // "I don't know": show the correct answer, count a mistake, move on (button, Enter with no answer, Shift+Enter)
+  giveup(){if(fb||!ses)return;const tk=cur();if(!tk||tk.t==='intro'||tk.t==='W')return;const p=prep(tk);
+    if(tk.t==='build'){p.placed=p.units.slice();p.tiles.forEach(z=>z.used=true);}
+    answer(false,{typed:''});},
   q(v){dictQ=v;dictN=100;rList();},
   f(k){dictF=k;dictN=100;render();},
   dlvl(v){dictLvl=v;dictN=100;render();},
@@ -1489,8 +1494,10 @@ window.addEventListener('keydown',e=>{
   const tk=cur();if(!tk)return;
   if(e.key==='Tab'){e.preventDefault();if(!fb&&!ses.hint&&['wt','tw','build','write','dict'].includes(tk.t))A.hint();return;}
   if(fb||tk.t==='intro'){if(e.key==='Enter'||e.key===' '){e.preventDefault();next();}return;}
-  if(['wt','tw','read','L1','L2'].includes(tk.t)){const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
+  if(e.key==='Enter'&&e.shiftKey){e.preventDefault();A.giveup();return;}
+  if(['wt','tw','read','L1','L2'].includes(tk.t)){if(e.key==='Enter'){e.preventDefault();A.giveup();return;}const n=parseInt(e.key);if(n>=1&&n<=prep(tk).opts.length)A.choose(n-1);return;}
   if(tk.t==='build'){
+    if(e.key==='Enter'){e.preventDefault();A.giveup();return;}
     if(e.key.length!==1||e.key===' ')return;
     const k=e.key.toLowerCase();
     let cands;
@@ -1505,8 +1512,7 @@ window.addEventListener('keydown',e=>{
     return;
   }
   if(tk.t==='write'||tk.t==='dict'){
-    if(e.key==='Enter'&&e.shiftKey){e.preventDefault();A.giveup();return;}
-    if(e.key==='Enter'){e.preventDefault();A.check();return;}
+    if(e.key==='Enter'){e.preventDefault();if(prep(tk).typed.trim())A.check();else A.giveup();return;}
     if(e.key==='ArrowRight'){e.preventDefault();A.letter();return;}
     if(e.key==='Backspace'){e.preventDefault();A.back();return;}
     if(e.key===' '){e.preventDefault();A.key(' ');return;}

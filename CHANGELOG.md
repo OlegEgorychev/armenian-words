@@ -9,6 +9,12 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.4] — 2026-11-22
+
+### Added
+- **Enter with no answer = "I don't know"** in every word exercise and in the Letters quiz: the correct answer is shown, it counts as a mistake, and the word comes back later in the session. `Shift+Enter` still works everywhere. In Writing and Dictation, Enter still checks the answer when something is typed.
+- An "I don't know" button under the choice exercises and the Builder (handy on a phone, where there is no Enter key).
+
 ## [0.5.3] — 2026-11-22
 
 ### Added
