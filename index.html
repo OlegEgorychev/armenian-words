@@ -721,7 +721,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.6';
+const APP_VERSION='0.5.7';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -1554,7 +1554,8 @@ const FB_CONFIG={apiKey:"AIzaSyDVfWy7grtiks49b-FzhFNM5ZmOHOaHHck",authDomain:"ba
 const FB_SDK='https://www.gstatic.com/firebasejs/13.4.0/';
 const SYNC_FLAG='hy-sync-on';
 const MAPS={w:'w',letters:'l',xp:'x'};
-const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&k!=='custom'&&k!=='u');
+const SETS=['known','hknown'];   // learned letters: every letter is synced on its own
+const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&!SETS.includes(k)&&k!=='custom'&&k!=='u');
 const SYNC={user:null,status:'off',err:'',last:0,timer:null,fb:null,busy:false,again:false};
 let accOpen=false;
 
@@ -1562,6 +1563,7 @@ let accOpen=false;
 function entries(s){const e={};
   for(const f in MAPS){const o=s[f]||{};for(const k in o)e[MAPS[f]+':'+k]=JSON.stringify(o[k]);}
   (s.custom||[]).forEach(c=>{if(c&&c.id)e['c:'+c.id]=JSON.stringify(c);});
+  SETS.forEach(f=>(Array.isArray(s[f])?s[f]:[]).forEach(l=>e['K:'+f+':'+l]='1'));
   SCALARS.forEach(f=>{if(s[f]!==undefined)e['k:'+f]=JSON.stringify(s[f]);});
   return e;}
 let SNAP=entries(S);
@@ -1573,9 +1575,9 @@ function stamp(){const now=Date.now(),cur=entries(S);if(!S.u||typeof S.u!=='obje
 // merge two states piece by piece (a = this device, b = cloud)
 function mergeState(a,b){
   const ea=entries(a),eb=entries(b),ua=a.u||{},ub=b.u||{};
-  const out=Object.assign(defaults(),a,{w:{},letters:{},xp:{},custom:[],u:{}});
+  const out=Object.assign(defaults(),a,{w:{},letters:{},xp:{},custom:[],known:[],hknown:[],u:{}});
   const keys=new Set([...Object.keys(ea),...Object.keys(eb),...Object.keys(ua),...Object.keys(ub)]);
-  const order=[...Object.keys(ea),...Object.keys(eb)].filter(k=>k.startsWith('c:'));
+  const order=[...Object.keys(ea),...Object.keys(eb)].filter(k=>k.startsWith('c:')||k.startsWith('K:'));
   const picked={};
   keys.forEach(k=>{
     const ta=ua[k]||0,tb=ub[k]||0,va=ea[k],vb=eb[k];let v;
@@ -1590,7 +1592,9 @@ function mergeState(a,b){
   for(const k in picked){const i=k.indexOf(':'),p=k.slice(0,i),id=k.slice(i+1);
     if(p==='w')out.w[id]=picked[k];else if(p==='l')out.letters[id]=picked[k];else if(p==='x')out.xp[id]=picked[k];
     else if(p==='k')out[id]=picked[k];}
-  const seen=new Set();order.forEach(k=>{if(k in picked&&!seen.has(k)){seen.add(k);out.custom.push(picked[k]);}});
+  const seen=new Set();order.forEach(k=>{if(!(k in picked)||seen.has(k))return;seen.add(k);
+    if(k.startsWith('c:'))out.custom.push(picked[k]);
+    else{const [,f,...l]=k.split(':');out[f].push(l.join(':'));}});
   return out;}
 
 function setSync(st,err){SYNC.status=st;SYNC.err=err||'';const e=document.getElementById('syncSt');if(e)e.innerHTML=syncText();const b=document.getElementById('accB');if(b)b.outerHTML=accBtn();}

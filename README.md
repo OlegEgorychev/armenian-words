@@ -90,7 +90,7 @@ Signing in is optional. Press 👤 at the top → "Sign in with Google", and pro
 
 ## Version and roadmap
 
-Current version: **0.5.6** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+Current version: **0.5.7** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
 
 | Version | Milestone | Tasks |
 |---|---|---|

@@ -9,6 +9,11 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.7] — 2026-11-22
+
+### Fixed
+- **Learned letters now sync.** They used to travel as one list, so when both devices already had progress from before sync, one device's list could win and the letters learned on the other did not show up. Now every learned letter (printed and handwritten) is synced on its own, like words: letters learned on different devices are combined, and a letter you un-learn is removed everywhere.
+
 ## [0.5.6] — 2026-11-22
 
 ### Added
