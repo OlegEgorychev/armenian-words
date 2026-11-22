@@ -630,7 +630,11 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  search:'Поиск по-армянски, по переводу или транскрипции',f_all:'Все',f_new:'Новые',f_learning:'Изучаю',f_learned:'Выучено',f_due:'Повторить',
  settings:'⚙️ Настройки и прогресс',goalXp:'Цель XP в день',exportB:'⬇️ Экспорт прогресса',importF:'⬆️ Импорт из файла',
  ioPh:'Сюда попадёт JSON при экспорте. Чтобы импортировать — вставь JSON и нажми кнопку ниже',importT:'Импорт из текста',resetAll:'Сбросить весь прогресс',
- storage:'Прогресс хранится в этом браузере.',voiceY:'Армянский голос найден 🔊',voiceN:'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.',
+ storage:'Прогресс хранится в этом браузере.',
+ acc:'👤 Аккаунт и синхронизация',accHint:'Войди через Google — и прогресс будет одинаковым на телефоне, компьютере и в любом браузере. Без входа всё работает как раньше.',
+ signIn:'Войти через Google',signOut:'Выйти',syncNow:'Синхронизировать сейчас',accTitle:'Аккаунт',
+ sy_off:'Синхронизация выключена',sy_load:'Подключаемся…',sy_busy:'Синхронизация…',sy_ok:'Синхронизировано · {0}',sy_offline:'Нет сети — синхронизируем, когда она появится',sy_err:'Ошибка синхронизации: {0}',
+ signedOut:'Вы вышли. Прогресс остался на этом устройстве.',signedIn:'Вход выполнен — прогресс синхронизирован',signFail:'Не удалось войти: {0}',accLocal:'Прогресс хранится в этом браузере и в облаке Google (Firebase).',voiceY:'Армянский голос найден 🔊',voiceN:'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.',
  nothing:'Ничего не найдено',resetT:'Сбросить прогресс слова',delT:'Удалить',
  abcSub:'алфавит',abcNote:'Нажимай на буквы, чтобы выбрать их для тренировки. Буква становится выученной (зелёная рамка ✓) после 3 правильных ответов подряд — или сразу отметь те, что уже знаешь. Слова в тренировках собираются только из выученных букв.',
  legend:"' — с придыханием, без апострофа — твёрдый звук; рр — раскатистое р",sortFreq:'По частоте',sortAlpha:'По алфавиту',upper:'Заглавные',lower:'Строчные',
@@ -682,7 +686,11 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  search:'Search in Armenian, translation or transcription',f_all:'All',f_new:'New',f_learning:'Learning',f_learned:'Learned',f_due:'Review',
  settings:'⚙️ Settings & progress',goalXp:'Daily XP goal',exportB:'⬇️ Export progress',importF:'⬆️ Import from file',
  ioPh:'Exported JSON appears here. To import, paste JSON and press the button below',importT:'Import from text',resetAll:'Reset all progress',
- storage:'Progress is stored in this browser.',voiceY:'Armenian voice found 🔊',voiceN:'No Armenian voice on this device — audio is hidden.',
+ storage:'Progress is stored in this browser.',
+ acc:'👤 Account & sync',accHint:'Sign in with Google and your progress will be the same on your phone, computer and any browser. Without signing in everything works as before.',
+ signIn:'Sign in with Google',signOut:'Sign out',syncNow:'Sync now',accTitle:'Account',
+ sy_off:'Sync is off',sy_load:'Connecting…',sy_busy:'Syncing…',sy_ok:'Synced · {0}',sy_offline:'Offline — will sync when back online',sy_err:'Sync error: {0}',
+ signedOut:'Signed out. Your progress stays on this device.',signedIn:'Signed in — progress synced',signFail:'Could not sign in: {0}',accLocal:'Progress is stored in this browser and in the Google cloud (Firebase).',voiceY:'Armenian voice found 🔊',voiceN:'No Armenian voice on this device — audio is hidden.',
  nothing:'Nothing found',resetT:'Reset word progress',delT:'Delete',
  abcSub:'alphabet',abcNote:'Tap letters to select them for practice. A letter becomes learned (green ✓ border) after 3 correct answers in a row — or mark the ones you already know. Word exercises only use words made of learned letters.',
  legend:"' — aspirated, without it — unaspirated; rr — rolled r",sortFreq:'By frequency',sortAlpha:'Alphabetical',upper:'Upper',lower:'Lower',
@@ -713,17 +721,17 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.5';
+const APP_VERSION='0.5.6';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
 const MY='Мои слова';
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all'};}
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all',u:{}};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
 if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
 if(Array.isArray(S.lettersOn)){S.sel=S.lettersOn;}delete S.lettersOn;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function save(){stamp();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncSoon();}
 const L=()=>T[S.lang]||T.ru;
 const t=(k,...a)=>{let s=L()[k];if(s===undefined)s=T.ru[k];a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s;};
 const snd=a=>S.lang==='en'?a[3]:a[2];
@@ -1052,7 +1060,7 @@ function navHtml(){
   const b=(k,i,n)=>`<button class="${screen===k?'on':''}" onclick="A.go('${k}')"><i>${i}</i>${n}</button>`;
   return `<nav>${b('home','🏋️',t('exercises'))}${b('dict','📖',t('dict'))}${b('abc','Աա',t('alphabet'))}</nav>`;
 }
-function topBar(title,sub,extra){return `<div class="top"><div class="logo">${title}<small>${sub}</small></div><div style="display:flex;gap:8px">${extra||''}${langBtn()}</div></div>`;}
+function topBar(title,sub,extra){return `<div class="top"><div class="logo">${title}<small>${sub}</small></div><div style="display:flex;gap:8px">${extra||''}${accBtn()}${langBtn()}</div></div>`;}
 function loadScreen(){
   if(!LOAD_ERR)return `${topBar('Բառեր',t('appSub'))}<div class="card" style="text-align:center;padding:40px 16px"><div class="hy" style="font-size:40px">Ա</div><p class="muted">${t('loading')}</p></div>`;
   const file=location.protocol==='file:';
@@ -1334,7 +1342,8 @@ function rDict(){
   ${filterChips(dictLvl,dictPos,'A.dlvl','A.dpos')}
   <div class="flt" style="margin-bottom:8px"><span class="muted">${t('sortBy')}</span><div class="seg" style="align-self:flex-start">${[['rank','sortRank'],['alpha','sortAz'],['topic','sortTopic']].map(([k,l])=>`<button class="${dictSort===k?'on':''}" onclick="A.dsort('${k}')">${t(l)}</button>`).join('')}</div></div>
   <div id="dlist"></div>
-  <details class="card" style="margin-top:20px"><summary>${t('settings')}</summary>
+  <details class="card" id="acct" style="margin-top:20px" ${accOpen?'open':''} ontoggle="accOpen=this.open"><summary>${t('acc')}</summary>${accHtml()}</details>
+  <details class="card"><summary>${t('settings')}</summary>
     <div class="form" style="margin-top:12px">
       <div class="muted">${t('orderT')}<div class="seg" style="margin-left:8px;vertical-align:middle"><button class="${S.order!=='topic'?'on':''}" onclick="A.order('freq')">${t('orderFreq')}</button><button class="${S.order==='topic'?'on':''}" onclick="A.order('topic')">${t('orderTopic')}</button></div></div>
       <label class="muted">${t('goalXp')} <input type="number" min="5" max="500" value="${S.goal}" onchange="A.goal(this.value)" style="width:90px;margin-left:8px"></label>
@@ -1343,7 +1352,7 @@ function rDict(){
       <textarea id="io" rows="3" placeholder="${esc(t('ioPh'))}" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:12px monospace"></textarea>
       <button class="btn ghost" onclick="A.impText()">${t('importT')}</button>
       <button class="btn ghost" style="color:var(--bad)" onclick="A.resetAll()">${t('resetAll')}</button>
-      <p class="muted">${t('storage')} ${hyVoice?t('voiceY'):t('voiceN')}</p>
+      <p class="muted">${SYNC.user?t('accLocal'):t('storage')} ${hyVoice?t('voiceY'):t('voiceN')}</p>
     </div></details>
   ${navHtml()}`;
   rList();
@@ -1418,6 +1427,10 @@ let armed=null;
 function twice(k,msg){if(armed&&armed.k===k&&Date.now()-armed.t<4000){armed=null;return true;}armed={k,t:Date.now()};toast(msg);return false;}
 function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});dirty();save();toast(t('loaded'));render();}
 const A={
+  acct(){screen='dict';accOpen=true;fb=null;render();const e=document.getElementById('acct');if(e)e.scrollIntoView({block:'start'});},
+  signIn(){signIn();},
+  signOut(){signOutNow();},
+  syncNow(){syncNow(true);},
   go(s){screen=s;if(s!=='session')ses=null;fb=null;render();window.scrollTo(0,0);},
   start(k){start(k);window.scrollTo(0,0);},
   lang(){S.lang=S.lang==='en'?'ru':'en';save();render();},
@@ -1527,6 +1540,138 @@ window.addEventListener('keydown',e=>{
 },true);
 /* ================= START ================= */
 // load words.json, merge it with RAW, then draw the app
+
+/* ================= CLOUD SYNC (Firebase) =================
+   How it works, in plain words:
+   - Without signing in nothing changes: progress lives in localStorage.
+   - After "Sign in with Google" the whole progress S is stored in Firestore as one document users/{uid}.
+   - Every change is stamped: S.u['w:<word>'] = time of the last change of that word
+     (also 'l:' letters, 'x:' XP of a day, 'c:' own words, 'k:' settings). A deleted thing keeps its stamp.
+   - Two copies (this device and the cloud) are merged piece by piece: the newer stamp wins.
+     XP of the same day takes the larger number. So learning offline on two devices loses nothing.
+   - The Firebase code (~150 KB) is downloaded only if you have signed in at least once. */
+const FB_CONFIG={apiKey:"AIzaSyDVfWy7grtiks49b-FzhFNM5ZmOHOaHHck",authDomain:"barev-c3b95.firebaseapp.com",projectId:"barev-c3b95",storageBucket:"barev-c3b95.firebasestorage.app",messagingSenderId:"660522976860",appId:"1:660522976860:web:c766ba59d8d1826c824899"};
+const FB_SDK='https://www.gstatic.com/firebasejs/13.4.0/';
+const SYNC_FLAG='hy-sync-on';
+const MAPS={w:'w',letters:'l',xp:'x'};
+const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&k!=='custom'&&k!=='u');
+const SYNC={user:null,status:'off',err:'',last:0,timer:null,fb:null,busy:false,again:false};
+let accOpen=false;
+
+// one JSON string per piece of progress
+function entries(s){const e={};
+  for(const f in MAPS){const o=s[f]||{};for(const k in o)e[MAPS[f]+':'+k]=JSON.stringify(o[k]);}
+  (s.custom||[]).forEach(c=>{if(c&&c.id)e['c:'+c.id]=JSON.stringify(c);});
+  SCALARS.forEach(f=>{if(s[f]!==undefined)e['k:'+f]=JSON.stringify(s[f]);});
+  return e;}
+let SNAP=entries(S);
+// called by save(): stamps everything that changed since the last save
+function stamp(){const now=Date.now(),cur=entries(S);if(!S.u||typeof S.u!=='object')S.u={};
+  for(const k in cur)if(cur[k]!==SNAP[k])S.u[k]=now;
+  for(const k in SNAP)if(!(k in cur))S.u[k]=now;
+  SNAP=cur;}
+// merge two states piece by piece (a = this device, b = cloud)
+function mergeState(a,b){
+  const ea=entries(a),eb=entries(b),ua=a.u||{},ub=b.u||{};
+  const out=Object.assign(defaults(),a,{w:{},letters:{},xp:{},custom:[],u:{}});
+  const keys=new Set([...Object.keys(ea),...Object.keys(eb),...Object.keys(ua),...Object.keys(ub)]);
+  const order=[...Object.keys(ea),...Object.keys(eb)].filter(k=>k.startsWith('c:'));
+  const picked={};
+  keys.forEach(k=>{
+    const ta=ua[k]||0,tb=ub[k]||0,va=ea[k],vb=eb[k];let v;
+    if(ta>tb)v=va;else if(tb>ta)v=vb;
+    else if(va===undefined||vb===undefined)v=va===undefined?vb:va;   // never stamped: keep whatever exists
+    else if(k.startsWith('w:')){const x=JSON.parse(va),y=JSON.parse(vb);v=((y.lvl||0)>(x.lvl||0)||((y.lvl||0)===(x.lvl||0)&&(y.next||0)>(x.next||0)))?vb:va;}
+    else v=va;
+    if(k.startsWith('x:')&&va!==undefined&&vb!==undefined)v=JSON.stringify(Math.max(JSON.parse(va),JSON.parse(vb)));
+    if(ta||tb)out.u[k]=Math.max(ta,tb);
+    if(v!==undefined)picked[k]=JSON.parse(v);
+  });
+  for(const k in picked){const i=k.indexOf(':'),p=k.slice(0,i),id=k.slice(i+1);
+    if(p==='w')out.w[id]=picked[k];else if(p==='l')out.letters[id]=picked[k];else if(p==='x')out.xp[id]=picked[k];
+    else if(p==='k')out[id]=picked[k];}
+  const seen=new Set();order.forEach(k=>{if(k in picked&&!seen.has(k)){seen.add(k);out.custom.push(picked[k]);}});
+  return out;}
+
+function setSync(st,err){SYNC.status=st;SYNC.err=err||'';const e=document.getElementById('syncSt');if(e)e.innerHTML=syncText();const b=document.getElementById('accB');if(b)b.outerHTML=accBtn();}
+function syncText(){const s=SYNC.status;
+  if(s==='ok')return t('sy_ok',new Date(SYNC.last).toLocaleTimeString(S.lang==='en'?'en-GB':'ru-RU',{hour:'2-digit',minute:'2-digit'}));
+  if(s==='err')return `<span style="color:var(--bad)">${esc(t('sy_err',SYNC.err))}</span>`;
+  return t('sy_'+s);}
+function accBtn(){const u=SYNC.user,dot=SYNC.status==='err'?'var(--bad)':SYNC.status==='offline'?'var(--muted)':SYNC.status==='ok'?'var(--ok)':'transparent';
+  const face=u&&u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer" style="width:22px;height:22px;border-radius:50%;display:block">`:(u?esc((u.displayName||u.email||'?')[0].toUpperCase()):'👤');
+  return `<button id="accB" class="pill" onclick="A.acct()" title="${esc(t('accTitle'))}" style="position:relative;padding:5px 9px">${face}${u?`<i style="position:absolute;right:2px;bottom:2px;width:8px;height:8px;border-radius:50%;background:${dot};border:1px solid var(--card)"></i>`:''}</button>`;}
+function accHtml(){const u=SYNC.user;
+  if(!u)return `<div class="form" style="margin-top:12px"><p class="muted" style="margin:0">${t('accHint')}</p>
+    <button class="btn" onclick="A.signIn()" ${SYNC.status==='load'?'disabled':''}>${SYNC.status==='load'?t('sy_load'):t('signIn')}</button>
+    ${SYNC.status==='err'?`<p class="muted" style="margin:0" id="syncSt">${syncText()}</p>`:''}</div>`;
+  return `<div class="form" style="margin-top:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      ${u.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer" style="width:48px;height:48px;border-radius:50%">`:`<div class="pill" style="width:48px;height:48px;justify-content:center;font-size:20px">${esc((u.displayName||u.email||'?')[0].toUpperCase())}</div>`}
+      <div style="min-width:0"><b>${esc(u.displayName||'')}</b><div class="muted" style="font-size:14px;overflow:hidden;text-overflow:ellipsis">${esc(u.email||'')}</div></div>
+    </div>
+    <p class="muted" style="margin:0" id="syncSt">${syncText()}</p>
+    <button class="btn ghost" onclick="A.syncNow()">🔄 ${t('syncNow')}</button>
+    <button class="btn ghost" onclick="A.signOut()">${t('signOut')}</button></div>`;}
+
+async function fbLoad(){
+  if(SYNC.fb)return SYNC.fb;
+  const [app,auth,fs]=await Promise.all([import(FB_SDK+'firebase-app.js'),import(FB_SDK+'firebase-auth.js'),import(FB_SDK+'firebase-firestore.js')]);
+  const a=app.initializeApp(FB_CONFIG),au=auth.getAuth(a);
+  SYNC.fb={auth,fs,au,db:fs.getFirestore(a)};
+  auth.onAuthStateChanged(au,u=>{
+    const was=SYNC.user&&SYNC.user.uid;
+    SYNC.user=u?{uid:u.uid,displayName:u.displayName,email:u.email,photoURL:u.photoURL}:null;
+    if(u){try{localStorage.setItem(SYNC_FLAG,'1');}catch(e){}if(was!==u.uid)syncNow(false);}
+    else setSync('off');
+    if(screen!=='session')render();
+  });
+  return SYNC.fb;}
+async function signIn(){
+  setSync('load');render();
+  try{const f=await fbLoad(),p=new f.auth.GoogleAuthProvider();
+    try{await f.auth.signInWithPopup(f.au,p);}
+    catch(e){const c=e&&e.code||'';
+      if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){try{localStorage.setItem(SYNC_FLAG,'1');}catch(_){}await f.auth.signInWithRedirect(f.au,p);return;}
+      throw e;}
+    toast(t('signedIn'));
+  }catch(e){const c=e&&e.code||String(e&&e.message||e);
+    if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request'){setSync('off');render();return;}
+    setSync('err',c);toast(t('signFail',c));render();}}
+async function signOutNow(){try{const f=await fbLoad();await f.auth.signOut(f.au);}catch(e){}
+  try{localStorage.removeItem(SYNC_FLAG);}catch(e){}SYNC.user=null;setSync('off');toast(t('signedOut'));render();}
+
+// download the cloud copy, merge it with this device, save both
+async function syncNow(manual){
+  if(!SYNC.user)return;
+  if(SYNC.busy){SYNC.again=true;return;}
+  if(!navigator.onLine){setSync('offline');return;}
+  if(screen==='session'){clearTimeout(SYNC.timer);SYNC.timer=setTimeout(()=>syncNow(false),15000);return;}   // never swap progress in the middle of a lesson
+  SYNC.busy=true;clearTimeout(SYNC.timer);setSync('busy');
+  try{const f=await fbLoad(),ref=f.fs.doc(f.db,'users',SYNC.user.uid);
+    const snap=await f.fs.getDoc(ref);
+    let remote=null;if(snap.exists()){try{remote=JSON.parse(snap.data().data);}catch(e){}}
+    if(remote&&typeof remote.w==='object'){
+      const before=JSON.stringify(S),lang=S.lang;
+      S=mergeState(S,remote);S.lang=lang||S.lang;
+      SNAP=entries(S);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+      if(JSON.stringify(S)!==before){dirty();if(screen!=='session')render();}
+    }
+    await f.fs.setDoc(ref,{data:JSON.stringify(S),ts:Date.now(),v:APP_VERSION});
+    SYNC.last=Date.now();setSync('ok');if(manual)toast(syncText());
+  }catch(e){const c=e&&e.code||String(e&&e.message||e);
+    setSync(navigator.onLine&&c!=='unavailable'?'err':'offline',c);}
+  SYNC.busy=false;
+  if(SYNC.again){SYNC.again=false;syncSoon();}}
+// called by save(): sends changes to the cloud a few seconds after the last change
+function syncSoon(){if(!SYNC.user)return;clearTimeout(SYNC.timer);SYNC.timer=setTimeout(()=>syncNow(false),4000);}
+window.addEventListener('online',()=>syncNow(false));
+document.addEventListener('visibilitychange',()=>{if(!SYNC.user)return;
+  if(document.visibilityState==='hidden'){if(SYNC.timer)syncNow(false);}   // leaving the app: send pending changes now
+  else if(Date.now()-SYNC.last>30000)syncNow(false);});                     // coming back: fetch changes from other devices
+let syncFlag=false;try{syncFlag=localStorage.getItem(SYNC_FLAG)==='1';}catch(e){}
+if(syncFlag&&location.protocol!=='file:'){setSync('load');fbLoad().catch(e=>setSync('offline',String(e&&e.message||e)));}
+
 function boot(){
   render();
   fetch('words.json',{cache:'no-cache'})

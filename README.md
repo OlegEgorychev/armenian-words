@@ -84,16 +84,20 @@ The app loads `words.json` with `fetch()`, which browsers block for files opened
 python3 -m http.server
 ```
 
+## Cloud sync
+
+Signing in is optional. Press 👤 at the top → "Sign in with Google", and progress is kept in Firebase (Firestore document `users/{uid}`) and merged across devices: every change carries a timestamp and the newer one wins, piece by piece. Access rules live in [`firestore.rules`](firestore.rules) and are pasted into Firebase console → Firestore → Rules. The Firebase config in `index.html` is public by design; the rules and the authorized domain (`olegegorychev.github.io`) are what protect the data.
+
 ## Version and roadmap
 
-Current version: **0.5.5** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+Current version: **0.5.6** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
 
 | Version | Milestone | Tasks |
 |---|---|---|
 | 0.5.0 | Baseline | everything built before versioning |
 | **0.6.0** | Every day | ✅ Daily lesson · ✅ dictionary moved to `words.json` (2000 words) · ✅ Enter without an answer = "I don't know" · ✅ PWA (install + offline) · emoji for words |
 | **0.7.0** | Memory and sound | smart spaced repetition (FSRS/SM-2) · recorded mp3 audio · listening exercise · stats and "hard words" |
-| **0.8.0** | Everywhere | cloud sync · reminders (push) · own words: edit + RU/EN · CSV/Anki import · topics for life in Yerevan |
+| **0.8.0** | Everywhere | ✅ cloud sync (Google sign-in) · reminders (push) · own words: edit + RU/EN · CSV/Anki import · topics for life in Yerevan |
 | **0.9.0** | Living language | phrases and short sentences · "Expressions" exercise · grammar mini-lessons · reading real signs |
 | **1.0.0** | Release | AI conversation practice · citizenship exam track · Android app in Google Play · promotion in Armenian communities |
 

@@ -9,6 +9,16 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.6] — 2026-11-22
+
+### Added
+- **Cloud sync with Google sign-in** (a 0.8.0 roadmap task, done early). New "👤 Account & sync" section (the 👤 button at the top opens it): sign in with Google and the same progress is on your phone, computer and any browser. Signing in is optional — without it everything works as before, offline, in localStorage.
+- Profile: Google photo, name and email, sync status ("Synced · 15:32", "Offline — will sync later"), "Sync now" and "Sign out". Signing out keeps the progress on the device.
+- Progress is stored in Firebase (project `barev-c3b95`, free Spark plan) as one Firestore document `users/{uid}`. Access rules are in `firestore.rules`: each user can read and write only their own document.
+- **Safe merging.** Every change is stamped with its time (per word, per letter, per day of XP, per own word, per setting). When two devices meet, the newer change wins piece by piece, XP of the same day takes the larger number, and deletions (reset word, reset all, delete own word) spread too. So practising offline on two devices loses nothing.
+- Changes are sent a few seconds after the last answer, when you leave the app, and when the internet comes back; changes from other devices are fetched when you open or return to the app. Nothing is swapped in the middle of a lesson.
+- The Firebase code is downloaded only after you have signed in once, so the app stays light for everyone else.
+
 ## [0.5.5] — 2026-11-22
 
 ### Added
