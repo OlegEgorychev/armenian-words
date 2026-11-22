@@ -9,6 +9,12 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.2] — 2026-11-22
+
+### Added
+- **Letters quiz setup screen.** The 🔤 Letters card on the home screen no longer starts the quiz right away: it first shows all 39 letters (by frequency, learned ones marked ✓) where you tap to add or remove letters, plus "+ next 5" and "Select none". The Start button shows how many letters are in the quiz.
+- **"Learn next" letters are clickable.** On the home screen, tapping a suggested letter adds it to the quiz selection (tap again to remove); a "Train selected" button opens the setup screen.
+
 ## [0.5.1] — 2026-11-22
 
 ### Added

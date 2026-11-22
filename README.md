@@ -19,7 +19,7 @@ The interface is available in **English and Russian**. Use the RU / EN button in
 | ✍️ Writing | typing the word on an Armenian keyboard from its translation |
 | 🎧 Dictation | typing the word from its transcription (spelling) |
 | 🖊️ Handwriting | draw letters with finger or mouse on a lined pad: trace the model first, then write from memory and compare with the model (self-graded). Print or handwritten script |
-| Աա Letters | alphabet trainer in the style of [chev.me/armenian](https://chev.me/armenian/): letter → pick its transliteration out of 5, 15 questions |
+| Աա Letters | first pick the letters (tap to add / remove, “+ next 5”), then: alphabet trainer in the style of [chev.me/armenian](https://chev.me/armenian/): letter → pick its transliteration out of 5, 15 questions |
 | 🔁 Review | spaced repetition of learned words: 1-3-7-14-30-60-120 days |
 
 A word counts as **learned** once it is answered correctly on the first try in all five core exercises. After that it moves into spaced-repetition review.
@@ -61,7 +61,7 @@ The Latin transcription is generated from the Cyrillic one. Cyrillic conventions
 
 ## Version and roadmap
 
-Current version: **0.5.1** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+Current version: **0.5.2** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
 
 | Version | Milestone | Tasks |
 |---|---|---|

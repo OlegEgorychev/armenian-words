@@ -199,6 +199,9 @@ kbd{display:none;font:600 11px system-ui;border:1px solid var(--line);border-bot
 .next-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .next-l span{border:1px solid var(--line);border-radius:10px;padding:2px 8px;font-size:13px}
 .next-l b{font:600 18px var(--hy)}
+.next-l button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:2px 8px;font-size:13px;cursor:pointer}
+.next-l button.on{background:var(--sel);border-color:var(--sel-b)}
+.next-l button.on::before{content:'✓ ';color:var(--ok);font-weight:700}
 .cta{background:var(--accent-soft);border-color:var(--accent)}
 .letter-q .big.hy{font-size:72px;letter-spacing:6px}
 .cur,.abc.cur button b,.letter-q .big.cur{font-family:'Arti',var(--hy);font-weight:400}
@@ -631,6 +634,9 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  clearW:'🧽 Стереть',compareW:'Сравнить с образцом',gradeOk:'✓ Получилось',gradeBad:'✗ Не похоже',drawFirst:'Сначала напиши букву',
  fontCredit:'Рукописный шрифт Arti — Khajag Apelian / Hamazkayin',noteHand:'Рукописные буквы — так пишут от руки в армянских школах. Тренируй чтение рукописных (тест) и письмо (✍️). Прогресс по рукописным считается отдельно.',
  selAll:'Выбрать все',unselAll:'Снять все',practice:'▶ Тренировать',myWords:'Мои слова',
+ lsetT:'Буквы для теста',lsetHint:'Нажми на букву, чтобы добавить её в тест или убрать. ✓ — уже выученные.',
+ lsetCount:'Выбрано: {0}',lsetNone:'Ничего не выбрано — тест будет по всем 39 буквам',lsetStart:'▶ Начать ({0})',lsetStartAll:'▶ Начать — все буквы',
+ lsetNext:'+ 5 следующих',nextTap:'Нажми на букву, чтобы добавить её в тест',trainPicked:'▶ Учить выбранные ({0})',
  dailyT:'Урок дня',dailyD:'Повторение, новые буквы и новые слова — одной кнопкой',dailyDone:'✅ Сегодня пройден — можно ещё раз',
  dailyRev:'🔁 повторить: {0}',dailyLet:'Աա букв: {0}',dailyNew:'🆕 слов: {0}',dailyMin:'≈{0} мин',dailyEmpty:'Пока нечего проходить: выучи буквы во вкладке «Алфавит»'},
 en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learning',st_learned:'learned',st_due:'to review',
@@ -670,12 +676,15 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  clearW:'🧽 Clear',compareW:'Compare with model',gradeOk:'✓ Got it',gradeBad:'✗ Not quite',drawFirst:'Draw the letter first',
  fontCredit:'Handwriting font Arti — Khajag Apelian / Hamazkayin',noteHand:'Handwritten letters are how Armenian is written by hand in school. Practise reading them (quiz) and writing them (✍️). Handwritten progress is tracked separately.',
  selAll:'Select all',unselAll:'Clear all',practice:'▶ Practise',myWords:'My words',
+ lsetT:'Letters for the quiz',lsetHint:'Tap a letter to add it to the quiz or remove it. ✓ — already learned.',
+ lsetCount:'Selected: {0}',lsetNone:'Nothing selected — the quiz will use all 39 letters',lsetStart:'▶ Start ({0})',lsetStartAll:'▶ Start — all letters',
+ lsetNext:'+ next 5',nextTap:'Tap a letter to add it to the quiz',trainPicked:'▶ Train selected ({0})',
  dailyT:'Daily lesson',dailyD:'Review, new letters and new words — in one tap',dailyDone:'✅ Done today — you can go again',
  dailyRev:'🔁 review: {0}',dailyLet:'Աա letters: {0}',dailyNew:'🆕 words: {0}',dailyMin:'≈{0} min',dailyEmpty:'Nothing to do yet: learn some letters in the Alphabet tab'}
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.1';
+const APP_VERSION='0.5.2';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -953,6 +962,7 @@ function render(){
   else if(screen==='abc')rAbc();
   else if(screen==='session')rSession();
   else if(screen==='end')rEnd();
+  else if(screen==='lsetup')rLetSetup();
 }
 function letterProgress(sc,dim){
   const K=new Set(knownList(sc)),n=ABC.length,k=K.size;
@@ -972,7 +982,8 @@ function lettersCard(){
     ${letterProgress('print')}${letterProgress('hand',!S.hknown.length)}
     <div style="margin-top:12px;font-weight:600">${t('wordsAvail',S.onlyKnown?ok:tot,tot)}</div>
     ${empty?`<p class="muted" style="margin:8px 0">${t('startAbc')}</p><button class="btn" style="width:100%" onclick="A.go('abc')">${t('goAbc')}</button>`:''}
-    ${S.onlyKnown&&nl.length?`<div class="muted" style="margin-top:10px">${t('nextLetters')}</div><div class="next-l">${nl.map(x=>`<span><b>${esc(x.l)}</b> ${esc(snd(byL[x.l]))}${x.n?` · ${t('plusWords',x.n)}`:''}</span>`).join('')}</div>`:''}
+    ${S.onlyKnown&&nl.length?`<div class="muted" style="margin-top:10px">${t('nextLetters')} <small>${t('nextTap')}</small></div><div class="next-l">${nl.map(x=>`<button class="${S.sel.includes(x.l)?'on':''}" onclick="A.abcT('${x.l}')"><b>${esc(x.l)}</b> ${esc(snd(byL[x.l]))}${x.n?` · ${t('plusWords',x.n)}`:''}</button>`).join('')}</div>
+    ${S.sel.length?`<button class="btn" style="width:100%;margin-top:10px" onclick="A.go('lsetup')">${t('trainPicked',S.sel.length)}</button>`:''}`:''}
     <label class="switch"><span>${t('onlyKnown')}</span><input type="checkbox" ${S.onlyKnown?'checked':''} onchange="A.only(this.checked)"></label>
   </div>`;
 }
@@ -1002,7 +1013,7 @@ function rHome(){
   </div>
   <h2>${t('exercises')}</h2>
   <div class="grid">
-    ${TR.map((x,i)=>{const n=available(x.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="A.start('${x.k}')">
+    ${TR.map((x,i)=>{const n=available(x.k);return `<button class="tr-card ${i===0?'wide':''} ${n?'':'dim'}" onclick="${x.k==='letters'?"A.go('lsetup')":`A.start('${x.k}')`}">
       <span class="cnt">${x.k==='letters'?n+' '+t('lettersN'):n}</span><div class="ico">${x.ico}</div><b>${trName(x.k)}</b><span>${trDesc(x.k)}</span></button>`;}).join('')}
   </div>
   <p class="muted" style="margin-top:16px">${t('foot')}</p>
@@ -1220,6 +1231,17 @@ function rList(){
     ${w.custom?`<button class="icon" title="${esc(t('delT'))}" onclick="A.del('${esc(w.id)}')">🗑</button>`:''}</div>`;}).join('')
     :`<p class="muted">${t('nothing')}</p>`;
 }
+function rLetSetup(){
+  const sel=new Set(S.sel),K=new Set(knownList()),hand=isHand();
+  const order=FREQ.map(l=>byL[l]);
+  $app.innerHTML=`<div class="s-top"><button class="x" onclick="A.go('home')">✕</button><b style="flex:1;font-size:18px">Աա ${t('lsetT')}</b></div>
+  <div class="seg" style="display:flex;margin-bottom:10px"><button style="flex:1;padding:10px" class="${hand?'':'on'}" onclick="A.script('print')">${t('scPrint')} <span class="hy">Աա</span></button><button style="flex:1;padding:10px" class="${hand?'on':''}" onclick="A.script('hand')">${t('scHand')} <span class="cur">Աա</span></button></div>
+  <p class="muted" style="margin:0 0 10px">${t('lsetHint')}</p>
+  <div class="abc-ctl"><b>${sel.size?t('lsetCount',sel.size):t('lsetNone')}</b></div>
+  <div class="abc-ctl"><button class="chip" onclick="A.selNext()">${t('lsetNext')}</button>${sel.size?`<button class="chip" onclick="A.selNone()">${t('clearSel')}</button>`:''}</div>
+  <div class="abc ${hand?'cur':''}">${order.map(a=>`<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}" onclick="A.abcT('${a[0]}')"><b>${esc(a[0])}</b><small>${esc(snd(a))}</small></button>`).join('')}</div>
+  <button class="btn" style="width:100%;margin:14px 0 24px;position:sticky;bottom:12px" onclick="A.start('letters')">${sel.size?t('lsetStart',sel.size):t('lsetStartAll')}</button>`;
+}
 function rAbc(){
   const sel=new Set(S.sel),K=new Set(knownList()),hand=isHand();
   const order=S.abcSort==='freq'?FREQ.map(l=>byL[l]):ABC;
@@ -1300,6 +1322,7 @@ const A={
   impText(){try{loadJSON(document.getElementById('io').value);}catch(e){toast(t('readFail'));}},
   abcT(l){S.sel=S.sel.includes(l)?S.sel.filter(x=>x!==l):S.sel.concat(l);save();render();},
   selNone(){S.sel=[];save();render();},
+  selNext(){const K=new Set(knownList());const add=FREQ.filter(l=>!K.has(l)&&!S.sel.includes(l)).slice(0,5);if(!add.length)return;S.sel=S.sel.concat(add);save();render();},
   abcSet(k,v){S[k]=v;save();render();},
   abcCase(k){S[k]=!S[k];if(!S.abcUp&&!S.abcLo)S[k==='abcUp'?'abcLo':'abcUp']=true;save();render();},
   mark(v){if(!S.sel.length)return toast(t('selectFirst'));
