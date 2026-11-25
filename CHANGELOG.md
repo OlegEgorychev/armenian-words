@@ -9,6 +9,17 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.10] — 2026-11-25
+
+### Fixed
+- **Words with unlearned letters no longer appear in trainings.** With "Only words made of learned letters" on:
+  - *Translation → word*: the wrong answer options used to be taken from the whole dictionary when fewer than 10 words were available, so they could contain letters you had not learned. Now only words made of learned letters are shown, even if that means fewer options.
+  - *Builder*: the extra (wrong) letter tiles used to be topped up with unlearned letters when there were not enough learned ones. Now only learned letters are used, even if there are fewer extra tiles.
+  - *Review* (and the review part of the daily lesson): a word that contains a letter marked as forgotten waits until that letter is learned again.
+
+### Added
+- 27 short common words in `words.json` (e.g. են, ալո, վայ, տետր, տոմս, կանոն, նավակ, կիտրոն, սալոր, ելակ, մետրո, լար, սանր, թել, հարս). They are marked `"extra": true` and have no frequency rank, so the "Top N" filter does not show them.
+
 ## [0.5.9] — 2026-11-22
 
 ### Added

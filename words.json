@@ -2,7 +2,7 @@
  "meta": {
   "name": "Բառեր — частотный словарь восточноармянского",
   "version": "2.0",
-  "count": 2000,
+  "count": 2027,
   "sources": [
    "UD Armenian-ArmTDP treebank (lemmas)",
    "OpenSubtitles hy frequency list (hermitdave/FrequencyWords)"
@@ -27,7 +27,8 @@
    "intj": "Междометие"
   },
   "translitNote": "Транскрипция побуквенная: h=հ, гх=ղ, х=խ, ы=ը; ударение обычно на последнем слоге",
-  "idNote": "id = армянское слово (как в текущем index.html: прогресс в localStorage привязан к hy)"
+  "idNote": "id = армянское слово (как в текущем index.html: прогресс в localStorage привязан к hy)",
+  "extraNote": "Слова с \"extra\": true — короткие частые слова, добавленные вручную (v0.5.10), чтобы тренировки работали уже на первых буквах. У них нет rank/level, поэтому фильтр «Топ N» их не показывает."
  },
  "words": [
   {
@@ -28029,6 +28030,330 @@
    "rank": 2000,
    "posRank": 421,
    "level": 4
+  },
+  {
+   "id": "լուսամուտ",
+   "hy": "լուսամուտ",
+   "ru": "окно",
+   "en": "window",
+   "pos": "noun",
+   "translit": {
+    "ru": "лусамут",
+    "en": "lusamut"
+   },
+   "extra": true
+  },
+  {
+   "id": "վերարկու",
+   "hy": "վերարկու",
+   "ru": "пальто",
+   "en": "coat",
+   "pos": "noun",
+   "translit": {
+    "ru": "верарку",
+    "en": "verarku"
+   },
+   "extra": true
+  },
+  {
+   "id": "մետրո",
+   "hy": "մետրո",
+   "ru": "метро",
+   "en": "metro",
+   "pos": "noun",
+   "translit": {
+    "ru": "метро",
+    "en": "metro"
+   },
+   "extra": true
+  },
+  {
+   "id": "սուր",
+   "hy": "սուր",
+   "ru": "острый",
+   "en": "sharp",
+   "pos": "adj",
+   "translit": {
+    "ru": "сур",
+    "en": "sur"
+   },
+   "extra": true
+  },
+  {
+   "id": "սալոր",
+   "hy": "սալոր",
+   "ru": "слива",
+   "en": "plum",
+   "pos": "noun",
+   "translit": {
+    "ru": "салор",
+    "en": "salor"
+   },
+   "extra": true
+  },
+  {
+   "id": "ելակ",
+   "hy": "ելակ",
+   "ru": "клубника",
+   "en": "strawberry",
+   "pos": "noun",
+   "translit": {
+    "ru": "елак",
+    "en": "yelak"
+   },
+   "extra": true
+  },
+  {
+   "id": "են",
+   "hy": "են",
+   "ru": "(они) есть — связка",
+   "en": "(they) are",
+   "pos": "verb",
+   "translit": {
+    "ru": "ен",
+    "en": "yen"
+   },
+   "extra": true
+  },
+  {
+   "id": "կոտրել",
+   "hy": "կոտրել",
+   "ru": "ломать",
+   "en": "to break",
+   "pos": "verb",
+   "translit": {
+    "ru": "котрел",
+    "en": "kotrel"
+   },
+   "extra": true
+  },
+  {
+   "id": "կիտրոն",
+   "hy": "կիտրոն",
+   "ru": "лимон",
+   "en": "lemon",
+   "pos": "noun",
+   "translit": {
+    "ru": "китрон",
+    "en": "kitron"
+   },
+   "extra": true
+  },
+  {
+   "id": "հայերեն",
+   "hy": "հայերեն",
+   "ru": "армянский язык",
+   "en": "Armenian (language)",
+   "pos": "noun",
+   "translit": {
+    "ru": "hайерен",
+    "en": "hayeren"
+   },
+   "extra": true
+  },
+  {
+   "id": "նավակ",
+   "hy": "նավակ",
+   "ru": "лодка",
+   "en": "boat",
+   "pos": "noun",
+   "translit": {
+    "ru": "навак",
+    "en": "navak"
+   },
+   "extra": true
+  },
+  {
+   "id": "տոմս",
+   "hy": "տոմս",
+   "ru": "билет",
+   "en": "ticket",
+   "pos": "noun",
+   "translit": {
+    "ru": "томс",
+    "en": "toms"
+   },
+   "extra": true
+  },
+  {
+   "id": "կանոն",
+   "hy": "կանոն",
+   "ru": "правило",
+   "en": "rule",
+   "pos": "noun",
+   "translit": {
+    "ru": "канон",
+    "en": "kanon"
+   },
+   "extra": true
+  },
+  {
+   "id": "տետր",
+   "hy": "տետր",
+   "ru": "тетрадь",
+   "en": "notebook",
+   "pos": "noun",
+   "translit": {
+    "ru": "тетр",
+    "en": "tetr"
+   },
+   "extra": true
+  },
+  {
+   "id": "տասնմեկ",
+   "hy": "տասնմեկ",
+   "ru": "одиннадцать",
+   "en": "eleven",
+   "pos": "num",
+   "translit": {
+    "ru": "таснмек",
+    "en": "tasnmek"
+   },
+   "extra": true
+  },
+  {
+   "id": "տասներկու",
+   "hy": "տասներկու",
+   "ru": "двенадцать",
+   "en": "twelve",
+   "pos": "num",
+   "translit": {
+    "ru": "таснерку",
+    "en": "tasnerku"
+   },
+   "extra": true
+  },
+  {
+   "id": "ում",
+   "hy": "ում",
+   "ru": "кого, кому",
+   "en": "whom",
+   "pos": "pron",
+   "translit": {
+    "ru": "ум",
+    "en": "um"
+   },
+   "extra": true
+  },
+  {
+   "id": "վայ",
+   "hy": "վայ",
+   "ru": "ой!",
+   "en": "oh!",
+   "pos": "intj",
+   "translit": {
+    "ru": "вай",
+    "en": "vay"
+   },
+   "extra": true
+  },
+  {
+   "id": "ալո",
+   "hy": "ալո",
+   "ru": "алло",
+   "en": "hello (on the phone)",
+   "pos": "intj",
+   "translit": {
+    "ru": "ало",
+    "en": "alo"
+   },
+   "extra": true
+  },
+  {
+   "id": "թել",
+   "hy": "թել",
+   "ru": "нитка",
+   "en": "thread",
+   "pos": "noun",
+   "translit": {
+    "ru": "тел",
+    "en": "tel"
+   },
+   "extra": true
+  },
+  {
+   "id": "թան",
+   "hy": "թան",
+   "ru": "тан (напиток из мацуна)",
+   "en": "tan (yogurt drink)",
+   "pos": "noun",
+   "translit": {
+    "ru": "тан",
+    "en": "tan"
+   },
+   "extra": true
+  },
+  {
+   "id": "թութ",
+   "hy": "թութ",
+   "ru": "тут, шелковица",
+   "en": "mulberry",
+   "pos": "noun",
+   "translit": {
+    "ru": "тут",
+    "en": "tut"
+   },
+   "extra": true
+  },
+  {
+   "id": "գորտ",
+   "hy": "գորտ",
+   "ru": "лягушка",
+   "en": "frog",
+   "pos": "noun",
+   "translit": {
+    "ru": "горт",
+    "en": "gort"
+   },
+   "extra": true
+  },
+  {
+   "id": "լար",
+   "hy": "լար",
+   "ru": "струна; провод",
+   "en": "string; wire",
+   "pos": "noun",
+   "translit": {
+    "ru": "лар",
+    "en": "lar"
+   },
+   "extra": true
+  },
+  {
+   "id": "սանր",
+   "hy": "սանր",
+   "ru": "расчёска",
+   "en": "comb",
+   "pos": "noun",
+   "translit": {
+    "ru": "санр",
+    "en": "sanr"
+   },
+   "extra": true
+  },
+  {
+   "id": "հագնել",
+   "hy": "հագնել",
+   "ru": "надевать",
+   "en": "to put on (clothes)",
+   "pos": "verb",
+   "translit": {
+    "ru": "hагнел",
+    "en": "hagnel"
+   },
+   "extra": true
+  },
+  {
+   "id": "հարս",
+   "hy": "հարս",
+   "ru": "невеста; невестка",
+   "en": "bride; daughter-in-law",
+   "pos": "noun",
+   "translit": {
+    "ru": "hарс",
+    "en": "hars"
+   },
+   "extra": true
   }
  ]
 }

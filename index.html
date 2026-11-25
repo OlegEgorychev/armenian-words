@@ -742,7 +742,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
 };
 
 /* ================= STATE ================= */
-const APP_VERSION='0.5.9';
+const APP_VERSION='0.5.10';
 const KEY='hy-words-v1', DAY=864e5, IV=[0,1,3,7,14,30,60,120];
 const FLAGS=['wt','tw','read','build','write'];
 const XP={wt:1,tw:1,read:1,build:2,write:3,dict:3,L1:1,L2:1,W:2};
@@ -895,7 +895,8 @@ function nextLetters(n){
   return all.slice(0,n);
 }
 function isDue(w){const s=peek(w.id);return s.lvl>0&&s.next<=Date.now();}
-function due(){return allWords().filter(isDue).sort((a,b)=>peek(a.id).next-peek(b.id).next);}
+// due for review; with "only learned letters" on, a word with a letter marked as forgotten waits until it is learned again
+function due(){const K=knownSet();return allWords().filter(w=>isDue(w)&&(!S.onlyKnown||wordOK(w,K))).sort((a,b)=>peek(a.id).next-peek(b.id).next);}
 function today(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function streak(){let n=0,d=new Date();if(!S.xp[today(d)])d.setDate(d.getDate()-1);while(S.xp[today(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 
@@ -973,10 +974,12 @@ function available(k){
   if(k==='letters'||k==='writing')return lettersOn().length;
   return p.length;
 }
-// answer options: the word + k-1 others; same part of speech first, then same topic, then any
-function options(w,fn,k){
+// answer options: the word + k-1 others; same part of speech first, then same topic, then any.
+// showsHy = the options are Armenian words: then only words made of learned letters are used,
+// even if that means fewer options (a word with an unlearned letter must never be shown)
+function options(w,fn,k,showsHy){
   let all=allWords();
-  if(S.onlyKnown){const ok=okAll();if(ok.length>=k*2)all=ok;}
+  if(S.onlyKnown){const ok=okAll();if(showsHy||ok.length>=k*2)all=ok;}
   const topic=w.th!==OTHER&&w.th!==MY?w.th:null;
   const score=x=>(w.pos&&x.pos===w.pos?2:0)+(topic&&x.th===topic?1:0);
   const groups=[[],[],[],[]];all.forEach(x=>{if(x!==w)groups[3-score(x)].push(x);});
@@ -1059,14 +1062,15 @@ function prep(tk){
   if(tk.p&&(tk.t==='build'||tk.t==='write'||tk.t==='dict'||tk.t==='W')){tk.p.lang=S.lang;return tk.p;}
   const w=tk.w,p={lang:S.lang};
   if(tk.t==='wt')p.opts=options(w,MEAN,5);
-  if(tk.t==='tw')p.opts=options(w,x=>x.hy,5);
+  if(tk.t==='tw')p.opts=options(w,x=>x.hy,5,true);
   if(tk.t==='read')p.opts=options(w,TR_,4);
   if(tk.t==='L1'||tk.t==='L2')p.opts=letterOptions(w,5);
   if(tk.t==='build'){
     p.units=units(w.hy);
     const K=knownSet(),cand=ABC.map(a=>a[0]).filter(u=>!p.units.includes(u));
     const pref=S.onlyKnown?cand.filter(u=>K.has(u)):cand;
-    const extra=shuffle(pref).concat(shuffle(cand.filter(u=>!pref.includes(u)))).slice(0,p.units.length>8?2:3);
+    // extra (wrong) tiles: only learned letters when "only learned letters" is on, even if there are fewer of them
+    const extra=shuffle(pref).slice(0,p.units.length>8?2:3);
     p.tiles=shuffle(p.units.concat(extra)).map(u=>({u,used:false}));
     p.placed=[];p.mist=0;
   }

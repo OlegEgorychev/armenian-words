@@ -101,6 +101,7 @@ Add an entry to the `words` array in `words.json`:
 - `pos`: `noun, verb, adj, adv, pron, num, adp, conj, part, intj`
 - `rank`: overall frequency rank; `posRank`: rank within the part of speech; `level`: 1 = ranks 1–500, 2 = 501–1000, 3 = 1001–1500, 4 = 1501–2000
 - Cyrillic transcription conventions: `h` = հ, `х` = խ, `гх` = ղ, `ы` = ը
+- Hand-picked words that are not in the frequency list get `"extra": true` and no `rank` / `posRank` / `level` (the "Top N" filter skips them)
 
 A word that should have a topic can also go into the `RAW` constant in `index.html` (`armenian | russian | english | russian transcription` under a `# Topic | Topic` line). If the same word is in both, the translation comes from `words.json` and the topic from `RAW`. After changing files, bump `APP_VERSION` in `index.html` so installed apps refresh their offline copy.
 
