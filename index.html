@@ -20,12 +20,14 @@
   --ok:#3B9F5A;--ok-soft:#E3F4E8;--bad:#D2504A;--bad-soft:#FBE5E3;
   --hy:"Noto Sans Armenian","Arian AMU","Sylfaen","Mshtakan",system-ui,sans-serif;
   --radius:16px;--sel:#FFF4B8;--sel-b:#D8C25C;
+  --fill:rgba(59,159,90,.24);--fill-top:rgba(59,159,90,.9);--fill-glow:#5CC47E;--rust:rgba(138,132,84,.28);--rust-top:rgba(128,122,74,.9);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;
   --accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220;--sel:#4A4220;--sel-b:#8F7F35;
+  --fill:rgba(76,190,110,.26);--fill-top:rgba(100,210,135,.9);--fill-glow:#6FD892;--rust:rgba(160,154,104,.26);--rust-top:rgba(175,168,115,.9);
 }}
-:root[data-theme=dark]{--sel:#4A4220;--sel-b:#8F7F35;--bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;--accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220}
+:root[data-theme=dark]{--fill:rgba(76,190,110,.26);--fill-top:rgba(100,210,135,.9);--fill-glow:#6FD892;--rust:rgba(160,154,104,.26);--rust-top:rgba(175,168,115,.9);--sel:#4A4220;--sel-b:#8F7F35;--bg:#1A1714;--card:#25211D;--ink:#F1EAE2;--muted:#A89C90;--line:#3A342E;--accent-soft:#3B2A1C;--ok-soft:#1E3326;--bad-soft:#3A2220}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -191,6 +193,18 @@ details summary::-webkit-details-marker{display:none}
 .abc button.sel{background:var(--sel);border-color:var(--sel-b)}
 .abc button.known{border-color:var(--ok)}
 .abc button.known::after{content:'✓';position:absolute;top:2px;right:6px;font-size:12px;color:var(--ok);font-weight:700}
+/* letter mastery: the card fills from the bottom up, height = m% (--m is set per card) */
+.abc button{overflow:hidden;isolation:isolate}
+.abc button::before{content:'';position:absolute;left:0;right:0;bottom:0;height:calc(var(--m,0) * 1%);z-index:-1;
+  background:var(--fill);box-shadow:inset 0 2px 0 var(--fill-top);transition:height .6s ease-out,background-color .3s}
+.abc button.lm::before{min-height:3px}
+.abc button.rust::before{background:var(--rust);box-shadow:inset 0 2px 0 var(--rust-top)}
+.abc button.full{border-color:var(--fill-glow);box-shadow:0 0 8px var(--fill-glow)}
+.abc button.full.rust{border-color:var(--rust-top);box-shadow:none}
+.lm-info{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px;font-size:14px}
+.lm-info b{font-size:20px;margin-right:4px}
+.lm-legend{display:flex;align-items:center;gap:8px;margin-bottom:0}
+.lm-legend i{flex:0 0 auto;width:14px;height:18px;border:2px solid var(--line);border-radius:4px;background:linear-gradient(to top,var(--fill) 60%,var(--fill-top) 60%,var(--fill-top) calc(60% + 2px),transparent calc(60% + 2px))}
 .sdots{display:flex;gap:3px;height:6px}
 .sdots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
 .sdots i.on{background:var(--ok)}
@@ -649,7 +663,7 @@ ru:{appSub:'армянские слова',goal:'Цель на сегодня',s
  sy_off:'Синхронизация выключена',sy_load:'Подключаемся…',sy_busy:'Синхронизация…',sy_ok:'Синхронизировано · {0}',sy_offline:'Нет сети — синхронизируем, когда она появится',sy_err:'Ошибка синхронизации: {0}',
  signedOut:'Вы вышли. Прогресс остался на этом устройстве.',signedIn:'Вход выполнен — прогресс синхронизирован',signFail:'Не удалось войти: {0}',accLocal:'Прогресс хранится в этом браузере и в облаке Google (Firebase).',voiceY:'Армянский голос найден 🔊',voiceN:'Армянский голос для озвучки на этом устройстве не найден — озвучка скрыта.',
  nothing:'Ничего не найдено',resetT:'Сбросить прогресс слова',delT:'Удалить',
- abcSub:'алфавит',abcNote:'Нажимай на буквы, чтобы выбрать их для тренировки. Буква становится выученной (зелёная рамка ✓) после 3 правильных ответов подряд — или сразу отметь те, что уже знаешь. Слова в тренировках собираются только из выученных букв.',
+ abcSub:'алфавит',lmLegend:'Заливка — насколько хорошо закреплена буква',lmInfo:'Закреплено: {0}% · {1}',lmNever:'ещё не тренировалась',lmToday:'тренировалась сегодня',lmYest:'тренировалась вчера',lmAgo:'тренировалась {0} назад',lmRusty:'давно не было — пора повторить',lmAria:'{0}, закреплено {1}%',weakBtn:'Тренировать слабые',abcNote:'Нажимай на буквы, чтобы выбрать их для тренировки. Буква становится выученной (зелёная рамка ✓) после 3 правильных ответов подряд — или сразу отметь те, что уже знаешь. Слова в тренировках собираются только из выученных букв.',
  legend:"' — с придыханием, без апострофа — твёрдый звук; рр — раскатистое р",sortFreq:'По частоте',sortAlpha:'По алфавиту',upper:'Заглавные',lower:'Строчные',
  trainSel:'Учить выбранное ({0})',trainAll:'Учить все',markKnown:'✓ Знаю выбранные',markForgot:'✗ Забыл выбранные',clearSel:'Сбросить выбор',
  knownN:'Выучено букв: {0} из 39',chooseTr:'Выбери транслитерацию',newKnown:'Новые выученные буквы:',unlocked:'Открыто новых слов: {0}',selectFirst:'Сначала выбери буквы',
@@ -709,7 +723,7 @@ en:{appSub:'Armenian words',goal:"Today's goal",st_new:'new',st_learning:'learni
  sy_off:'Sync is off',sy_load:'Connecting…',sy_busy:'Syncing…',sy_ok:'Synced · {0}',sy_offline:'Offline — will sync when back online',sy_err:'Sync error: {0}',
  signedOut:'Signed out. Your progress stays on this device.',signedIn:'Signed in — progress synced',signFail:'Could not sign in: {0}',accLocal:'Progress is stored in this browser and in the Google cloud (Firebase).',voiceY:'Armenian voice found 🔊',voiceN:'No Armenian voice on this device — audio is hidden.',
  nothing:'Nothing found',resetT:'Reset word progress',delT:'Delete',
- abcSub:'alphabet',abcNote:'Tap letters to select them for practice. A letter becomes learned (green ✓ border) after 3 correct answers in a row — or mark the ones you already know. Word exercises only use words made of learned letters.',
+ abcSub:'alphabet',lmLegend:'Fill shows how well you know the letter',lmInfo:'Mastery: {0}% · {1}',lmNever:'not practised yet',lmToday:'practised today',lmYest:'practised yesterday',lmAgo:'practised {0} ago',lmRusty:'been a while — time to review',lmAria:'{0}, mastery {1}%',weakBtn:'Train weak letters',abcNote:'Tap letters to select them for practice. A letter becomes learned (green ✓ border) after 3 correct answers in a row — or mark the ones you already know. Word exercises only use words made of learned letters.',
  legend:"' — aspirated, without it — unaspirated; rr — rolled r",sortFreq:'By frequency',sortAlpha:'Alphabetical',upper:'Upper',lower:'Lower',
  trainSel:'Train selected ({0})',trainAll:'Train all',markKnown:'✓ I know selected',markForgot:'✗ Forgot selected',clearSel:'Select none',
  knownN:'Letters learned: {0} of 39',chooseTr:'Choose the transliteration',newKnown:'Newly learned letters:',unlocked:'New words unlocked: {0}',selectFirst:'Select letters first',
@@ -757,12 +771,13 @@ const HARD_SHARE    = 0.3; // max share of Struggling words in a single-exercise
 const HARD_MAX      = 10;  // words in one "Tricky words" training
 const retryXP = x=>Math.floor(x/2);   // XP for a correct answer on a retry
 const MY='Мои слова';
-function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all',u:{}};}
+function defaults(){return{w:{},custom:[],xp:{},goal:30,themes:[],letters:{},known:[],hknown:[],script:'print',sel:[],onlyKnown:true,abcSort:'freq',abcUp:true,abcLo:true,lang:null,dailyDone:null,order:'freq',lvlF:0,posF:'all',lm:{print:{},hand:{}},u:{}};}
 let S=defaults();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(defaults(),s);}catch(e){}
 if(!S.lang){let l='en';try{l=/^(ru|uk|be|kk|hy)/i.test(navigator.language||'')?'ru':'en';}catch(e){}S.lang=l;}
 if(Array.isArray(S.lettersOn)){S.sel=S.lettersOn;}delete S.lettersOn;
-function save(){stamp();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncSoon();}
+function save(){stamp();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
+  if(!(ses&&screen==='session'))syncSoon();}   // during a training the cloud copy is written once, at the end
 const L=()=>T[S.lang]||T.ru;
 const t=(k,...a)=>{let s=L()[k];if(s===undefined)s=T.ru[k];a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s;};
 const snd=a=>S.lang==='en'?a[3]:a[2];
@@ -878,6 +893,105 @@ function missing(w,K){K=K||knownSet();return (w.us||[...new Set(units(w.hy))]).f
 function wordOK(w,K){K=K||knownSet();return (w.us||units(w.hy)).every(u=>K.has(u));}
 const knownKey=()=>S.known.slice().sort().join('');
 const filtKey=()=>S.themes.join(',')+'|'+S.lvlF+'|'+S.posF;
+
+/* ================= LETTER MASTERY =================
+   In plain words: every letter has a number m from 0 to 100, separately for print and handwritten.
+   It is the fill of the letter card in the Alphabet tab. Correct answers raise it, mistakes lower it.
+   S.lm = { print: { 'ա': {m, day, today, seen} }, hand: {...} }
+     m     — mastery 0…100 (the fill, in %)
+     day   — the date of `today`; today — points earned that day (for the daily cap)
+     seen  — last time the letter was practised in this mode (for "rust")
+   The ✓ / green border still means "learned" (S.known / S.hknown) — that is what unlocks words.
+   Future letter levels: 20/40/60/80/100% = levels 1–5. All numbers to tune live here: */
+const MASTERY={
+  letterQuiz:10,   // print letter quiz (letter → transliteration), correct
+  wordChoice:3,    // word: translation choice / reading check, correct — to each unique letter
+  wordBuild:5,     // word: builder / writing / dictation, correct — to each unique letter
+  phrase:2,        // phrase exercise (not in the app yet)
+  handQuiz:10,     // handwritten letter reading quiz, correct
+  handOk:12,       // handwriting exercise from memory: "Got it"
+  handTrace:6,     // handwriting exercise by tracing: "Got it"
+  letterMiss:-5,   // wrong answer in an exercise about one letter
+  buildMiss:-3,    // wrong letter while building / writing a word — to exactly that letter
+  dailyCap:25,     // max points per letter per mode per day
+  repeatHalf:0.5,  // the same word correct a 2nd time in one session; 3rd time and later: 0
+  rustDays:7,      // not practised this long → the fill turns grey-olive
+  markKnown:30,    // "✓ I know the selected": raise m to this
+  migrateOk:10,migrateBad:-5,   // first start: m from old answer history (min markKnown, max 100)
+  max:100,
+};
+const LM_MODES=['print','hand'];
+const lmMode=sc=>isHand(sc)?'hand':'print';
+function lmGet(l,mode){const o=S.lm&&S.lm[mode];return (o&&o[l])||null;}
+const lmVal=(l,mode)=>{const r=lmGet(l,mode);return r?Math.round(r.m):0;};
+const lmRust=(l,mode,now=Date.now())=>{const r=lmGet(l,mode);return !!r&&r.m>0&&!!r.seen&&now-r.seen>=MASTERY.rustDays*DAY;};
+function lmRec(l,mode){
+  if(!S.lm||typeof S.lm!=='object')S.lm={};if(!S.lm[mode]||typeof S.lm[mode]!=='object')S.lm[mode]={};
+  return S.lm[mode][l]||(S.lm[mode][l]={m:0,day:'',today:0,seen:0});}
+// add (or take away) points; respects the daily cap and the 0…100 range; marks the letter as practised now
+function addMastery(l,mode,pts){
+  if(!l||!byL[l])return;
+  const r=lmRec(l,mode),d=today();
+  if(r.day!==d){r.day=d;r.today=0;}
+  if(pts>0){pts=Math.max(0,Math.min(pts,MASTERY.dailyCap-r.today));r.today+=pts;}
+  r.m=Math.max(0,Math.min(MASTERY.max,Math.round((r.m+pts)*10)/10));
+  r.seen=Date.now();
+}
+// unique letters of a word (ու and և are letters of their own; a letter twice in a word counts once)
+const wordLetters=w=>[...new Set(units(w.hy.toLowerCase()))].filter(u=>byL[u]);
+// writing / dictation: the first letter that differs from the right word
+function firstWrong(typed,tgt){const a=units(typed.toLowerCase()),b=units(tgt.toLowerCase());
+  for(let i=0;i<b.length;i++)if(a[i]!==b[i])return b[i];return null;}
+// called after every graded answer
+function lmAnswer(tk,ok,extra){
+  if(tk.t==='intro')return;
+  if(tk.t==='L1'||tk.t==='L2'){const mode=lmMode(tk.sc);
+    addMastery(tk.w[0],mode,ok?(mode==='hand'?MASTERY.handQuiz:MASTERY.letterQuiz):MASTERY.letterMiss);return;}
+  if(tk.t==='W'){addMastery(tk.w[0],lmMode(tk.sc),ok?(tk.mode==='trace'?MASTERY.handTrace:MASTERY.handOk):MASTERY.letterMiss);return;}
+  // word exercises are printed text → print mode
+  const writeLike=tk.t==='build'||tk.t==='write'||tk.t==='dict';
+  if(ok){
+    if(!ses.wc)ses.wc={};const n=ses.wc[tk.w.id]=(ses.wc[tk.w.id]||0)+1;
+    const k=n===1?1:n===2?MASTERY.repeatHalf:0;
+    const pts=(writeLike?MASTERY.wordBuild:MASTERY.wordChoice)*k;
+    wordLetters(tk.w).forEach(u=>addMastery(u,'print',pts));
+  }else if((tk.t==='write'||tk.t==='dict')&&extra&&extra.typed){
+    const u=firstWrong(extra.typed,tk.w.hy);if(u)addMastery(u,'print',MASTERY.buildMiss);
+  }
+  // wrong translation choice / reading / "I don't know": 0 (we can't tell which letter is to blame)
+}
+// first start / old export / data from an older app: learned letters without a mastery get a starting value
+function ensureLM(){
+  if(!S.lm||typeof S.lm!=='object'||Array.isArray(S.lm))S.lm={};
+  LM_MODES.forEach(mode=>{
+    if(!S.lm[mode]||typeof S.lm[mode]!=='object')S.lm[mode]={};
+    knownList(mode).forEach(l=>{
+      if(S.lm[mode][l]||!byL[l])return;
+      const h=S.letters[lkey(l,mode)]||{};
+      const m=Math.max(MASTERY.markKnown,Math.min(MASTERY.max,(h.ok||0)*MASTERY.migrateOk+(h.bad||0)*MASTERY.migrateBad));
+      S.lm[mode][l]={m,day:'',today:0,seen:Date.now()};
+    });
+  });
+}
+ensureLM();
+// "practised 3 days ago"
+function lmAgo(seen){
+  if(!seen)return t('lmNever');
+  const d0=new Date();d0.setHours(0,0,0,0);const d1=new Date(seen);d1.setHours(0,0,0,0);
+  const n=Math.max(0,Math.round((d0-d1)/DAY));
+  if(n===0)return t('lmToday');if(n===1)return t('lmYest');
+  const word=S.lang==='en'?'days':(n%10===1&&n%100!==11?'день':(n%10>=2&&n%10<=4&&(n%100<12||n%100>14))?'дня':'дней');
+  return t('lmAgo',n+' '+word);
+}
+// classes + style + aria-label for a letter card with the fill (from = the fill to start the animation at)
+function lmCard(l,mode,from){
+  const m=lmVal(l,mode),a=byL[l];
+  const cls=(m>0?' lm':'')+(m>=MASTERY.max?' full':'')+(lmRust(l,mode)?' rust':'');
+  const aria=esc(t('lmAria',a?a[1]+a[0]:l,m));
+  return {m,cls,attr:`style="--m:${from===undefined?m:from}" data-m="${m}" aria-label="${aria}"`};
+}
+const LM_SHOWN={};   // the fill last shown in the Alphabet tab, so it grows smoothly after a training
+let abcInfo=null;    // the last tapped letter in the Alphabet tab (its details are shown above the grid)
 // words that pass the practice filters (topics on the home screen + level + part of speech)
 function themed(){return memo('themed',filtKey(),()=>{const th=S.themes;
   return allWords().filter(w=>(!th.length||th.includes(w.th))&&passLvl(w,S.lvlF)&&passPos(w,S.posF));});}
@@ -1053,7 +1167,7 @@ function start(kind){
     tasks=picks.map(a=>({t:'W',w:a,mode:'trace',cs:cs(),sc:S.script})).concat(shuffle(picks).map(a=>({t:'W',w:a,mode:'mem',cs:cs(),sc:S.script})));
   }
   ses={kind,tasks,i:0,done:0,total:tasks.length,res:new Map(),xp:0,hint:false,learned:[],newKnown:[],before:pool().length,sc:S.script,rev,
-    missT:{},missW:{},dropped:[]};   // mistake counters for this session only (not saved)
+    missT:{},missW:{},dropped:[],wc:{}};   // mistake counters for this session only (not saved)
   fb=null;screen='session';render();
 }
 function cur(){return ses.tasks[ses.i];}
@@ -1100,6 +1214,7 @@ function answer(ok,extra){
     if(streakOf(l,tk.sc)>=3&&!KL.includes(l)){KL.push(l);ses.newKnown.push(l);toast(t('letterKnown',l));}
   }
   if(isWord){const s=st(tk.w.id);if(!s.seen)s.seen=Date.now();}
+  lmAnswer(tk,ok,extra);   // letter mastery (fill of the alphabet cards)
   if(ok){ses.done++;const x=XP[tk.t]||1;addXP(tk.retry&&isWord?retryXP(x):x);}
   else if(isWord)wordMiss(tk);
   else ses.tasks.push({t:tk.t,w:tk.w,retry:true,mode:tk.mode,cs:tk.cs,sc:tk.sc,rev:tk.rev});   // letters: as before
@@ -1167,7 +1282,7 @@ function finish(){
     S_.okSes++;if(S_.okSes>=HARD_EXIT){S_.hard=0;S_.okSes=0;}
   }
   if(ses.kind==='daily')S.dailyDone=today();
-  save();screen='end';render();
+  screen='end';save();render();
 }
 
 /* ================= RENDER ================= */
@@ -1515,11 +1630,11 @@ function rLetSetup(){
   <p class="muted" style="margin:0 0 10px">${t('lsetHint')}</p>
   <div class="abc-ctl"><b>${sel.size?t('lsetCount',sel.size):t('lsetNone')}</b></div>
   <div class="abc-ctl"><button class="chip" onclick="A.selNext()">${t('lsetNext')}</button>${sel.size?`<button class="chip" onclick="A.selNone()">${t('clearSel')}</button>`:''}</div>
-  <div class="abc ${hand?'cur':''}">${order.map(a=>`<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}" onclick="A.abcT('${a[0]}')"><b>${esc(a[0])}</b><small>${esc(snd(a))}</small></button>`).join('')}</div>
+  <div class="abc ${hand?'cur':''}">${order.map(a=>{const c=lmCard(a[0],lmMode());return `<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}${c.cls}" ${c.attr} onclick="A.abcT('${a[0]}')"><b>${esc(a[0])}</b><small>${esc(snd(a))}</small></button>`;}).join('')}</div>
   <button class="btn" style="width:100%;margin:14px 0 24px;position:sticky;bottom:12px" onclick="A.start('letters')">${sel.size?t('lsetStart',sel.size):t('lsetStartAll')}</button>`;
 }
 function rAbc(){
-  const sel=new Set(S.sel),K=new Set(knownList()),hand=isHand();
+  const sel=new Set(S.sel),K=new Set(knownList()),hand=isHand(),mode=lmMode();
   const order=S.abcSort==='freq'?FREQ.map(l=>byL[l]):ABC;
   const glyph=a=>(S.abcUp?esc(a[1]):'')+(S.abcLo?`<span class="lo">${esc(a[0])}</span>`:'');
   $app.innerHTML=`${topBar('Այբուբեն',t('abcSub'))}
@@ -1534,29 +1649,35 @@ function rAbc(){
     <button class="chip" onclick="A.mark(true)">${t('markKnown')}</button>
     <button class="chip" onclick="A.mark(false)">${t('markForgot')}</button>
     ${sel.size?`<button class="chip" onclick="A.selNone()">${t('clearSel')}</button>`:''}
+    ${K.size>=2?`<button class="chip" onclick="A.weak()">💪 ${t('weakBtn')}</button>`:''}
   </div>
   <div class="card" style="padding:12px 14px">${letterProgress(hand?'hand':'print')}${letterProgress(hand?'print':'hand',true)}</div>
-  <div class="abc ${hand?'cur':''}">${order.map(a=>{const sk=Math.min(3,streakOf(a[0]));
-    return `<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}" onclick="A.abcT('${a[0]}')"><b>${glyph(a)}</b><small>${esc(snd(a))}</small>
+  ${abcInfo&&byL[abcInfo]?`<div class="lm-info"><b class="${gcls()}">${esc(byL[abcInfo][1]+byL[abcInfo][0])}</b> ${esc(t('lmInfo',lmVal(abcInfo,mode),lmAgo((lmGet(abcInfo,mode)||{}).seen)))}${lmRust(abcInfo,mode)?' · '+esc(t('lmRusty')):''}</div>`:''}
+  <div class="abc ${hand?'cur':''}">${order.map(a=>{const sk=Math.min(3,streakOf(a[0])),key=mode+':'+a[0];
+    const c=lmCard(a[0],mode,LM_SHOWN[key]===undefined?0:LM_SHOWN[key]);LM_SHOWN[key]=c.m;
+    return `<button class="${sel.has(a[0])?'sel':''} ${K.has(a[0])?'known':''}${c.cls}" ${c.attr} onclick="A.abcT('${a[0]}')"><b>${glyph(a)}</b><small>${esc(snd(a))}</small>
     <span class="sdots">${[0,1,2].map(i=>`<i class="${i<sk||K.has(a[0])?'on':''}"></i>`).join('')}</span></button>`;}).join('')}</div>
+  <p class="muted lm-legend"><i></i>${t('lmLegend')}</p>
   <p class="muted">${t('legend')}${hand?'<br>'+t('fontCredit'):''}</p>
   ${navHtml()}`;
+  // grow the fill from the last shown value to the new one (CSS transition, ~0.6 s)
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.abc button[data-m]').forEach(b=>b.style.setProperty('--m',b.dataset.m))));
 }
 
 /* ================= ACTIONS ================= */
 let armed=null;
 function twice(k,msg){if(armed&&armed.k===k&&Date.now()-armed.t<4000){armed=null;return true;}armed={k,t:Date.now()};toast(msg);return false;}
-function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});dirty();save();toast(t('loaded'));render();}
+function loadJSON(txt){const d=JSON.parse(txt);if(!d||typeof d.w!=='object')throw 0;S=Object.assign(defaults(),d,{lang:d.lang||S.lang});ensureLM();dirty();save();toast(t('loaded'));render();}
 const A={
   acct(){screen='dict';accOpen=true;fb=null;render();const e=document.getElementById('acct');if(e)e.scrollIntoView({block:'start'});},
   signIn(){signIn();},
   signOut(){signOutNow();},
   syncNow(){syncNow(true);},
-  go(s){screen=s;if(s!=='session')ses=null;fb=null;render();window.scrollTo(0,0);},
+  go(s){const was=screen==='session';screen=s;if(s!=='session')ses=null;fb=null;if(was)syncSoon();render();window.scrollTo(0,0);},
   start(k){start(k);window.scrollTo(0,0);},
   lang(){S.lang=S.lang==='en'?'ru':'en';save();render();},
   theme(th){if(!th)S.themes=[];else S.themes=S.themes.includes(th)?S.themes.filter(x=>x!==th):S.themes.concat(th);save();render();},
-  quit(){ses=null;fb=null;screen='home';render();},
+  quit(){ses=null;fb=null;screen='home';syncSoon();render();},
   next,say,
   hint(){ses.hint=true;render();},
   know(){const tk=cur();const s=st(tk.w.id);FLAGS.forEach(f=>s.f[f]=true);if(s.lvl===0){s.lvl=1;s.next=Date.now()+DAY;}
@@ -1567,7 +1688,7 @@ const A={
     if(fb)return;const p=prep(cur()),x=p.tiles[i];if(!x||x.used)return;
     const exp=p.units[p.placed.length];
     if(x.u===exp){x.used=true;p.placed.push(x.u);if(p.placed.length===p.units.length)return answer(true);render();}
-    else{p.mist++;
+    else{p.mist++;addMastery(exp,'print',MASTERY.buildMiss);   // the letter you were looking for
       // the first BUILD_SLIPS wrong letters are only highlighted; the next one fails the attempt and shows the word
       if(p.mist>BUILD_SLIPS){p.placed=p.units.slice();p.tiles.forEach(z=>z.used=true);return answer(false);}
       x.bad=true;render();setTimeout(()=>{x.bad=false;if(screen==='session'&&!fb)render();},350);}
@@ -1605,7 +1726,7 @@ const A={
   },
   del(id){if(!twice('del'+id,t('delAgain')))return;S.custom=S.custom.filter(c=>c.id!==id);dirty();delete S.w[id];if(!S.custom.length)S.themes=S.themes.filter(x=>x!==MY);save();render();},
   reset(id){delete S.w[id];save();rList();toast(t('wordReset'));},
-  resetAll(){if(!twice('reset',t('resetAgain')))return;S.w={};S.xp={};S.letters={};save();render();},
+  resetAll(){if(!twice('reset',t('resetAgain')))return;S.w={};S.xp={};S.letters={};S.lm={print:{},hand:{}};save();render();},
   goal(v){S.goal=Math.max(5,Math.min(500,parseInt(v)||30));save();},
   exp(){const txt=JSON.stringify(S);
     try{const b=new Blob([txt],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='armenian-words-progress-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();}catch(e){}
@@ -1613,15 +1734,23 @@ const A={
     const ta=document.getElementById('io');if(ta)ta.value=txt;},
   imp(inp){const f=inp.files[0];if(!f)return;f.text().then(x=>{try{loadJSON(x);}catch(e){toast(t('readFail'));}});},
   impText(){try{loadJSON(document.getElementById('io').value);}catch(e){toast(t('readFail'));}},
-  abcT(l){S.sel=S.sel.includes(l)?S.sel.filter(x=>x!==l):S.sel.concat(l);save();render();},
+  abcT(l){if(screen==='abc')abcInfo=l;S.sel=S.sel.includes(l)?S.sel.filter(x=>x!==l):S.sel.concat(l);save();render();},
+  // "Train weak letters": the 5 learned letters (current mode) with the lowest mastery, rusty ones first
+  weak(){const mode=lmMode(),now=Date.now(),ls=knownList().filter(l=>byL[l]);if(ls.length<2)return;
+    const fi=l=>{const i=FREQ.indexOf(l);return i<0?99:i;};
+    ls.sort((a,b)=>(lmRust(b,mode,now)-lmRust(a,mode,now))||(lmVal(a,mode)-lmVal(b,mode))||(fi(a)-fi(b)));
+    S.sel=ls.slice(0,5);save();A.go('lsetup');},
   selNone(){S.sel=[];save();render();},
   selNext(){const K=new Set(knownList());const add=FREQ.filter(l=>!K.has(l)&&!S.sel.includes(l)).slice(0,5);if(!add.length)return;S.sel=S.sel.concat(add);save();render();},
   abcSet(k,v){S[k]=v;save();render();},
   abcCase(k){S[k]=!S[k];if(!S.abcUp&&!S.abcLo)S[k==='abcUp'?'abcLo':'abcUp']=true;save();render();},
   mark(v){if(!S.sel.length)return toast(t('selectFirst'));
     const key=isHand()?'hknown':'known';
-    if(v)S[key]=[...new Set(S[key].concat(S.sel))];
-    else{S[key]=S[key].filter(l=>!S.sel.includes(l));S.sel.forEach(l=>{const k=lkey(l);if(S.letters[k])S.letters[k].h=[];});}
+    const mode=lmMode(),now=Date.now();
+    if(v){S[key]=[...new Set(S[key].concat(S.sel))];
+      S.sel.forEach(l=>{const r=lmRec(l,mode);if(r.m<MASTERY.markKnown){r.m=MASTERY.markKnown;r.seen=now;}});}   // known without a test: 30%
+    else{S[key]=S[key].filter(l=>!S.sel.includes(l));S.sel.forEach(l=>{const k=lkey(l);if(S.letters[k])S.letters[k].h=[];
+      const r=lmRec(l,mode);r.m=0;r.seen=now;});}   // forgot: fill back to 0
     S.sel=[];save();render();},
   only(v){S.onlyKnown=v;save();render();},
   script(v){S.script=v;save();render();},
@@ -1687,7 +1816,7 @@ const FB_SDK='https://www.gstatic.com/firebasejs/13.4.0/';
 const SYNC_FLAG='hy-sync-on';
 const MAPS={w:'w',letters:'l',xp:'x'};
 const SETS=['known','hknown'];   // learned letters: every letter is synced on its own
-const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&!SETS.includes(k)&&k!=='custom'&&k!=='u');
+const SCALARS=Object.keys(defaults()).filter(k=>!(k in MAPS)&&!SETS.includes(k)&&k!=='custom'&&k!=='u'&&k!=='lm');
 const SYNC={user:null,status:'off',err:'',last:0,timer:null,fb:null,busy:false,again:false,cloud:null};
 let accOpen=false;
 
@@ -1696,6 +1825,7 @@ function entries(s){const e={};
   for(const f in MAPS){const o=s[f]||{};for(const k in o)e[MAPS[f]+':'+k]=JSON.stringify(o[k]);}
   (s.custom||[]).forEach(c=>{if(c&&c.id)e['c:'+c.id]=JSON.stringify(c);});
   SETS.forEach(f=>(Array.isArray(s[f])?s[f]:[]).forEach(l=>e['K:'+f+':'+l]='1'));
+  {const lm=s.lm||{};LM_MODES.forEach(md=>{const o=lm[md]||{};for(const l in o)e['m:'+md+':'+l]=JSON.stringify(o[l]);});}   // letter mastery: one piece per letter and mode
   SCALARS.forEach(f=>{if(s[f]!==undefined)e['k:'+f]=JSON.stringify(s[f]);});
   return e;}
 let SNAP=entries(S);
@@ -1707,13 +1837,14 @@ function stamp(){const now=Date.now(),cur=entries(S);if(!S.u||typeof S.u!=='obje
 // merge two states piece by piece (a = this device, b = cloud)
 function mergeState(a,b){
   const ea=entries(a),eb=entries(b),ua=a.u||{},ub=b.u||{};
-  const out=Object.assign(defaults(),a,{w:{},letters:{},xp:{},custom:[],known:[],hknown:[],u:{}});
+  const out=Object.assign(defaults(),a,{w:{},letters:{},xp:{},custom:[],known:[],hknown:[],lm:{print:{},hand:{}},u:{}});
   const keys=new Set([...Object.keys(ea),...Object.keys(eb),...Object.keys(ua),...Object.keys(ub)]);
   const order=[...Object.keys(ea),...Object.keys(eb)].filter(k=>k.startsWith('c:')||k.startsWith('K:'));
   const picked={};
   keys.forEach(k=>{
     const ta=ua[k]||0,tb=ub[k]||0,va=ea[k],vb=eb[k];let v;
-    if(ta>tb)v=va;else if(tb>ta)v=vb;
+    if(k.startsWith('m:')&&va!==undefined&&vb!==undefined)v=(JSON.parse(vb).seen||0)>(JSON.parse(va).seen||0)?vb:va;   // letter mastery: the newer practice wins
+    else if(ta>tb)v=va;else if(tb>ta)v=vb;
     else if(va===undefined||vb===undefined)v=va===undefined?vb:va;   // never stamped: keep whatever exists
     else if(k.startsWith('w:')){const x=JSON.parse(va),y=JSON.parse(vb);v=((y.lvl||0)>(x.lvl||0)||((y.lvl||0)===(x.lvl||0)&&(y.next||0)>(x.next||0)))?vb:va;}
     else v=va;
@@ -1723,7 +1854,8 @@ function mergeState(a,b){
   });
   for(const k in picked){const i=k.indexOf(':'),p=k.slice(0,i),id=k.slice(i+1);
     if(p==='w')out.w[id]=picked[k];else if(p==='l')out.letters[id]=picked[k];else if(p==='x')out.xp[id]=picked[k];
-    else if(p==='k')out[id]=picked[k];}
+    else if(p==='k')out[id]=picked[k];
+    else if(p==='m'){const j=id.indexOf(':'),md=id.slice(0,j);if(out.lm[md])out.lm[md][id.slice(j+1)]=picked[k];}}
   const seen=new Set();order.forEach(k=>{if(!(k in picked)||seen.has(k))return;seen.add(k);
     if(k.startsWith('c:'))out.custom.push(picked[k]);
     else{const [,f,...l]=k.split(':');out[f].push(l.join(':'));}});
@@ -1804,7 +1936,7 @@ async function syncNow(manual){
     SYNC.cloud=snap.exists()?Object.assign(sumUp(remote||{}),{ts:snap.data().ts||0,v:snap.data().v||'?'}):{none:true};
     if(remote&&typeof remote.w==='object'){
       const before=JSON.stringify(S),lang=S.lang;
-      S=mergeState(S,remote);S.lang=lang||S.lang;
+      S=mergeState(S,remote);S.lang=lang||S.lang;ensureLM();
       SNAP=entries(S);try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
       if(JSON.stringify(S)!==before){dirty();if(screen!=='session')render();}
     }
