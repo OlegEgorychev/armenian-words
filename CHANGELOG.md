@@ -9,6 +9,21 @@ How versions move until 1.0.0 (see the roadmap in the README):
 - bug fixes bump **PATCH**;
 - **1.0.0** is released when the whole backlog is done.
 
+## [0.5.11] — 2026-11-26
+
+### Added
+- **Letter mastery fill on the alphabet cards.** Every letter has a score from 0 to 100 %, separately for print and handwritten; the card fills from the bottom up. Points come from the letter quiz, handwriting and all word exercises; mistakes on a specific letter lower it. Max +25 per letter per mode per day; repeating the same word in a session gives half, then nothing. See "Letter mastery" in the README. All numbers are in the `MASTERY` object.
+- "Rust": a letter not practised for 7 days turns grey-olive (keeps its %). 100 % = fully filled card with a glow. The fill grows smoothly when you come back to the Alphabet tab.
+- Tap a letter in the Alphabet tab to see "Mastery: 64% · practised 3 days ago". Legend under the grid, `aria-label` with the percentage on every card.
+- **💪 Train weak letters** button: opens the letter list with the 5 weakest learned letters preselected (rusty ones first). Shown when 2+ letters are learned.
+
+### Changed
+- "✓ I know the selected" raises the letter's score to 30 %, "✗ Forgot the selected" resets it to 0.
+- Cloud sync is written once at the end of a training (or when you leave it), not after every answer.
+
+### Migration
+- New progress field `S.lm`. Already learned letters get a starting score from their answer history (at least 30 %); old exports import without errors. Update the app on every device so the fill syncs.
+
 ## [0.5.10] — 2026-11-25
 
 ### Fixed

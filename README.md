@@ -52,6 +52,27 @@ Every word has a status, shown as a coloured badge in the dictionary (with a sta
 
 All balance numbers (`MISS_PER_TASK`, `MISS_PER_WORD`, `RETRY_GAP`, `BUILD_SLIPS`, `HARD_EXIT`, `HARD_IN_NEW`, `HARD_SHARE`, `HARD_MAX`, `retryXP`) are in one block at the top of the script in `index.html`. New fields per word (`seen`, `hard`, `hardAt`, `okSes`) are added on first use, so old progress and old exports keep working. Letter exercises are not affected.
 
+## Letter mastery (fill on the alphabet cards)
+
+Every letter has a **mastery score from 0 to 100**, kept separately for print and handwritten letters. In the Alphabet tab the card fills from the bottom up to that percentage, so one look at the grid shows weak and strong letters. The ✓ and green border still mean "learned" (that is what unlocks words); the fill shows how solid the letter is. Tap a letter to see "Mastery: 64% · practised 3 days ago".
+
+| Event | Mode | Points |
+|---|---|---|
+| Letter quiz (letter → transliteration), correct | print | +10 |
+| Handwritten letter reading quiz, correct | handwritten | +10 |
+| Handwriting from memory, "Got it" | mode of the exercise | +12 |
+| Handwriting by tracing, "Got it" | mode of the exercise | +6 |
+| Word → translation / Translation → word / Reading, correct | print | +3 to each unique letter of the word |
+| Builder / Writing / Dictation, correct | print | +5 to each unique letter |
+| Wrong answer in a one-letter exercise (quiz, "Doesn't match") | — | −5 |
+| Wrong tile in the Builder | print | −3 to the letter that should have been placed |
+| Wrong word in Writing / Dictation | print | −3 to the first letter that differs |
+| Wrong translation choice / reading, "I don't know" | — | 0 |
+
+Rules: at most **+25 per letter per mode per day** (so 100% takes at least 4 days); the same word answered correctly a 2nd time in one session gives half the points, the 3rd time and later nothing; a letter that appears twice in a word counts once; ու and և are letters of their own; the score stays between 0 and 100. "✓ I know the selected" raises the score to 30, "✗ Forgot the selected" resets it to 0. A letter not practised for **7 days** turns grey-olive ("rust") and keeps its percentage; one correct answer brings the colour back. **💪 Train weak letters** preselects the 5 learned letters with the lowest score (rusty ones first) in the letter list. Future letter levels will be derived from this scale: 20/40/60/80/100% = levels 1–5.
+
+All numbers are in the `MASTERY` object in `index.html`. The scores live in a new progress field `S.lm` (`{print:{'ա':{m,day,today,seen}}, hand:{…}}`). On first start, and when importing an old export, letters that are already learned get a starting score from their answer history (10 × correct − 5 × wrong, at least 30, at most 100); unlearned letters start at 0. Each letter is synced on its own; when two devices disagree, the more recent practice wins.
+
 ## Alphabet first: words only from learned letters
 
 The Alphabet tab works like [chev.me/armenian](https://chev.me/armenian/) by Oleg Kalachev:
@@ -119,7 +140,7 @@ Signing in is optional. Press 👤 at the top → "Sign in with Google", and pro
 
 ## Version and roadmap
 
-Current version: **0.5.9** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
+Current version: **0.5.11** — see [CHANGELOG.md](CHANGELOG.md). Every finished backlog task bumps PATCH, finishing a milestone bumps MINOR, and **1.0.0** ships when the whole backlog is done.
 
 | Version | Milestone | Tasks |
 |---|---|---|
